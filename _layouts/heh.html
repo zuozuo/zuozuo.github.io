@@ -22,6 +22,12 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+
 					<a class="brand" href="/"><strong></strong>左左<small>的博客</small></a>
           <div class="nav-collapse">
             <ul class="nav pull-right">
@@ -44,15 +50,39 @@
     <!-- Main content area -->
 
     <div class="container">
-			<!-- <header class="page-header"> -->
-				<!-- <h1>{{ site.title }}</h1> -->
-			<!-- </header> -->
-			<div id="content" class="span8">
-				{{ content }}
-			</div>
+        <!-- <header class="page-header"> -->
+          <!-- <h1>{{ site.title }}</h1> -->
+        <!-- </header> -->
+          <div id="content" class="span8">
+            {{ content }}
+          <!-- </div> -->
+          <!-- <nav class="span3"> -->
+          <!--   <div id="social networks" class="rss twitter" > -->
+          <!--     <a href="http://feeds.feedburner.com/GitwatcherBlog"> -->
+          <!--       <img src="http://gitwatcher.com/blog/img/icons_32x32px/rss.png" alt="Subscribe to RSS Feed" /> -->
+          <!--     </a> -->
+          <!--     <a href="https://twitter.com/gitwatcher"> -->
+          <!--       <img src="http://gitwatcher.com/blog/img/icons_32x32px/twitter_1.png" alt="Follow us on Twitter" /> -->
+          <!--     </a> -->
+          <!--   </div> -->
+          <!--   <h3>Recent Posts</h3> -->
+          <!--   <hr /> -->
+          <!--   <div id="posts"> -->
+          <!--     {% for post in site.posts limit:10%} -->
+          <!--       <p><a href="{{ post.url }}">{{ post.title }}</a></p> -->
+          <!--     {% endfor %} -->
+          <!--     <hr> -->
+          <!--     <p>powered by <a href="https://github.com/mojombo/jekyll">jekyll</a></p> -->
+          <!--   </div> -->
+          <!-- </nav> -->
+      <hr />
       {% include footer.html %}
     </div> 
+
   </div> 
+
+  <!-- End Main content area -->
+
 </body>
 </html>
 

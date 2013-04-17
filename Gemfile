@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 # source 'http://ruby.taobao.org'
 
-# gem 'jekyll-slim'
+gem 'jekyll-slim'
 
 # gem 'directory_watcher ', '~>1.4.1'
 

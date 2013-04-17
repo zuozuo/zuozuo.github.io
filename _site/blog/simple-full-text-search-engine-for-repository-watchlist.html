@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Simple full-text search engine for repository watchlist</title>
+   <meta name="author" content="GitWatcher" />
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="../css/main.css" type="text/css" />
+   <link rel="stylesheet" href="../css/bootstrap.css" type="text/css" />
+   <link rel="stylesheet" href="../css/bootstrap-responsive.min.css" type="text/css" />
+
+</head>
+
+<body>
+
+  <div id="page">
+
+   <!-- Twitter Bootstrap navbar -->
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+					<a class="brand" href="/"><strong></strong>左左<small>的博客</small></a>
+          <div class="nav-collapse">
+            <ul class="nav pull-right">
+              <li><a href="/">首页</a></li>
+              <li><a href="/blog.html">博客</a></li>
+              <li><a href="/categories.html">分类</a></li>
+              <li><a href="/about.html">关于我</a></li>
+              <!-- <li><a href="/trends">Trends</a></li> -->
+              <!-- <li><a href="/auth/github">Sign in with Github</a></li> -->
+            </ul>
+            <!-- form method="get" action="http://www.google.com/search" class="navbar-search pull-right">
+              <input type="text" name="q" class="span2 search-query" placeholder="Search" maxlength="255" value="">
+              <input name="sitesearch" type="hidden" value="">
+            </form -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+
+    <div class="container">
+			<!-- <header class="page-header"> -->
+				<!-- <h1></h1> -->
+			<!-- </header> -->
+			<div id="content" class="span8">
+				<article>
+  <header>
+    <h1>
+      <a href="/blog/simple-full-text-search-engine-for-repository-watchlist.html" rel="bookmark" title="Permanent link to ">Simple full-text search engine for repository watchlist</a>
+    </h1>
+    <!-- <h5> -->
+			<!-- <time>February  2, 2012</time> -  -->
+			<!-- <author>zuozuohui</author> -->
+    <!-- </h5> -->
+  </header>
+	<section> <br /> <p>Many of you have been asking for this since the beginning. Today, I have the
+pleasure to announce that full-text search engine for your repository
+watchlist, is finally here.</p>
+
+<p>People who are watching several hundred of GitHub repositories like me, after
+login the first time, get a big list of untagged git projects and starting
+tagging could be a bit tricky.</p>
+
+<p>Even if you can reorder your pages sorting by fields, ‘By Tag’ tab in your
+dasboard is still empty and you may have several pages to go through, that’s
+way a search engine became essential.</p>
+
+<p>There are many open source full-text search engines like
+<a href="http://www.elasticsearch.org/">elasticsearch</a> and
+<a href="http://sphinxsearch.com/">sphinx</a> with relative Ruby API and DSL  like
+<a href="http://karmi.github.com/tire/">Tire</a> /
+<a href="https://github.com/cousine/mebla">Mebla</a> and<a href="https://github.com/redbeard-tech/mongoid-sphinx">mongoid-
+sphinx</a>, but we have two
+constraints here:</p>
+
+<ol>
+<li>a mongoid <a href="http://mongoid.org/docs/relations/embedded/1-n.html">embedded one to many</a> model on Rails 3.1 to search full text</li>
+<li>deploy on heroku without having to pay for add-ons, initially</li>
+</ol>
+
+
+<p>All heroku Full-Text Search add-ons currently, seem to have just paying plans
+which are not good to start with, see <a href="http://addons.heroku.com/flying_sphinx">Flying
+Sphinx</a> and
+<a href="http://addons.heroku.com/websolr">Websolr</a>.</p>
+
+<p>There is also <a href="http://addons.heroku.com/searchify">Searchify IndexTank</a> but is
+currently Beta, then for our pourpose we decided to go even simpler using
+<a href="https://github.com/joshuabowers/search_magic">search_magic</a> gem.</p>
+
+<p>We tried <a href="https://github.com/mauriciozaffari/mongoid_search">mongoid_search</a>
+and <a href="https://github.com/aaw/mongoid_fulltext">mongoid_fulltext</a> too, but we
+have not been able to make them working with mongoid <a href="http://mongoid.org/docs/relations/embedded/1-n.html">embedded one to
+many</a>.</p>
+
+<p>That said, the search is very simple and restrictive : you insert a set of
+words and it match a permutation of the exact terms only, case unsensitive,
+looking full-text into "repo", "description" and "tags" fields  of each
+repository, which means that in my case, searching for<em> "authentication
+omniath" </em>will find the following five responces :</p>
+
+<p><img src="http://gitwatcher.com/blog/img/full_text_search.png" alt="" /></p>
+
+<p>but searching for <em>"rack __authentication omniath"</em>  gets back  just one
+responce, as you can see :</p>
+
+<p><img src="http://gitwatcher.com/blog/img/full_text_search_result.png" alt="" /></p>
+
+<p>Very simple, but is what we need at the moment. Any feedback is welcome.</p>
+ </section>
+
+<!-- <div class="hero-unit"> -->
+<!--   <nav id="related"> -->
+<!--     <h3>Related Posts</h3> -->
+<!--     <ul class="posts"> -->
+<!--        -->
+<!--         <p><li><span>20 Oct 2012</span> - <a href="/blog/blog/tumblr-to-jekyll-blog-migration.html">Tumblr to Jekyll Blog Migration</a></li></p> -->
+<!--        -->
+<!--         <p><li><span>31 Jul 2012</span> - <a href="/blog/blog/mongoid-odm-as-fast-as-you-can.html">MongoID ODM as fast as you can</a></li></p> -->
+<!--        -->
+<!--         <p><li><span>29 May 2012</span> - <a href="/blog/blog/easy-and-cooperative-project-categorization-is-now-open-to-gitwatcher-users.html">Easy and cooperative project categorization is now open to GitWatcher users</a></li></p> -->
+<!--        -->
+<!--         <p><li><span>07 May 2012</span> - <a href="/blog/blog/a-semi-automatic-categorization-of-github-projects.html">A semi-automatic categorization of GitHub projects</a></li></p> -->
+<!--        -->
+<!--         <p><li><span>24 Mar 2012</span> - <a href="/blog/blog/gitWatcher-is-built-on-top-of-several-amazing-ruby-gems.html">GitWatcher is built on top of several amazing Ruby Gems</a></li></p> -->
+<!--        -->
+<!--     </ul> -->
+<!--   </nav> -->
+<!-- </div> -->
+<!--  -->
+<!--   -->
+<!--         <div id="disqus_thread"></div> -->
+<!--         <script type="text/javascript"> -->
+<!--             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */ -->
+<!--             var disqus_shortname = 'gitwatcher'; // required: replace example with your forum shortname -->
+<!--             /*var disqus_developer = 1; // This turns developer mode on -->
+<!--                                       // Make sure you remove this before you push this -->
+<!--                                       // to your live site. -->
+<!--  -->
+<!--             /* * * DON'T EDIT BELOW THIS LINE * * */ -->
+<!--             (function() { -->
+<!--                 var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
+<!--                 dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js'; -->
+<!--                 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
+<!--             })(); -->
+<!--         </script> -->
+<!--         <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+<!--         <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+<!--   -->
+<!--  -->
+<!-- <!--  -->
+<!--    -->
+<!--  -->
+</article>
+
+			</div>
+      <footer>
+  <div class="row">
+    <div class="span10">
+      <p class="Copyright">&copy; 2013 左左</p>
+    </div>
+    <!-- .span2 -->
+    <!-- %a.pull-right{:href => "http://flow.mixpanel.com/f/partner"} -->
+    <!-- %img{:alt => "Real Time Web Analytics", :src => "http://mixpanel.com/site_media/images/partner/badge_blue.png"} -->
+  </div>
+</footer>
+
+    </div> 
+  </div> 
+</body>
+</html>
+

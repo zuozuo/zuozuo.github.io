@@ -1,0 +1,1321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>GitWatcher Blog</title>
+ <link href="http://gitwatcher.com/blog/feed/atom.xml" rel="self"/>
+ <link href="http://gitwatcher.com/blog/feed"/>
+ <updated>2013-04-17T00:52:18+08:00</updated>
+ <id>http://gitwatcher.com/blog/feed</id>
+ <author>
+   <name>Luca G. Soave</name>
+   <email>luca.soave@gmail.com</email>
+ </author>
+
+ 
+ <entry>
+   <title>Tumblr to Jekyll Blog Migration</title>
+   <link href="http://gitwatcher.com/blog/blog/tumblr-to-jekyll-blog-migration.html"/>
+   <updated>2012-10-20T00:00:00+08:00</updated>
+   <id>http://gitwatcher.com/blog/blog/tumblr-to-jekyll-blog-migration.html</id>
+   <content type="html">&lt;p&gt;After half an year of blogging on tumblr GitWatcher’s blog has now decided to go for &lt;a href=&quot;http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html&quot;&gt;Blogging Like a Hacker&lt;/a&gt; well known way, by jekylling on rails.&lt;/p&gt;
+
+&lt;p&gt;There is really no reason to delegate third-level domain for blogging ( blog.gitwatcher.com vs &lt;a href=&quot;http://gitwatcher.com/blog&quot;&gt;gitwatcher.com/blog&lt;/a&gt; ) losing SEO and ranking, &lt;a href=&quot;http://webapps.stackexchange.com/questions/22586/my-tumblr-blog-disappeared&quot;&gt;having less control and reliability on our blog content.&lt;/a&gt;, eventually.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://jekyllrb.com/&quot;&gt;Jekyll&lt;/a&gt; is an open-source blog-aware static site generator and &lt;a href=&quot;http://rubyonrails.org/&quot;&gt;Rails&lt;/a&gt; as you know, is the “main” application engine behind &lt;a href=&quot;http://gitwatcher.com&quot;&gt;gitwatcher.com&lt;/a&gt; ( but no longer the only one, more on future articles ).&lt;/p&gt;
+
+&lt;p&gt;Mounting a Jekyll blog on Rails, can be done manually several different ways, but if you want to go easy peasy, you really have to see this article about &lt;a href=&quot;http://www.engineyard.com/blog/2012/introducing-bloggy-a-simple-way-to-add-a-jekyll-blog-to-any-rails-application/&quot;&gt;bloggy&lt;/a&gt; gem.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/zbruhnke/bloggy&quot;&gt;Bloggy&lt;/a&gt; makes it easy to run a Jekyll blog right within your existing Rails application with no changes to your current configuration. It helps you generate a jekyll blog by using rails generator commands similar to the ones you are used to already.&lt;/p&gt;
+
+&lt;p&gt;Blog’s layout, is done by glorious front-end framework &lt;a href=&quot;http://twitter.github.com/bootstrap/&quot;&gt;twitter bootstrap&lt;/a&gt; ( impressive ~40k stars and 10k forks on &lt;a href=&quot;https://github.com/twitter/bootstrap&quot;&gt;https://github.com/twitter/bootstrap&lt;/a&gt; ), now provided via CDN by &lt;a href=&quot;http://www.bootstrapcdn.com/&quot;&gt;BootstrapCDN&lt;/a&gt;, and perfectly integrated with the rest of the site, that’s cool.&lt;/p&gt;
+
+&lt;p&gt;Data migration has been smooth, thanks to &lt;a href=&quot;https://github.com/mojombo/jekyll/wiki/Blog-Migrations&quot;&gt;Blog Migration Tutorial&lt;/a&gt;. You can find Tumblr procedure at the end of the page, but you can find migration scripts and procedures for WordPress, Drupal, Movable Type, Typo 4+, TextPattern, Mephisto, Blogger (Blogspot), Posterous, as well.&lt;/p&gt;
+
+&lt;p&gt;Then once again, no reason to go outsourcing. That’s all for this post, I would like to know what do you think about, please feel free to share your experience by adding comments.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>MongoID ODM as fast as you can</title>
+   <link href="http://gitwatcher.com/blog/blog/mongoid-odm-as-fast-as-you-can.html"/>
+   <updated>2012-07-31T00:00:00+08:00</updated>
+   <id>http://gitwatcher.com/blog/blog/mongoid-odm-as-fast-as-you-can.html</id>
+   <content type="html">&lt;p&gt;In the &lt;a href=&quot;http://gitwatcher.com/blog/easy-and-cooperative-project-categorization-is-now-open-to-gitwatcher-users.html&quot;&gt;previous article&lt;/a&gt;,
+we announced our first attempt of croudsourcing repository categorization on GitWatcher platform.&lt;/p&gt;
+
+&lt;p&gt;Based on hybrid model, &lt;a href=&quot;http://gitwatcher.com/categories&quot;&gt;gitwatcher
+categories&lt;/a&gt; are automatically extracted by a
+collector, which simply list them based on the tags they have been associated
+to by each user.&lt;/p&gt;
+
+&lt;p&gt;A new category can be added by a logged in gitwatcher, who gives it a name and
+a set of tags to be associated with. If another user tags a repository with
+the same tag set, that repo will be displayed into the list, after being
+collected ( which currently happen once a day ).&lt;/p&gt;
+
+&lt;p&gt;Now, part of the the collector code, was looking like the following at first :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Competitor  = Struct.new(:html_url, :description, :user)
+competitors = []
+User.all.map do |user|
+  user.watchlists.all.map do |wl|
+    if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;, &quot;framework&quot;]
+       competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
+   end
+ end
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and a semplified underline datamodel was similar to the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class User
+  include Mongoid::Document
+  field :nickname
+  embeds_many :watchlists
+end
+
+class Watchlist
+  include Mongoid::Document
+  field :html_url
+  field :description
+  field :tags_array, type: Array
+  embedded_in :user
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Well, that was great at first, but the data was growing and the entire
+operation became time and CPU consuming. I start googling around, looking for
+better, more efficient and effective way to use the amazing&lt;a href=&quot;http://mongoid.org/&quot;&gt; mongoid
+ODM&lt;/a&gt; driver.&lt;/p&gt;
+
+&lt;p&gt;An interesting response came from a post I made on
+&lt;a href=&quot;http://stackoverflow.com/questions/10121977/extracting-modelling-and-changing-data-model-with-mongoid-mongodb&quot;&gt;stackoverflow.com&lt;/a&gt; where I was suggested
+to consider the following enhancements ( thanks goes to
+&lt;a href=&quot;http://stackoverflow.com/users/479167/rubish&quot;&gt;rubish&lt;/a&gt; ) :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Filter the users with db query instead of filtering in application&lt;/li&gt;
+&lt;li&gt;only fetch fields you need from db, rather than the whole user objects&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;the code example was posted on the same answer. Here it is :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Competitor = Struct.new(:html_url, :description, :user)
+competitors = []
+User.where('watchlists.tags_array' =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each do |u|
+  u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each do |wl|
+    competitors « Competitor.new(wl.html_url, wl.description, u.nickname)
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I Took the time to get some measures … and surprise,  it results really faster
+and less cpu consuming:&lt;/p&gt;
+
+&lt;p&gt;first code :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;1.9.2p290 :157 &amp;gt; Competitor  = Struct.new(:html_url, :description, :user)
+1.9.2p290 :158 &amp;gt; competitors = []
+=&amp;gt; []
+
+1.9.2p290 :159 &amp;gt; Benchmark.bm(10) do |x|
+1.9.2p290 :160 &amp;gt;     x.report(&quot;first:&quot;) do
+1.9.2p290 :161 &amp;gt;       User.all.map do |user|
+1.9.2p290 :162 &amp;gt;           user.watchlists.all.map do |wl|
+1.9.2p290 :163 &amp;gt;               if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;,
+&quot;framework&quot;]
+1.9.2p290 :164?&amp;gt;                   competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
+1.9.2p290 :165?&amp;gt;               end
+1.9.2p290 :166?&amp;gt;           end
+1.9.2p290 :167?&amp;gt;       end
+1.9.2p290 :168?&amp;gt;     end
+1.9.2p290 :169?&amp;gt;   x.report(&quot;second:&quot;) do
+1.9.2p290 :170 &amp;gt;       User.all.map do |user|
+1.9.2p290 :171 &amp;gt;           user.watchlists.all.map do |wl|
+1.9.2p290 :172 &amp;gt;               if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;, &quot;framework&quot;]
+1.9.2p290 :173?&amp;gt;                   competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
+1.9.2p290 :174?&amp;gt;               end
+1.9.2p290 :175?&amp;gt;           end
+1.9.2p290 :176?&amp;gt;       end
+1.9.2p290 :177?&amp;gt;     end
+1.9.2p290 :178?&amp;gt;   x.report(&quot;third:&quot;) do
+1.9.2p290 :179 &amp;gt;       User.all.map do |user|
+1.9.2p290 :180 &amp;gt;           user.watchlists.all.map do |wl|
+1.9.2p290 :181 &amp;gt;               if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;, &quot;framework&quot;]
+1.9.2p290 :182?&amp;gt;                   competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
+1.9.2p290 :183?&amp;gt;               end
+1.9.2p290 :184?&amp;gt;           end
+1.9.2p290 :185?&amp;gt;       end
+1.9.2p290 :186?&amp;gt;     end
+1.9.2p290 :187?&amp;gt;   end
+
+               user     system      total        real
+
+first:    MONGODB (30ms) heroku_app1707530['users'].find({})
+
+MONGODB [DEBUG] cursor.refresh() for cursor 6320857008182747446
+
+MONGODB [DEBUG] cursor.refresh() for cursor 6320857008182747446
+
+ 1.460000   0.010000   1.470000 (  1.475545)
+
+second:   MONGODB (24ms) heroku_app1707530['users'].find({})
+
+MONGODB [DEBUG] cursor.refresh() for cursor 8580701579081246457
+
+MONGODB [DEBUG] cursor.refresh() for cursor 8580701579081246457
+
+ 1.470000   0.010000   1.480000 (  1.494812)
+
+third:    MONGODB (24ms) heroku_app1707530['users'].find({})
+
+MONGODB [DEBUG] cursor.refresh() for cursor 6472818135140756688
+
+MONGODB [DEBUG] cursor.refresh() for cursor 6472818135140756688
+
+ 1.490000   0.010000   1.500000 (  1.505000)
+
+=&amp;gt; true
+
+1.9.2p290 :188 &amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;vs. second code :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;1.9.2p290 :065 &amp;gt; Competitor  = Struct.new(:html_url, :description, :user)
+1.9.2p290 :066 &amp;gt; competitors = []
+=&amp;gt; []
+1.9.2p290 :067 &amp;gt; Benchmark.bm(10) do |x|
+1.9.2p290 :068 &amp;gt;     x.report(&quot;first:&quot;) {User.where('watchlists.tags_array' =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
+
+1.9.2p290 :069?&amp;gt;   x.report(&quot;second:&quot;) {User.where('watchlists.tags_array' =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
+
+1.9.2p290 :070?&amp;gt;   x.report(&quot;third:&quot;) {User.where('watchlists.tags_array' =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
+1.9.2p290 :071?&amp;gt;   end
+
+               user     system      total        real
+
+first:    MONGODB (163ms)
+heroku_app1707530['users'].find({&quot;watchlists.tags_array&quot;=&amp;gt;[&quot;ruby&quot;, &quot;web&quot;,
+&quot;framework&quot;]}, {:_type=&amp;gt;1, :nickname=&amp;gt;1, :watchlists=&amp;gt;1})
+
+MONGODB [DEBUG] cursor.refresh() for cursor 7239021952645827000
+
+ 0.330000   0.000000   0.330000 (  0.380199)
+
+second:   MONGODB (164ms)
+heroku_app1707530['users'].find({&quot;watchlists.tags_array&quot;=&amp;gt;[&quot;ruby&quot;, &quot;web&quot;,
+&quot;framework&quot;]}, {:_type=&amp;gt;1, :nickname=&amp;gt;1, :watchlists=&amp;gt;1})
+
+MONGODB [DEBUG] cursor.refresh() for cursor 4816095738351422260
+
+ 0.320000   0.010000   0.330000 (  0.381196)
+
+third:    MONGODB (125ms)
+heroku_app1707530['users'].find({&quot;watchlists.tags_array&quot;=&amp;gt;[&quot;ruby&quot;, &quot;web&quot;,
+&quot;framework&quot;]}, {:_type=&amp;gt;1, :nickname=&amp;gt;1, :watchlists=&amp;gt;1})
+
+MONGODB [DEBUG] cursor.refresh() for cursor 5014359782446173361
+
+ 0.390000   0.010000   0.400000 (  0.397241)
+
+=&amp;gt; true
+
+1.9.2p290 :072 &amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can see the speed up is quite impressive. MongoID/MongoDB is a defacto
+NoSQL tech for data crunching and big data in Ruby&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.indeed.com/jobtrends?q=mongodb%2C+riack%2C+couchdb%2C+elasticsearch%2C+cassandra&quot;&gt; &lt;img src=&quot;http://www.indeed.com/trendgraph/jobgraph.png?q=mongodb%2C+riack%2C+couchdb%2C+elasticsearch%2C+cassandra&quot; alt=&quot;mongodb, riack, couchdb, elasticsearch, cassandra Job Trends graph&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;… but it takes some mind shift to be fully understood and utilized.&lt;/p&gt;
+
+&lt;p&gt;I hope it can help,&lt;/p&gt;
+
+&lt;p&gt;feel free to add your comments and experiences.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Easy and cooperative project categorization is now open to GitWatcher users</title>
+   <link href="http://gitwatcher.com/blog/blog/easy-and-cooperative-project-categorization-is-now-open-to-gitwatcher-users.html"/>
+   <updated>2012-05-29T00:00:00+08:00</updated>
+   <id>http://gitwatcher.com/blog/blog/easy-and-cooperative-project-categorization-is-now-open-to-gitwatcher-users.html</id>
+   <content type="html">&lt;p&gt;As announced in &lt;a href=&quot;http://blog.gitwatcher.com/post/22589388119/a-semi-automatic-%0Acategorization-of-github-projects&quot;&gt;the previous
+article&lt;/a&gt;, categorization system is now open to
+GitWatcher users. Adding Categories is now possible by &lt;a href=&quot;http://gitwatcher.com/auth/github&quot;&gt;Sign in with
+Github&lt;/a&gt; then going to &lt;a href=&quot;http://gitwatcher.com/categories&quot;&gt;categories
+page&lt;/a&gt;. You’ll find a list of categories
+already in place and a form where you can add your own.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://lh3.googleusercontent.com/THY2EJOfMljmIwjzfDI_InbYTzVb_pbx_9U8I-%0AYuw62Wv1N0fR2VXilHkVCkCau2zU0BYSvGiy0OJkGfI9xMm2utmKyYVanlw4vP3w4PjWl7BLxnkJQ&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Suppose you are interested in the emerging web presentation model “&lt;a href=&quot;http://en.wikipedia.org/wiki/Model_View_ViewModel&quot;&gt;Model View
+ViewModel (MVVM)&lt;/a&gt;” and you
+want to know which projects and libraries on &lt;a href=&quot;http://github.com/&quot;&gt;GitHub&lt;/a&gt; are
+implementing that design pattern and how popular, mature and maintained they
+are. You just need a quick view of what is going on in the market before you
+dig into the code, right ?&lt;/p&gt;
+
+&lt;p&gt;Well just go to the trends page and click to &lt;a href=&quot;http://gitwatcher.com/trends&quot;&gt;Javascript MVC/MVVM
+Frameworks&lt;/a&gt; and you’ll see a list of trending
+projects extracted from how GitWatcher users have already tagged their own
+watched repositories, with at last three tags: javascript - mvc - framework.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://lh4.googleusercontent.com/68joG4d0-SaEx5OPXNYSXmc9LLGh3DOVMwqDuyyW%0ALdFHi48tTgFiKdq1Wnet48eVvaeY3oJsARe0C974To1pwR_feZWj5kQJzXGjZMlGO_ngPgiFuoc&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;That is just a category I made for myself to stay on top of that field but you
+can now make your own, just &lt;a href=&quot;http://gitwatcher.com/categories&quot;&gt;add category field and one or more
+tags&lt;/a&gt; which are going to be the minimum
+matches for GitWatcher extractor engine to assign a repository to your new
+category.&lt;/p&gt;
+
+&lt;p&gt;Categories will be public, each user will see them, just try to follow some
+few conventions :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Categories should be most of all plural, even if not necessarily, like fore example “Content Management Systems”, “Ruby Web Frameworks”, “Mongodb Clients” and so on.&lt;/li&gt;
+&lt;li&gt;Tags should be singular. When composed, like in “api-client “ or  “api-builder”, minus (&quot;-&quot;) char should be used to join two words.&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;p&gt;GitWatcher, will probably put in place some automatic normalization,
+aggregation or correction filters but until now, let's see how will it work
+the easiest way. Of course any suggestion are welcome.&lt;/p&gt;
+
+&lt;p&gt;Please let me know what do you think about and how would you do that, post
+your comment or shoot your tweet @gitwatcher, your contribution is welcome.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;UPDATE Sat Jun 2 :&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;To populate a new created category, at last one repository on
+&lt;a href=&quot;http://gitwatcher.com/&quot;&gt;GitWatcher&lt;/a&gt; has to be tagged with the minimum tag set
+you added for that category. If nobody has a repository tagged that way,
+you’ll end up with an empty category which will be removed automatically in
+few hours. To evoid that go to your watchlist by &lt;a href=&quot;http://gitwatcher.com/auth/github&quot;&gt;Sign in with Github
+&lt;/a&gt;and just tag a repo with the tags you just
+added, otherwise leave it empty and it will be cleared up automatically.&lt;/em&gt;&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>A semi-automatic categorization of GitHub projects</title>
+   <link href="http://gitwatcher.com/blog/blog/a-semi-automatic-categorization-of-github-projects.html"/>
+   <updated>2012-05-07T00:00:00+08:00</updated>
+   <id>http://gitwatcher.com/blog/blog/a-semi-automatic-categorization-of-github-projects.html</id>
+   <content type="html">&lt;p&gt;After few months from launch, &lt;a href=&quot;http://gitwatcher.com/&quot;&gt;gitwatcher.com&lt;/a&gt; is
+slowly but constantly adding new users to the system and today, we reach the
+nice number of 73 active users.&lt;/p&gt;
+
+&lt;p&gt;Few but good, just like books and friends should be, right ? What I mean, is
+that all of us are skilled programmers already using &lt;a href=&quot;https://github.com/&quot;&gt;GitHub
+&lt;/a&gt;for fun and profit and now, by tagging, we are also
+adding a collective value too.&lt;/p&gt;
+
+&lt;p&gt;Tagging the repositories we are watching on GitHub in the pursue of being able
+to find it again the next time we need it, has at first the personal value of
+keeping our things organized and easily findable. As secondary effect, it
+enables cooperative semi-automatic categorization  based on
+“&lt;a href=&quot;http://en.wikipedia.org/wiki/Folksonomy&quot;&gt;folksonomy&lt;/a&gt;”.&lt;/p&gt;
+
+&lt;p&gt;What we are trying to get here, is a brand new “&lt;a href=&quot;http://gitwatcher.com/trends&quot;&gt;trends
+page&lt;/a&gt;“, where the best GitHub projects are
+listed by category.&lt;/p&gt;
+
+&lt;p&gt;How can we do it ? Despite the quite extensive literature in  “Automatic
+Categorization Systems” field,  gitwatcher.com wants to go easy and
+cooperative.&lt;/p&gt;
+
+&lt;p&gt;It will start from a really basic kind of categorization system looking each
+user’s watchlist for a specific set of tags, say “ruby”, “web” and “framework”
+for example, then assign the relative repository to the category “Ruby Web
+Frameworks”.&lt;/p&gt;
+
+&lt;p&gt;Categories are currently generated by admins at gitwatcher.com, who give them
+a name and a minimum set of tags to be included in, but the future is open for
+experimenting with better, maybe more social and collaborative solutions.&lt;/p&gt;
+
+&lt;p&gt;If you have any idea on how that should be done, please let me know. Add your
+suggestion by commenting this article and contributing to the development of
+the GitWatcher free platform.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>GitWatcher is built on top of several amazing Ruby Gems</title>
+   <link href="http://gitwatcher.com/blog/blog/gitWatcher-is-built-on-top-of-several-amazing-ruby-gems.html"/>
+   <updated>2012-03-24T00:00:00+08:00</updated>
+   <id>http://gitwatcher.com/blog/blog/gitWatcher-is-built-on-top-of-several-amazing-ruby-gems.html</id>
+   <content type="html">&lt;p&gt;I'd like to thanks one by one all the developers who contributed directly or
+undirectly to the amazing edge we are living in Ruby domain.&lt;/p&gt;
+
+&lt;p&gt;Here it is a dump of Ruby Gems which GitWatcher is currently built on top of.&lt;/p&gt;
+
+&lt;p&gt;My personal special thanks goes to &lt;a href=&quot;http://mongoid.org/&quot;&gt;MongoID&lt;/a&gt; project and
+in special way to &lt;a href=&quot;https://github.com/durran&quot;&gt;durran &lt;em&gt;(Durran Jordan)&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Without his support &lt;a href=&quot;http://gitwatcher.com/&quot;&gt;GitWatcher&lt;/a&gt; would have never been
+started.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;GIT
+
+  remote: [https://github.com/mongoid/mongoid.git](https://github.com/mongoid/
+mongoid.git)
+
+  revision: 512b7107ea79721c1780890eff8eec663f381bf2
+
+  specs:
+
+    mongoid (3.0.0)
+
+      activemodel (~&amp;gt; 3.1)
+
+      mongo (~&amp;gt; 1.3)
+
+      tzinfo (~&amp;gt; 0.3.22)
+
+
+
+GEM
+
+  remote: [http://rubygems.org/](http://rubygems.org/)
+
+  specs:
+
+    ZenTest (4.6.2)
+
+    actionmailer (3.2.2)
+
+      actionpack (= 3.2.2)
+
+      mail (~&amp;gt; 2.4.0)
+
+    actionpack (3.2.2)
+
+      activemodel (= 3.2.2)
+
+      activesupport (= 3.2.2)
+
+      builder (~&amp;gt; 3.0.0)
+
+      erubis (~&amp;gt; 2.7.0)
+
+      journey (~&amp;gt; 1.0.1)
+
+      rack (~&amp;gt; 1.4.0)
+
+      rack-cache (~&amp;gt; 1.1)
+
+      rack-test (~&amp;gt; 0.6.1)
+
+      sprockets (~&amp;gt; 2.1.2)
+
+    activemodel (3.2.2)
+
+      activesupport (= 3.2.2)
+
+      builder (~&amp;gt; 3.0.0)
+
+    activerecord (3.2.2)
+
+      activemodel (= 3.2.2)
+
+      activesupport (= 3.2.2)
+
+      arel (~&amp;gt; 3.0.2)
+
+      tzinfo (~&amp;gt; 0.3.29)
+
+    activeresource (3.2.2)
+
+      activemodel (= 3.2.2)
+
+      activesupport (= 3.2.2)
+
+    activesupport (3.2.2)
+
+      i18n (~&amp;gt; 0.6)
+
+      multi_json (~&amp;gt; 1.0)
+
+    addressable (2.2.7)
+
+    archive-tar-minitar (0.5.2)
+
+    arel (3.0.2)
+
+    autotest-notification (2.3.4)
+
+      autotest-standalone (~&amp;gt; 4.5)
+
+    autotest-rails (4.1.2)
+
+      ZenTest (~&amp;gt; 4.5)
+
+    autotest-standalone (4.5.9)
+
+    bson (1.6.1)
+
+    bson_ext (1.6.1)
+
+      bson (~&amp;gt; 1.6.1)
+
+    builder (3.0.0)
+
+    capybara (1.1.2)
+
+      mime-types (&amp;gt;= 1.16)
+
+      nokogiri (&amp;gt;= 1.3.3)
+
+      rack (&amp;gt;= 1.0.0)
+
+      rack-test (&amp;gt;= 0.5.4)
+
+      selenium-webdriver (~&amp;gt; 2.0)
+
+      xpath (~&amp;gt; 0.1.4)
+
+    childprocess (0.3.1)
+
+      ffi (~&amp;gt; 1.0.6)
+
+    chronic (0.6.7)
+
+    coffee-rails (3.2.2)
+
+      coffee-script (&amp;gt;= 2.2.0)
+
+      railties (~&amp;gt; 3.2.0)
+
+    coffee-script (2.2.0)
+
+      coffee-script-source
+
+      execjs
+
+    coffee-script-source (1.2.0)
+
+    columnize (0.3.6)
+
+    commonjs (0.2.0)
+
+      therubyracer (~&amp;gt; 0.9.9)
+
+    cucumber (1.1.9)
+
+      builder (&amp;gt;= 2.1.2)
+
+      diff-lcs (&amp;gt;= 1.1.2)
+
+      gherkin (~&amp;gt; 2.9.0)
+
+      json (&amp;gt;= 1.4.6)
+
+      term-ansicolor (&amp;gt;= 1.0.6)
+
+    cucumber-rails (1.3.0)
+
+      capybara (&amp;gt;= 1.1.2)
+
+      cucumber (&amp;gt;= 1.1.8)
+
+      nokogiri (&amp;gt;= 1.5.0)
+
+    daemons (1.0.10)
+
+    dalli (1.1.5)
+
+    database_cleaner (0.7.1)
+
+    diff-lcs (1.1.3)
+
+    em-websocket (0.3.6)
+
+      addressable (&amp;gt;= 2.1.1)
+
+      eventmachine (&amp;gt;= 0.12.9)
+
+    erubis (2.7.0)
+
+    eventmachine (0.12.10)
+
+    execjs (1.3.0)
+
+      multi_json (~&amp;gt; 1.0)
+
+    factory_girl (2.6.3)
+
+      activesupport (&amp;gt;= 2.3.9)
+
+    factory_girl_rails (1.7.0)
+
+      factory_girl (~&amp;gt; 2.6.0)
+
+      railties (&amp;gt;= 3.0.0)
+
+    faraday (0.7.6)
+
+      addressable (~&amp;gt; 2.2)
+
+      multipart-post (~&amp;gt; 1.1)
+
+      rack (~&amp;gt; 1.1)
+
+    faraday-stack (0.1.5)
+
+      faraday (&amp;gt;= 0.6, &amp;lt; 0.8)
+
+    ffi (1.0.11)
+
+    gem_plugin (0.2.3)
+
+    gherkin (2.9.0)
+
+      json (&amp;gt;= 1.4.6)
+
+    git (1.2.5)
+
+    google_visualr (2.1.2)
+
+    guard (1.0.1)
+
+      ffi (&amp;gt;= 0.5.0)
+
+      thor (~&amp;gt; 0.14.6)
+
+    guard-bundler (0.1.3)
+
+      bundler (&amp;gt;= 1.0.0)
+
+      guard (&amp;gt;= 0.2.2)
+
+    guard-cucumber (0.7.5)
+
+      cucumber (&amp;gt;= 0.10)
+
+      guard (&amp;gt;= 0.8.3)
+
+    guard-livereload (0.4.2)
+
+      em-websocket (&amp;gt;= 0.2.0)
+
+      guard (&amp;gt;= 0.10.0)
+
+      multi_json (~&amp;gt; 1.0)
+
+    guard-rails (0.1.0)
+
+      guard (&amp;gt;= 0.2.2)
+
+    guard-rspec (0.6.0)
+
+      guard (&amp;gt;= 0.10.0)
+
+    guard-spork (0.5.2)
+
+      guard (&amp;gt;= 0.10.0)
+
+      spork (&amp;gt;= 0.8.4)
+
+    haml (3.1.4)
+
+    haml-rails (0.3.4)
+
+      actionpack (~&amp;gt; 3.0)
+
+      activesupport (~&amp;gt; 3.0)
+
+      haml (~&amp;gt; 3.0)
+
+      railties (~&amp;gt; 3.0)
+
+    hashie (1.2.0)
+
+    hike (1.2.1)
+
+    httparty (0.8.1)
+
+      multi_json
+
+      multi_xml
+
+    i18n (0.6.0)
+
+    jar_wrapper (0.1.2)
+
+      jeweler
+
+      jeweler
+
+      zip
+
+      zip
+
+    jeweler (1.8.3)
+
+      bundler (~&amp;gt; 1.0)
+
+      git (&amp;gt;= 1.2.5)
+
+      rake
+
+      rdoc
+
+    journey (1.0.3)
+
+    jquery-rails (2.0.1)
+
+      railties (&amp;gt;= 3.2.0, &amp;lt; 5.0)
+
+      thor (~&amp;gt; 0.14)
+
+    json (1.6.5)
+
+    kaminari (0.13.0)
+
+      actionpack (&amp;gt;= 3.0.0)
+
+      activesupport (&amp;gt;= 3.0.0)
+
+      railties (&amp;gt;= 3.0.0)
+
+    launchy (2.0.5)
+
+      addressable (~&amp;gt; 2.2.6)
+
+    less (2.0.10)
+
+      commonjs (~&amp;gt; 0.2.0)
+
+      therubyracer (~&amp;gt; 0.9.9)
+
+    less-rails (2.1.7)
+
+      actionpack (&amp;gt;= 3.1)
+
+      less (~&amp;gt; 2.0.7)
+
+    libnotify (0.7.2)
+
+    libv8 (3.3.10.4)
+
+    linecache19 (0.5.12)
+
+      ruby_core_source (&amp;gt;= 0.1.4)
+
+    mail (2.4.3)
+
+      i18n (&amp;gt;= 0.4.0)
+
+      mime-types (~&amp;gt; 1.16)
+
+      treetop (~&amp;gt; 1.4.8)
+
+    meta-tags (1.2.6)
+
+      actionpack
+
+    mime-types (1.17.2)
+
+    mongo (1.6.1)
+
+      bson (~&amp;gt; 1.6.1)
+
+    mongoid_taggable_with_context (0.8.0)
+
+      mongoid (&amp;gt;= 2.0.0)
+
+    mongrel (1.2.0.pre2)
+
+      daemons (~&amp;gt; 1.0.10)
+
+      gem_plugin (~&amp;gt; 0.2.3)
+
+    multi_json (1.1.0)
+
+    multi_xml (0.4.1)
+
+    multipart-post (1.1.5)
+
+    nokogiri (1.5.2)
+
+    oauth2 (0.5.2)
+
+      faraday (~&amp;gt; 0.7)
+
+      multi_json (~&amp;gt; 1.0)
+
+    omniauth (1.0.3)
+
+      hashie (~&amp;gt; 1.2)
+
+      rack
+
+    omniauth-github (1.0.1)
+
+      omniauth (~&amp;gt; 1.0)
+
+      omniauth-oauth2 (~&amp;gt; 1.0)
+
+    omniauth-oauth2 (1.0.0)
+
+      oauth2 (~&amp;gt; 0.5.0)
+
+      omniauth (~&amp;gt; 1.0)
+
+    pg (0.13.2)
+
+    polyglot (0.3.3)
+
+    progstr-ruby (1.0.6)
+
+      multi_json
+
+    rack (1.4.1)
+
+    rack-cache (1.2)
+
+      rack (&amp;gt;= 0.4)
+
+    rack-ssl (1.3.2)
+
+      rack
+
+    rack-test (0.6.1)
+
+      rack (&amp;gt;= 1.0)
+
+    rails (3.2.2)
+
+      actionmailer (= 3.2.2)
+
+      actionpack (= 3.2.2)
+
+      activerecord (= 3.2.2)
+
+      activeresource (= 3.2.2)
+
+      activesupport (= 3.2.2)
+
+      bundler (~&amp;gt; 1.0)
+
+      railties (= 3.2.2)
+
+    railties (3.2.2)
+
+      actionpack (= 3.2.2)
+
+      activesupport (= 3.2.2)
+
+      rack-ssl (~&amp;gt; 1.3.2)
+
+      rake (&amp;gt;= 0.8.7)
+
+      rdoc (~&amp;gt; 3.4)
+
+      thor (~&amp;gt; 0.14.6)
+
+    rake (0.9.2.2)
+
+    rb-inotify (0.8.8)
+
+      ffi (&amp;gt;= 0.5.0)
+
+    rdoc (3.12)
+
+      json (~&amp;gt; 1.4)
+
+    rspec (2.8.0)
+
+      rspec-core (~&amp;gt; 2.8.0)
+
+      rspec-expectations (~&amp;gt; 2.8.0)
+
+      rspec-mocks (~&amp;gt; 2.8.0)
+
+    rspec-core (2.8.0)
+
+    rspec-expectations (2.8.0)
+
+      diff-lcs (~&amp;gt; 1.1.2)
+
+    rspec-mocks (2.8.0)
+
+    rspec-rails (2.8.1)
+
+      actionpack (&amp;gt;= 3.0)
+
+      activesupport (&amp;gt;= 3.0)
+
+      railties (&amp;gt;= 3.0)
+
+      rspec (~&amp;gt; 2.8.0)
+
+    ruby-debug-base19 (0.11.25)
+
+      columnize (&amp;gt;= 0.3.1)
+
+      linecache19 (&amp;gt;= 0.5.11)
+
+      ruby_core_source (&amp;gt;= 0.1.4)
+
+    ruby-debug19 (0.11.6)
+
+      columnize (&amp;gt;= 0.3.1)
+
+      linecache19 (&amp;gt;= 0.5.11)
+
+      ruby-debug-base19 (&amp;gt;= 0.11.19)
+
+    ruby_core_source (0.1.5)
+
+      archive-tar-minitar (&amp;gt;= 0.5.2)
+
+    rubyzip (0.9.6.1)
+
+    sass (3.1.15)
+
+    sass-rails (3.2.4)
+
+      railties (~&amp;gt; 3.2.0)
+
+      sass (&amp;gt;= 3.1.10)
+
+      tilt (~&amp;gt; 1.3)
+
+    search_magic (0.3.0)
+
+      chronic
+
+      mongoid (&amp;gt;= 2.4.3)
+
+    selenium (0.2.5)
+
+      jar_wrapper
+
+      jeweler
+
+    selenium-client (1.2.18)
+
+    selenium-webdriver (2.20.0)
+
+      childprocess (&amp;gt;= 0.2.5)
+
+      ffi (~&amp;gt; 1.0)
+
+      multi_json (~&amp;gt; 1.0)
+
+      rubyzip
+
+    spork (0.9.0)
+
+    sprockets (2.1.2)
+
+      hike (~&amp;gt; 1.2)
+
+      rack (~&amp;gt; 1.0)
+
+      tilt (~&amp;gt; 1.1, != 1.3.0)
+
+    sqlite3 (1.3.5)
+
+    stathat (0.0.3)
+
+    systemu (2.4.2)
+
+    term-ansicolor (1.0.7)
+
+    therubyracer (0.9.10)
+
+      libv8 (~&amp;gt; 3.3.10)
+
+    thin (1.3.1)
+
+      daemons (&amp;gt;= 1.0.9)
+
+      eventmachine (&amp;gt;= 0.12.6)
+
+      rack (&amp;gt;= 1.0.0)
+
+    thor (0.14.6)
+
+    tilt (1.3.3)
+
+    treetop (1.4.10)
+
+      polyglot
+
+      polyglot (&amp;gt;= 0.3.1)
+
+    twitter-bootstrap-rails (2.0.1)
+
+      actionpack (&amp;gt;= 3.1)
+
+      less-rails (~&amp;gt; 2.1.5)
+
+      railties (&amp;gt;= 3.1)
+
+    tzinfo (0.3.32)
+
+    uglifier (1.2.3)
+
+      execjs (&amp;gt;= 0.3.0)
+
+      multi_json (&amp;gt;= 1.0.2)
+
+    xpath (0.1.4)
+
+      nokogiri (~&amp;gt; 1.3)
+
+    zip (2.0.2)
+
+
+PLATFORMS
+
+  ruby
+
+
+DEPENDENCIES
+
+  ZenTest
+
+  autotest-notification
+
+  autotest-rails
+
+  bson
+
+  bson_ext
+
+  builder
+
+  capybara
+
+  coffee-rails
+
+  cucumber
+
+  cucumber-rails
+
+  dalli
+
+  database_cleaner
+
+  factory_girl_rails
+
+  faraday-stack
+
+  google_visualr
+
+  guard-bundler
+
+  guard-cucumber
+
+  guard-livereload
+
+  guard-rails
+
+  guard-rspec
+
+  guard-spork
+
+  haml
+
+  haml-rails
+
+  httparty
+
+  jquery-rails
+
+  kaminari
+
+  launchy
+
+  libnotify
+
+  meta-tags
+
+  mongo
+
+  mongoid!
+
+  mongoid_taggable_with_context (= 0.8.0)
+
+  mongrel (= 1.2.0.pre2)
+
+  omniauth
+
+  omniauth-github
+
+  pg
+
+  progstr-ruby
+
+  rack
+
+  rails (= 3.2.2)
+
+  rake
+
+  rb-inotify
+
+  rspec-rails
+
+  ruby-debug19
+
+  sass-rails
+
+  search_magic
+
+  selenium
+
+  selenium-client
+
+  selenium-webdriver
+
+  sqlite3
+
+  stathat
+
+  systemu
+
+  therubyracer
+
+  thin
+
+  twitter-bootstrap-rails (~&amp;gt; 2.0.1.0)
+
+  uglifier
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Simple full-text search engine for repository watchlist</title>
+   <link href="http://gitwatcher.com/blog/blog/simple-full-text-search-engine-for-repository-watchlist.html"/>
+   <updated>2012-02-02T00:00:00+08:00</updated>
+   <id>http://gitwatcher.com/blog/blog/simple-full-text-search-engine-for-repository-watchlist.html</id>
+   <content type="html">&lt;p&gt;Many of you have been asking for this since the beginning. Today, I have the
+pleasure to announce that full-text search engine for your repository
+watchlist, is finally here.&lt;/p&gt;
+
+&lt;p&gt;People who are watching several hundred of GitHub repositories like me, after
+login the first time, get a big list of untagged git projects and starting
+tagging could be a bit tricky.&lt;/p&gt;
+
+&lt;p&gt;Even if you can reorder your pages sorting by fields, ‘By Tag’ tab in your
+dasboard is still empty and you may have several pages to go through, that’s
+way a search engine became essential.&lt;/p&gt;
+
+&lt;p&gt;There are many open source full-text search engines like
+&lt;a href=&quot;http://www.elasticsearch.org/&quot;&gt;elasticsearch&lt;/a&gt; and
+&lt;a href=&quot;http://sphinxsearch.com/&quot;&gt;sphinx&lt;/a&gt; with relative Ruby API and DSL  like
+&lt;a href=&quot;http://karmi.github.com/tire/&quot;&gt;Tire&lt;/a&gt; /
+&lt;a href=&quot;https://github.com/cousine/mebla&quot;&gt;Mebla&lt;/a&gt; and&lt;a href=&quot;https://github.com/redbeard-tech/mongoid-sphinx&quot;&gt;mongoid-
+sphinx&lt;/a&gt;, but we have two
+constraints here:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;a mongoid &lt;a href=&quot;http://mongoid.org/docs/relations/embedded/1-n.html&quot;&gt;embedded one to many&lt;/a&gt; model on Rails 3.1 to search full text&lt;/li&gt;
+&lt;li&gt;deploy on heroku without having to pay for add-ons, initially&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;p&gt;All heroku Full-Text Search add-ons currently, seem to have just paying plans
+which are not good to start with, see &lt;a href=&quot;http://addons.heroku.com/flying_sphinx&quot;&gt;Flying
+Sphinx&lt;/a&gt; and
+&lt;a href=&quot;http://addons.heroku.com/websolr&quot;&gt;Websolr&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;There is also &lt;a href=&quot;http://addons.heroku.com/searchify&quot;&gt;Searchify IndexTank&lt;/a&gt; but is
+currently Beta, then for our pourpose we decided to go even simpler using
+&lt;a href=&quot;https://github.com/joshuabowers/search_magic&quot;&gt;search_magic&lt;/a&gt; gem.&lt;/p&gt;
+
+&lt;p&gt;We tried &lt;a href=&quot;https://github.com/mauriciozaffari/mongoid_search&quot;&gt;mongoid_search&lt;/a&gt;
+and &lt;a href=&quot;https://github.com/aaw/mongoid_fulltext&quot;&gt;mongoid_fulltext&lt;/a&gt; too, but we
+have not been able to make them working with mongoid &lt;a href=&quot;http://mongoid.org/docs/relations/embedded/1-n.html&quot;&gt;embedded one to
+many&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;That said, the search is very simple and restrictive : you insert a set of
+words and it match a permutation of the exact terms only, case unsensitive,
+looking full-text into &quot;repo&quot;, &quot;description&quot; and &quot;tags&quot; fields  of each
+repository, which means that in my case, searching for&lt;em&gt; &quot;authentication
+omniath&quot; &lt;/em&gt;will find the following five responces :&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/full_text_search.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;but searching for &lt;em&gt;&quot;rack __authentication omniath&quot;&lt;/em&gt;  gets back  just one
+responce, as you can see :&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/full_text_search_result.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Very simple, but is what we need at the moment. Any feedback is welcome.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Migrating MongoDB between cloud-based providers</title>
+   <link href="http://gitwatcher.com/blog/blog/migrating-mongodb-between-cloud-based-providers.html"/>
+   <updated>2012-01-25T00:00:00+08:00</updated>
+   <id>http://gitwatcher.com/blog/blog/migrating-mongodb-between-cloud-based-providers.html</id>
+   <content type="html">&lt;p&gt;&lt;a href=&quot;http://gitwatcher.com/&quot;&gt;GitWatcher&lt;/a&gt; is an experimental platform currently
+based on Rails 3.1.3 and MongoDB/&lt;a href=&quot;http://mongoid.org/&quot;&gt;Mongoid&lt;/a&gt;, one of the
+most promising pairs of Object-Document-Mapper for NoSQL DBs, in the Ruby
+landscape.&lt;/p&gt;
+
+&lt;p&gt;While the backend is on a cloud, the frontend is on another. Infact, the Rails
+app is running on Heroku Celadon Cedar Stack and the DB was initially running
+on &lt;a href=&quot;https://mongohq.com/home&quot;&gt;MongoHQ&lt;/a&gt;, a cloud-based hosted database solution
+for &lt;a href=&quot;http://www.mongodb.org/&quot;&gt;MongoDB&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Although that was fine at the beginning when only a few data were collected,
+free plan with 16MB of storage, can quickly become a shortage while you still
+need to go on testing, maintaining low cost of exercise at the same time but,
+magic of cloud computing competition, we can have a free plan for up to 240MB
+also.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.heroku.com/&quot;&gt;Heroku&lt;/a&gt; Platform as a Service (PaaS), provide many
+add-ons to easily plug in external services like
+&lt;a href=&quot;https://mongolab.com/home&quot;&gt;MongLab&lt;/a&gt; for example, which currently have a free
+plan 15 times greater than MongoHQ, to go on testing for free with MongoDB.&lt;/p&gt;
+
+&lt;p&gt;So here we go, migrating between clouds should never be easier, let me show
+you.&lt;/p&gt;
+
+&lt;p&gt;First we add Heroku addons to our application. You can do it either through
+the  web console  or through the command line interface ( see &lt;a href=&quot;http://devcenter.heroku.com/articles/managing-add-ons&quot;&gt;managing-add-
+ons&lt;/a&gt; for more details )
+:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ # ADD HEROKU ADDONS:  
+$ heroku addons:add mongolab:starter
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;than we query Heroku config to get MongoHQ connection user and password for
+current application :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ # QUERY HEROKU CONFIG:  
+$ heroku config --long | grep MONGOHQ_URL   
+MONGOHQ_URL =&amp;gt; mongodb://&amp;lt;user&amp;gt;:&amp;lt;password&amp;gt;@staff.mongohq.com:10075/app1707530
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;now we dump MongoDB from MongoHQ :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ # DUMP MongoHQ DB:  
+$ mongodump -h staff.mongohq.com:10075 -d app1707530 -u user -p password     
+connected to: staff.mongohq.com:10075  
+DATABASE: app1707530     to     dump/app1707530  
+        app1707530.system.users to dump/app1707530/system.users.bson  
+                 1 objects  
+        app1707530.system.indexes to dump/app1707530/system.indexes.bson  
+                 2 objects  
+        app1707530.users to dump/app1707530/users.bson  
+                 2 objects  
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and we restore the DB on MongoLab, after extracting user and password the same
+way we did before :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ # RESTORE ON MongoLab:  
+$ mongorestore -h ds029257.mongolab.com:29257 -d gitwatcher-db -u user -p password ./dump/app1707530  
+connected to: ds029257.mongolab.com:29257  
+Wed Jan 11 23:05:17 ./dump/app1707530/users.bson  
+Wed Jan 11 23:05:17      going into namespace [gitwatcher-db.users]  
+Wed Jan 11 23:05:24      2 objects found  
+Wed Jan 11 23:05:24 ./dump/app1707530/system.users.bson  
+Wed Jan 11 23:05:24      going into namespace [gitwatcher-db.system.users]  
+Wed Jan 11 23:05:24      1 objects found  
+Wed Jan 11 23:05:24 ./dump/app1707530/system.indexes.bson  
+Wed Jan 11 23:05:24      going into namespace [gitwatcher-db.system.indexes]  
+Wed Jan 11 23:05:24      2 objects found  
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;last, change production configuration in config/mongoid.yml, which should look
+like the following :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;production:
+
+ uri: &amp;lt;%= ENV['MONGOLAB_URI'] %&amp;gt;  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;just remain to commit and push back to Heroku.&lt;/p&gt;
+
+&lt;p&gt;Done in 10 minutes.&lt;/p&gt;
+
+&lt;p&gt;We did it online but, if you are under heavy DB load, is better to disable
+access to your application for some length of time.&lt;/p&gt;
+
+&lt;p&gt;You can use Heroku’s built in
+&lt;a href=&quot;https://devcenter.heroku.com/articles/maintenance-mode&quot;&gt;maintenance&lt;/a&gt; mode. It
+will serve a static page to all visitors, while still allowing you to run rake
+tasks or console commands.&lt;/p&gt;
+
+&lt;p&gt;It's great isn't it ? Let me know what you think about.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>GitWatcher helps you to stay on top of github trending projects</title>
+   <link href="http://gitwatcher.com/blog/blog/gitWatcher-helps-you-to-stay-on-top-of-github-trending-projects.html"/>
+   <updated>2012-01-07T00:00:00+08:00</updated>
+   <id>http://gitwatcher.com/blog/blog/gitWatcher-helps-you-to-stay-on-top-of-github-trending-projects.html</id>
+   <content type="html">&lt;p&gt;Almost daily an interesting project appears on GitHub and you want to keep
+track of it because you know, sooner or later you will have to get ride of a
+similar problem in your own work.&lt;/p&gt;
+
+&lt;p&gt;Then you hit the watch button and in a blink of eyes, your &quot;Watched
+Repositories&quot; list, grows to the point it will be very difficult looking for
+something when you will have to ( my own list count 1641 repos, today ).&lt;/p&gt;
+
+&lt;p&gt;That's the way  GitWatcher has been thought, sync and watch your github watch-list
+is just a matter of &quot;&lt;a href=&quot;http://gitwatcher.com/auth/github&quot;&gt;sign in&lt;/a&gt;&quot;, if
+you already have a GitHub account, infact, it utilize GitHub as authentication
+system provider.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/watchlist.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now you are logged in and you will see the list of all repositories you are
+watching on GitHub. Then you can assign an arbitrary tag (or multiple) to any
+repository, being able to find it again the next time you need it.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/add_tag.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;By clicking on the respective column header, you can also reorder your list,
+sorting by number of watchers, by number of forks, by creating date or by
+pushing date.&lt;/p&gt;
+
+&lt;p&gt;That is very useful coupled with &quot;tag categorization&quot; which I will explain in
+a minute, because it gives you the dimension of popularity in a given field.&lt;/p&gt;
+
+&lt;p&gt;Let me explain. By adding tags to a repositories, the system will also fill a
+categorization tab dropdown called &quot;By Tag&quot;. Next time you reload the page,
+you will be able to display just the repositories tagged with &quot;css3&quot;, for
+example ( see following image ).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/by_tag_dropdown.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;At this point, sorting by number of watchers you can have a quick filling of
+the cascading interest the community is falling down &quot;&lt;a href=&quot;http://twitter.github.com/bootstrap/&quot;&gt;Twitter
+Bootstrap&lt;/a&gt;&quot;, for example, in comparison
+to other CSS3/JS/HTML5 frameworks, as  you can see.&lt;/p&gt;
+
+&lt;p&gt;Than you sort the same CSS3 set by pushing date and you can have an idea if a
+repository is still active and fresh and so on.&lt;/p&gt;
+
+&lt;p&gt;The value added here, is that you can directly compare projects  competing in
+the same field, in a blink of eyes.&lt;/p&gt;
+
+&lt;p&gt;But remember, &lt;a href=&quot;http://gitwatcher.com/&quot;&gt;GitWatcher&lt;/a&gt; is very experimental, work
+in progress, spare time project and moreover it is free. Anyone can contribute
+at any level of knowledge, please start by commenting this article or send me
+your feedback on Twitter to &lt;a href=&quot;https://twitter.com/#!/gitwatcher&quot;&gt;@&lt;/a&gt;[gitwatcher]
+(https://twitter.com/#!/gitwatcher)&lt;/p&gt;
+</content>
+ </entry>
+ 
+ 
+</feed>

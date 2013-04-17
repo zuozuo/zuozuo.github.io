@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Migrating MongoDB between cloud-based providers</title>
+   <meta name="author" content="GitWatcher" />
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="../css/main.css" type="text/css" />
+   <link rel="stylesheet" href="../css/bootstrap.css" type="text/css" />
+   <link rel="stylesheet" href="../css/bootstrap-responsive.min.css" type="text/css" />
+
+</head>
+
+<body>
+
+  <div id="page">
+
+   <!-- Twitter Bootstrap navbar -->
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+					<a class="brand" href="/"><strong></strong>左左<small>的博客</small></a>
+          <div class="nav-collapse">
+            <ul class="nav pull-right">
+              <li><a href="/">首页</a></li>
+              <li><a href="/blog.html">博客</a></li>
+              <li><a href="/categories.html">分类</a></li>
+              <li><a href="/about.html">关于我</a></li>
+              <!-- <li><a href="/trends">Trends</a></li> -->
+              <!-- <li><a href="/auth/github">Sign in with Github</a></li> -->
+            </ul>
+            <!-- form method="get" action="http://www.google.com/search" class="navbar-search pull-right">
+              <input type="text" name="q" class="span2 search-query" placeholder="Search" maxlength="255" value="">
+              <input name="sitesearch" type="hidden" value="">
+            </form -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+
+    <div class="container">
+			<!-- <header class="page-header"> -->
+				<!-- <h1></h1> -->
+			<!-- </header> -->
+			<div id="content" class="span8">
+				<article>
+  <header>
+    <h1>
+      <a href="/blog/migrating-mongodb-between-cloud-based-providers.html" rel="bookmark" title="Permanent link to ">Migrating MongoDB between cloud-based providers</a>
+    </h1>
+    <!-- <h5> -->
+			<!-- <time>January 25, 2012</time> -  -->
+			<!-- <author>zuozuohui</author> -->
+    <!-- </h5> -->
+  </header>
+	<section> <br /> <p><a href="http://gitwatcher.com/">GitWatcher</a> is an experimental platform currently
+based on Rails 3.1.3 and MongoDB/<a href="http://mongoid.org/">Mongoid</a>, one of the
+most promising pairs of Object-Document-Mapper for NoSQL DBs, in the Ruby
+landscape.</p>
+
+<p>While the backend is on a cloud, the frontend is on another. Infact, the Rails
+app is running on Heroku Celadon Cedar Stack and the DB was initially running
+on <a href="https://mongohq.com/home">MongoHQ</a>, a cloud-based hosted database solution
+for <a href="http://www.mongodb.org/">MongoDB</a>.</p>
+
+<p>Although that was fine at the beginning when only a few data were collected,
+free plan with 16MB of storage, can quickly become a shortage while you still
+need to go on testing, maintaining low cost of exercise at the same time but,
+magic of cloud computing competition, we can have a free plan for up to 240MB
+also.</p>
+
+<p><a href="http://www.heroku.com/">Heroku</a> Platform as a Service (PaaS), provide many
+add-ons to easily plug in external services like
+<a href="https://mongolab.com/home">MongLab</a> for example, which currently have a free
+plan 15 times greater than MongoHQ, to go on testing for free with MongoDB.</p>
+
+<p>So here we go, migrating between clouds should never be easier, let me show
+you.</p>
+
+<p>First we add Heroku addons to our application. You can do it either through
+the  web console  or through the command line interface ( see <a href="http://devcenter.heroku.com/articles/managing-add-ons">managing-add-
+ons</a> for more details )
+:</p>
+
+<pre><code>$ # ADD HEROKU ADDONS:  
+$ heroku addons:add mongolab:starter
+</code></pre>
+
+<p>than we query Heroku config to get MongoHQ connection user and password for
+current application :</p>
+
+<pre><code>$ # QUERY HEROKU CONFIG:  
+$ heroku config --long | grep MONGOHQ_URL   
+MONGOHQ_URL =&gt; mongodb://&lt;user&gt;:&lt;password&gt;@staff.mongohq.com:10075/app1707530
+</code></pre>
+
+<p>now we dump MongoDB from MongoHQ :</p>
+
+<pre><code>$ # DUMP MongoHQ DB:  
+$ mongodump -h staff.mongohq.com:10075 -d app1707530 -u user -p password     
+connected to: staff.mongohq.com:10075  
+DATABASE: app1707530     to     dump/app1707530  
+        app1707530.system.users to dump/app1707530/system.users.bson  
+                 1 objects  
+        app1707530.system.indexes to dump/app1707530/system.indexes.bson  
+                 2 objects  
+        app1707530.users to dump/app1707530/users.bson  
+                 2 objects  
+...
+</code></pre>
+
+<p>and we restore the DB on MongoLab, after extracting user and password the same
+way we did before :</p>
+
+<pre><code>$ # RESTORE ON MongoLab:  
+$ mongorestore -h ds029257.mongolab.com:29257 -d gitwatcher-db -u user -p password ./dump/app1707530  
+connected to: ds029257.mongolab.com:29257  
+Wed Jan 11 23:05:17 ./dump/app1707530/users.bson  
+Wed Jan 11 23:05:17      going into namespace [gitwatcher-db.users]  
+Wed Jan 11 23:05:24      2 objects found  
+Wed Jan 11 23:05:24 ./dump/app1707530/system.users.bson  
+Wed Jan 11 23:05:24      going into namespace [gitwatcher-db.system.users]  
+Wed Jan 11 23:05:24      1 objects found  
+Wed Jan 11 23:05:24 ./dump/app1707530/system.indexes.bson  
+Wed Jan 11 23:05:24      going into namespace [gitwatcher-db.system.indexes]  
+Wed Jan 11 23:05:24      2 objects found  
+...
+</code></pre>
+
+<p>last, change production configuration in config/mongoid.yml, which should look
+like the following :</p>
+
+<pre><code>production:
+
+ uri: &lt;%= ENV['MONGOLAB_URI'] %&gt;  
+</code></pre>
+
+<p>just remain to commit and push back to Heroku.</p>
+
+<p>Done in 10 minutes.</p>
+
+<p>We did it online but, if you are under heavy DB load, is better to disable
+access to your application for some length of time.</p>
+
+<p>You can use Heroku’s built in
+<a href="https://devcenter.heroku.com/articles/maintenance-mode">maintenance</a> mode. It
+will serve a static page to all visitors, while still allowing you to run rake
+tasks or console commands.</p>
+
+<p>It's great isn't it ? Let me know what you think about.</p>
+ </section>
+
+<!-- <div class="hero-unit"> -->
+<!--   <nav id="related"> -->
+<!--     <h3>Related Posts</h3> -->
+<!--     <ul class="posts"> -->
+<!--        -->
+<!--         <p><li><span>20 Oct 2012</span> - <a href="/blog/blog/tumblr-to-jekyll-blog-migration.html">Tumblr to Jekyll Blog Migration</a></li></p> -->
+<!--        -->
+<!--         <p><li><span>31 Jul 2012</span> - <a href="/blog/blog/mongoid-odm-as-fast-as-you-can.html">MongoID ODM as fast as you can</a></li></p> -->
+<!--        -->
+<!--         <p><li><span>29 May 2012</span> - <a href="/blog/blog/easy-and-cooperative-project-categorization-is-now-open-to-gitwatcher-users.html">Easy and cooperative project categorization is now open to GitWatcher users</a></li></p> -->
+<!--        -->
+<!--         <p><li><span>07 May 2012</span> - <a href="/blog/blog/a-semi-automatic-categorization-of-github-projects.html">A semi-automatic categorization of GitHub projects</a></li></p> -->
+<!--        -->
+<!--         <p><li><span>24 Mar 2012</span> - <a href="/blog/blog/gitWatcher-is-built-on-top-of-several-amazing-ruby-gems.html">GitWatcher is built on top of several amazing Ruby Gems</a></li></p> -->
+<!--        -->
+<!--     </ul> -->
+<!--   </nav> -->
+<!-- </div> -->
+<!--  -->
+<!--   -->
+<!--         <div id="disqus_thread"></div> -->
+<!--         <script type="text/javascript"> -->
+<!--             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */ -->
+<!--             var disqus_shortname = 'gitwatcher'; // required: replace example with your forum shortname -->
+<!--             /*var disqus_developer = 1; // This turns developer mode on -->
+<!--                                       // Make sure you remove this before you push this -->
+<!--                                       // to your live site. -->
+<!--  -->
+<!--             /* * * DON'T EDIT BELOW THIS LINE * * */ -->
+<!--             (function() { -->
+<!--                 var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
+<!--                 dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js'; -->
+<!--                 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
+<!--             })(); -->
+<!--         </script> -->
+<!--         <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+<!--         <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+<!--   -->
+<!--  -->
+<!-- <!--  -->
+<!--    -->
+<!--  -->
+</article>
+
+			</div>
+      <footer>
+  <div class="row">
+    <div class="span10">
+      <p class="Copyright">&copy; 2013 左左</p>
+    </div>
+    <!-- .span2 -->
+    <!-- %a.pull-right{:href => "http://flow.mixpanel.com/f/partner"} -->
+    <!-- %img{:alt => "Real Time Web Analytics", :src => "http://mixpanel.com/site_media/images/partner/badge_blue.png"} -->
+  </div>
+</footer>
+
+    </div> 
+  </div> 
+</body>
+</html>
+

@@ -1,15 +1,11 @@
 markdown: rdiscount
-permalink: /:title.html
-destination: ../../public/blog
-auto: true
+permalink: /blog/:title.html
 exclude:
   - Rakefile
   - Gemfile
   - .gitignore
-author: Luca G. Soave
-gravatar: 9c7d80ebc20ab8994e51b9f7518909ae
-email: luca.soave@gmail.com
-web: http://gitwatcher.com/profiles/lsoave
-twitter: lgswitter
-github: lgs
-linkedin: lucasoave
+author: zuozuohui 
+email: zzhattzzh@126.com  
+web: zuozuo.github.io
+twitter: zuozuo
+github: zuozuo
