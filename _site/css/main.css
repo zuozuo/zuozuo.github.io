@@ -6,20 +6,38 @@ body {
   font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   color: #555555;
   font-weight: 300; 
-  background: #6c7989;
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #6c7989), color-stop(100%, #434b55)) fixed;
-  background: -webkit-linear-gradient(#6c7989, #434b55) fixed;
-  background: -moz-linear-gradient(#6c7989, #434b55) fixed;
-  background: -o-linear-gradient(#6c7989, #434b55) fixed;
-  background: linear-gradient(#6c7989, #434b55) fixed; 
+  background: #999999;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #666666)) fixed;
+  background: -webkit-linear-gradient(#999999, #666666) fixed;
+  background: -moz-linear-gradient(#999999, #666666) fixed;
+  background: -o-linear-gradient(#999999, #666666) fixed;
+  background: linear-gradient(#999999, #666666) fixed; 
+	background-color: hsl(214, 37%, 28%) !important;
+  background-repeat: repeat-x;
+
 }
 
 .navbar-inner {
+	background: url('../images/nav-bg.png');
+	height: 15px;
+	background-repeat: repeat;
+	background-position: 0 0;
+	background-color: white;
+	margin-bottom: 1.625em;
+	padding-top: 1.625em;
+	padding-bottom: 1.625em;
+}
 
+.navbar-inner a.brand {
+	padding: 0px;
 }
 
 #content {
 	margin: 50px 0px 20px 150px;
+}
+
+#content .hero-unit {
+	background: white;
 }
 
 .wrapper {
@@ -39,9 +57,10 @@ body {
 header, section, footer {
   display: block; }
 
-a {
-  color: #006699;
-  text-decoration: none; }
+#content a {
+  color: #669999;
+  text-decoration: none; 
+}
 
 p {
   margin: 0 0 20px;
@@ -51,18 +70,21 @@ strong {
   color: #222222;
   font-weight: 700; }
 
+#content header h1 a {
+	color: white;
+}
 header {
   -webkit-border-radius: 8px 8px 0 0;
   -moz-border-radius: 8px 8px 0 0;
   -ms-border-radius: 8px 8px 0 0;
   -o-border-radius: 8px 8px 0 0;
   border-radius: 8px 8px 0 0;
-  background: #c6eafa;
+  background: #336666;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ddfbfc), color-stop(100%, #c6eafa));
-  background: -webkit-linear-gradient(#ddfbfc, #c6eafa);
-  background: -moz-linear-gradient(#ddfbfc, #c6eafa);
-  background: -o-linear-gradient(#ddfbfc, #c6eafa);
-  background: linear-gradient(#ddfbfc, #c6eafa);
+  background: -webkit-linear-gradient(#336666, #669999);
+  background: -moz-linear-gradient(#336666, #669999);
+  background: -o-linear-gradient(#336666, #669999);
+  background: linear-gradient(#336666, #669999);
   position: relative;
   padding: 15px 20px;
   border-bottom: 1px solid #b2d2e1; }
@@ -72,7 +94,8 @@ header {
     font-size: 24px;
     line-height: 1.2;
     color: #006699;
-    text-shadow: rgba(255, 255, 255, 0.9) 0 1px 0; }
+    text-shadow: rgba(255, 255, 255, 0.9) 0 1px 0; 
+	}
   header.without-description h1 {
     margin: 10px 0; }
   header p {
