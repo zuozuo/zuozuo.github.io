@@ -4,13 +4,22 @@
  <title>GitWatcher Blog</title>
  <link href="http://gitwatcher.com/blog/feed/atom.xml" rel="self"/>
  <link href="http://gitwatcher.com/blog/feed"/>
- <updated>2013-04-17T21:47:08+08:00</updated>
+ <updated>2013-04-18T17:54:10+08:00</updated>
  <id>http://gitwatcher.com/blog/feed</id>
  <author>
    <name>Luca G. Soave</name>
    <email>luca.soave@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>使用jekyll在github上面搭建博客</title>
+   <link href="http://gitwatcher.com/blog/blog/%E4%BD%BF%E7%94%A8jekyll%E5%9C%A8github%E4%B8%8A%E9%9D%A2%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html"/>
+   <updated>2013-04-18T00:00:00+08:00</updated>
+   <id>http://gitwatcher.com/blog/blog/使用jekyll在github上面搭建博客.html</id>
+   <content type="html">
+</content>
+ </entry>
  
  <entry>
    <title>Tumblr to Jekyll Blog Migration</title>
