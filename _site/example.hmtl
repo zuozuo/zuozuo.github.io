@@ -51,7 +51,14 @@
 				    
       <div class="hero-unit">
         <p><h2><a href="/blog/blog/%E4%BD%BF%E7%94%A8jekyll%E5%9C%A8github%E4%B8%8A%E9%9D%A2%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html">使用jekyll在github上面搭建博客</a></h2>18 Apr 2013 - 左左</p>
-        <p>
+        <p>```ruby
+  def hah
+
+  return 1
+end
+
+
+```
 </p>
         <p><a href="/blog/blog/%E4%BD%BF%E7%94%A8jekyll%E5%9C%A8github%E4%B8%8A%E9%9D%A2%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html">Read more ...</a></p>
       </div>
