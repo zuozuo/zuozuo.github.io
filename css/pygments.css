@@ -32,7 +32,7 @@
 .nd { color: #AA22FF } /* Name.Decorator */
 .ni { color: #999999; font-weight: bold } /* Name.Entity */
 .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.nf { color: #0000FF } /* Name.Function */
+.nf { color: #cc0000} /* Name.Function */
 .nl { color: #A0A000 } /* Name.Label */
 .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
 .nt { color: #008000; font-weight: bold } /* Name.Tag */

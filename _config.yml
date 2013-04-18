@@ -1,4 +1,3 @@
-markdown: rdiscount
 permalink: /blog/:title.html
 exclude:
   - Rakefile
@@ -9,3 +8,5 @@ email: zzhattzzh@126.com
 web: zuozuo.github.io
 twitter: zuozuo
 github: zuozuo
+pygments: true
+markdown: redcarpet

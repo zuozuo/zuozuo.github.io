@@ -58,7 +58,7 @@
 			<!-- <author>左左</author> -->
     <!-- </h5> -->
   </header>
-	<section> <br /> <p>In the <a href="http://gitwatcher.com/blog/easy-and-cooperative-project-categorization-is-now-open-to-gitwatcher-users.html">previous article</a>,
+	<section> <br /> <p>In the <a href="http://gitwatcher.com/blog/easy-and-cooperative-project-categorization-is-now-open-to-gitwatcher-users.html">previous article</a>, 
 we announced our first attempt of croudsourcing repository categorization on GitWatcher platform.</p>
 
 <p>Based on hybrid model, <a href="http://gitwatcher.com/categories">gitwatcher
@@ -72,21 +72,18 @@ the same tag set, that repo will be displayed into the list, after being
 collected ( which currently happen once a day ).</p>
 
 <p>Now, part of the the collector code, was looking like the following at first :</p>
-
-<pre><code>Competitor  = Struct.new(:html_url, :description, :user)
+<div class="highlight"><pre><code class="text">Competitor  = Struct.new(:html_url, :description, :user)
 competitors = []
 User.all.map do |user|
   user.watchlists.all.map do |wl|
-    if wl.tags_array == ["ruby", "web", "framework"]
+    if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;, &quot;framework&quot;]
        competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
    end
  end
 end
-</code></pre>
-
-<p>and a semplified underline datamodel was similar to the following:</p>
-
-<pre><code>class User
+</code></pre></div>
+<p>and a semplified underline datamodel was similar to the following:  </p>
+<div class="highlight"><pre><code class="text">class User
   include Mongoid::Document
   field :nickname
   embeds_many :watchlists
@@ -99,8 +96,7 @@ class Watchlist
   field :tags_array, type: Array
   embedded_in :user
 end
-</code></pre>
-
+</code></pre></div>
 <p>Well, that was great at first, but the data was growing and the entire
 operation became time and CPU consuming. I start googling around, looking for
 better, more efficient and effective way to use the amazing<a href="http://mongoid.org/"> mongoid
@@ -116,51 +112,46 @@ to consider the following enhancements ( thanks goes to
 <li>only fetch fields you need from db, rather than the whole user objects</li>
 </ul>
 
-
 <p>the code example was posted on the same answer. Here it is :</p>
-
-<pre><code>Competitor = Struct.new(:html_url, :description, :user)
+<div class="highlight"><pre><code class="text">Competitor = Struct.new(:html_url, :description, :user)
 competitors = []
-User.where('watchlists.tags_array' =&gt; %w[ruby web framework]).only(:nickname, :watchlists).each do |u|
+User.where(&#39;watchlists.tags_array&#39; =&gt; %w[ruby web framework]).only(:nickname, :watchlists).each do |u|
   u.watchlists.where(:tags_array =&gt; %w[ruby web framework]).each do |wl|
     competitors « Competitor.new(wl.html_url, wl.description, u.nickname)
   end
 end
-</code></pre>
-
+</code></pre></div>
 <p>I Took the time to get some measures … and surprise,  it results really faster
 and less cpu consuming:</p>
 
-<p>first code :</p>
-
-<pre><code>1.9.2p290 :157 &gt; Competitor  = Struct.new(:html_url, :description, :user)
-1.9.2p290 :158 &gt; competitors = []
-=&gt; []
-
-1.9.2p290 :159 &gt; Benchmark.bm(10) do |x|
-1.9.2p290 :160 &gt;     x.report("first:") do
+<p>first code :
+    1.9.2p290 :157 &gt; Competitor  = Struct.new(:html_url, :description, :user)
+    1.9.2p290 :158 &gt; competitors = []
+    =&gt; []</p>
+<div class="highlight"><pre><code class="text">1.9.2p290 :159 &gt; Benchmark.bm(10) do |x|
+1.9.2p290 :160 &gt;     x.report(&quot;first:&quot;) do
 1.9.2p290 :161 &gt;       User.all.map do |user|
 1.9.2p290 :162 &gt;           user.watchlists.all.map do |wl|
-1.9.2p290 :163 &gt;               if wl.tags_array == ["ruby", "web",
-"framework"]
+1.9.2p290 :163 &gt;               if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;,
+&quot;framework&quot;]
 1.9.2p290 :164?&gt;                   competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
 1.9.2p290 :165?&gt;               end
 1.9.2p290 :166?&gt;           end
 1.9.2p290 :167?&gt;       end
 1.9.2p290 :168?&gt;     end
-1.9.2p290 :169?&gt;   x.report("second:") do
+1.9.2p290 :169?&gt;   x.report(&quot;second:&quot;) do
 1.9.2p290 :170 &gt;       User.all.map do |user|
 1.9.2p290 :171 &gt;           user.watchlists.all.map do |wl|
-1.9.2p290 :172 &gt;               if wl.tags_array == ["ruby", "web", "framework"]
+1.9.2p290 :172 &gt;               if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;, &quot;framework&quot;]
 1.9.2p290 :173?&gt;                   competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
 1.9.2p290 :174?&gt;               end
 1.9.2p290 :175?&gt;           end
 1.9.2p290 :176?&gt;       end
 1.9.2p290 :177?&gt;     end
-1.9.2p290 :178?&gt;   x.report("third:") do
+1.9.2p290 :178?&gt;   x.report(&quot;third:&quot;) do
 1.9.2p290 :179 &gt;       User.all.map do |user|
 1.9.2p290 :180 &gt;           user.watchlists.all.map do |wl|
-1.9.2p290 :181 &gt;               if wl.tags_array == ["ruby", "web", "framework"]
+1.9.2p290 :181 &gt;               if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;, &quot;framework&quot;]
 1.9.2p290 :182?&gt;                   competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
 1.9.2p290 :183?&gt;               end
 1.9.2p290 :184?&gt;           end
@@ -170,7 +161,7 @@ and less cpu consuming:</p>
 
                user     system      total        real
 
-first:    MONGODB (30ms) heroku_app1707530['users'].find({})
+first:    MONGODB (30ms) heroku_app1707530[&#39;users&#39;].find({})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 6320857008182747446
 
@@ -178,7 +169,7 @@ MONGODB [DEBUG] cursor.refresh() for cursor 6320857008182747446
 
  1.460000   0.010000   1.470000 (  1.475545)
 
-second:   MONGODB (24ms) heroku_app1707530['users'].find({})
+second:   MONGODB (24ms) heroku_app1707530[&#39;users&#39;].find({})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 8580701579081246457
 
@@ -186,7 +177,7 @@ MONGODB [DEBUG] cursor.refresh() for cursor 8580701579081246457
 
  1.470000   0.010000   1.480000 (  1.494812)
 
-third:    MONGODB (24ms) heroku_app1707530['users'].find({})
+third:    MONGODB (24ms) heroku_app1707530[&#39;users&#39;].find({})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 6472818135140756688
 
@@ -197,42 +188,40 @@ MONGODB [DEBUG] cursor.refresh() for cursor 6472818135140756688
 =&gt; true
 
 1.9.2p290 :188 &gt;
-</code></pre>
-
+</code></pre></div>
 <p>vs. second code :</p>
-
-<pre><code>1.9.2p290 :065 &gt; Competitor  = Struct.new(:html_url, :description, :user)
+<div class="highlight"><pre><code class="text">1.9.2p290 :065 &gt; Competitor  = Struct.new(:html_url, :description, :user)
 1.9.2p290 :066 &gt; competitors = []
 =&gt; []
 1.9.2p290 :067 &gt; Benchmark.bm(10) do |x|
-1.9.2p290 :068 &gt;     x.report("first:") {User.where('watchlists.tags_array' =&gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
+1.9.2p290 :068 &gt;     x.report(&quot;first:&quot;) {User.where(&#39;watchlists.tags_array&#39; =&gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
 
-1.9.2p290 :069?&gt;   x.report("second:") {User.where('watchlists.tags_array' =&gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
+1.9.2p290 :069?&gt;   x.report(&quot;second:&quot;) {User.where(&#39;watchlists.tags_array&#39; =&gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
 
-1.9.2p290 :070?&gt;   x.report("third:") {User.where('watchlists.tags_array' =&gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
+1.9.2p290 :070?&gt;   x.report(&quot;third:&quot;) {User.where(&#39;watchlists.tags_array&#39; =&gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
 1.9.2p290 :071?&gt;   end
 
                user     system      total        real
 
 first:    MONGODB (163ms)
-heroku_app1707530['users'].find({"watchlists.tags_array"=&gt;["ruby", "web",
-"framework"]}, {:_type=&gt;1, :nickname=&gt;1, :watchlists=&gt;1})
+heroku_app1707530[&#39;users&#39;].find({&quot;watchlists.tags_array&quot;=&gt;[&quot;ruby&quot;, &quot;web&quot;,
+&quot;framework&quot;]}, {:_type=&gt;1, :nickname=&gt;1, :watchlists=&gt;1})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 7239021952645827000
 
  0.330000   0.000000   0.330000 (  0.380199)
 
 second:   MONGODB (164ms)
-heroku_app1707530['users'].find({"watchlists.tags_array"=&gt;["ruby", "web",
-"framework"]}, {:_type=&gt;1, :nickname=&gt;1, :watchlists=&gt;1})
+heroku_app1707530[&#39;users&#39;].find({&quot;watchlists.tags_array&quot;=&gt;[&quot;ruby&quot;, &quot;web&quot;,
+&quot;framework&quot;]}, {:_type=&gt;1, :nickname=&gt;1, :watchlists=&gt;1})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 4816095738351422260
 
  0.320000   0.010000   0.330000 (  0.381196)
 
 third:    MONGODB (125ms)
-heroku_app1707530['users'].find({"watchlists.tags_array"=&gt;["ruby", "web",
-"framework"]}, {:_type=&gt;1, :nickname=&gt;1, :watchlists=&gt;1})
+heroku_app1707530[&#39;users&#39;].find({&quot;watchlists.tags_array&quot;=&gt;[&quot;ruby&quot;, &quot;web&quot;,
+&quot;framework&quot;]}, {:_type=&gt;1, :nickname=&gt;1, :watchlists=&gt;1})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 5014359782446173361
 
@@ -241,12 +230,11 @@ MONGODB [DEBUG] cursor.refresh() for cursor 5014359782446173361
 =&gt; true
 
 1.9.2p290 :072 &gt;
-</code></pre>
-
+</code></pre></div>
 <p>As you can see the speed up is quite impressive. MongoID/MongoDB is a defacto
 NoSQL tech for data crunching and big data in Ruby</p>
 
-<p><a href="http://www.indeed.com/jobtrends?q=mongodb%2C+riack%2C+couchdb%2C+elasticsearch%2C+cassandra"> <img src="http://www.indeed.com/trendgraph/jobgraph.png?q=mongodb%2C+riack%2C+couchdb%2C+elasticsearch%2C+cassandra" alt="mongodb, riack, couchdb, elasticsearch, cassandra Job Trends graph" /></a></p>
+<p><a href="http://www.indeed.com/jobtrends?q=mongodb%2C+riack%2C+couchdb%2C+elasticsearch%2C+cassandra"> <img src="http://www.indeed.com/trendgraph/jobgraph.png?q=mongodb%2C+riack%2C+couchdb%2C+elasticsearch%2C+cassandra" alt="mongodb, riack, couchdb, elasticsearch, cassandra Job Trends graph"></a></p>
 
 <p>… but it takes some mind shift to be fully understood and utilized.</p>
 
@@ -260,7 +248,7 @@ NoSQL tech for data crunching and big data in Ruby</p>
 <!--     <h3>Related Posts</h3> -->
 <!--     <ul class="posts"> -->
 <!--        -->
-<!--         <p><li><span>18 Apr 2013</span> - <a href="/blog/blog/%E4%BD%BF%E7%94%A8jekyll%E5%9C%A8github%E4%B8%8A%E9%9D%A2%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html">使用jekyll在github上面搭建博客</a></li></p> -->
+<!--         <p><li><span>18 Apr 2013</span> - <a href="/blog/blog/using-jekyll-to-build-blog-on-github.html">使用jekyll在github上搭建个人博客</a></li></p> -->
 <!--        -->
 <!--         <p><li><span>20 Oct 2012</span> - <a href="/blog/blog/tumblr-to-jekyll-blog-migration.html">Tumblr to Jekyll Blog Migration</a></li></p> -->
 <!--        -->

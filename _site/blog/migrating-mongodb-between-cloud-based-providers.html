@@ -86,22 +86,17 @@ you.</p>
 the  web console  or through the command line interface ( see <a href="http://devcenter.heroku.com/articles/managing-add-ons">managing-add-
 ons</a> for more details )
 :</p>
-
-<pre><code>$ # ADD HEROKU ADDONS:  
+<div class="highlight"><pre><code class="text">$ # ADD HEROKU ADDONS:  
 $ heroku addons:add mongolab:starter
-</code></pre>
-
+</code></pre></div>
 <p>than we query Heroku config to get MongoHQ connection user and password for
 current application :</p>
-
-<pre><code>$ # QUERY HEROKU CONFIG:  
+<div class="highlight"><pre><code class="text">$ # QUERY HEROKU CONFIG:  
 $ heroku config --long | grep MONGOHQ_URL   
 MONGOHQ_URL =&gt; mongodb://&lt;user&gt;:&lt;password&gt;@staff.mongohq.com:10075/app1707530
-</code></pre>
-
+</code></pre></div>
 <p>now we dump MongoDB from MongoHQ :</p>
-
-<pre><code>$ # DUMP MongoHQ DB:  
+<div class="highlight"><pre><code class="text">$ # DUMP MongoHQ DB:  
 $ mongodump -h staff.mongohq.com:10075 -d app1707530 -u user -p password     
 connected to: staff.mongohq.com:10075  
 DATABASE: app1707530     to     dump/app1707530  
@@ -112,12 +107,10 @@ DATABASE: app1707530     to     dump/app1707530
         app1707530.users to dump/app1707530/users.bson  
                  2 objects  
 ...
-</code></pre>
-
+</code></pre></div>
 <p>and we restore the DB on MongoLab, after extracting user and password the same
 way we did before :</p>
-
-<pre><code>$ # RESTORE ON MongoLab:  
+<div class="highlight"><pre><code class="text">$ # RESTORE ON MongoLab:  
 $ mongorestore -h ds029257.mongolab.com:29257 -d gitwatcher-db -u user -p password ./dump/app1707530  
 connected to: ds029257.mongolab.com:29257  
 Wed Jan 11 23:05:17 ./dump/app1707530/users.bson  
@@ -130,16 +123,13 @@ Wed Jan 11 23:05:24 ./dump/app1707530/system.indexes.bson
 Wed Jan 11 23:05:24      going into namespace [gitwatcher-db.system.indexes]  
 Wed Jan 11 23:05:24      2 objects found  
 ...
-</code></pre>
-
+</code></pre></div>
 <p>last, change production configuration in config/mongoid.yml, which should look
 like the following :</p>
+<div class="highlight"><pre><code class="text">production:
 
-<pre><code>production:
-
- uri: &lt;%= ENV['MONGOLAB_URI'] %&gt;  
-</code></pre>
-
+ uri: &lt;%= ENV[&#39;MONGOLAB_URI&#39;] %&gt;  
+</code></pre></div>
 <p>just remain to commit and push back to Heroku.</p>
 
 <p>Done in 10 minutes.</p>
@@ -152,7 +142,7 @@ access to your application for some length of time.</p>
 will serve a static page to all visitors, while still allowing you to run rake
 tasks or console commands.</p>
 
-<p>It's great isn't it ? Let me know what you think about.</p>
+<p>It&#39;s great isn&#39;t it ? Let me know what you think about.</p>
  </section>
 
 <!-- <div class="hero-unit"> -->
@@ -160,7 +150,7 @@ tasks or console commands.</p>
 <!--     <h3>Related Posts</h3> -->
 <!--     <ul class="posts"> -->
 <!--        -->
-<!--         <p><li><span>18 Apr 2013</span> - <a href="/blog/blog/%E4%BD%BF%E7%94%A8jekyll%E5%9C%A8github%E4%B8%8A%E9%9D%A2%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html">使用jekyll在github上面搭建博客</a></li></p> -->
+<!--         <p><li><span>18 Apr 2013</span> - <a href="/blog/blog/using-jekyll-to-build-blog-on-github.html">使用jekyll在github上搭建个人博客</a></li></p> -->
 <!--        -->
 <!--         <p><li><span>20 Oct 2012</span> - <a href="/blog/blog/tumblr-to-jekyll-blog-migration.html">Tumblr to Jekyll Blog Migration</a></li></p> -->
 <!--        -->

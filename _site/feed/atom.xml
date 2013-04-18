@@ -4,7 +4,7 @@
  <title>GitWatcher Blog</title>
  <link href="http://gitwatcher.com/blog/feed/atom.xml" rel="self"/>
  <link href="http://gitwatcher.com/blog/feed"/>
- <updated>2013-04-18T17:57:06+08:00</updated>
+ <updated>2013-04-18T18:19:06+08:00</updated>
  <id>http://gitwatcher.com/blog/feed</id>
  <author>
    <name>Luca G. Soave</name>
@@ -13,18 +13,16 @@
 
  
  <entry>
-   <title>使用jekyll在github上面搭建博客</title>
-   <link href="http://gitwatcher.com/blog/blog/%E4%BD%BF%E7%94%A8jekyll%E5%9C%A8github%E4%B8%8A%E9%9D%A2%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2.html"/>
+   <title>使用jekyll在github上搭建个人博客</title>
+   <link href="http://gitwatcher.com/blog/blog/using-jekyll-to-build-blog-on-github.html"/>
    <updated>2013-04-18T00:00:00+08:00</updated>
-   <id>http://gitwatcher.com/blog/blog/使用jekyll在github上面搭建博客.html</id>
-   <content type="html">&lt;p&gt;```ruby
-  def hah&lt;/p&gt;
+   <id>http://gitwatcher.com/blog/blog/using-jekyll-to-build-blog-on-github.html</id>
+   <content type="html">&lt;p&gt;haha &lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;  return 1
-end
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;```&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;      &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;hahha&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+        
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 </content>
  </entry>
  
@@ -33,7 +31,7 @@ end
    <link href="http://gitwatcher.com/blog/blog/tumblr-to-jekyll-blog-migration.html"/>
    <updated>2012-10-20T00:00:00+08:00</updated>
    <id>http://gitwatcher.com/blog/blog/tumblr-to-jekyll-blog-migration.html</id>
-   <content type="html">&lt;p&gt;After half an year of blogging on tumblr GitWatcher’s blog has now decided to go for &lt;a href=&quot;http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html&quot;&gt;Blogging Like a Hacker&lt;/a&gt; well known way, by jekylling on rails.&lt;/p&gt;
+   <content type="html">&lt;p&gt;After half an year of blogging on tumblr GitWatcher’s blog has now decided to go for &lt;a href=&quot;http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html&quot;&gt;Blogging Like a Hacker&lt;/a&gt; well known way, by jekylling on rails.  &lt;/p&gt;
 
 &lt;p&gt;There is really no reason to delegate third-level domain for blogging ( blog.gitwatcher.com vs &lt;a href=&quot;http://gitwatcher.com/blog&quot;&gt;gitwatcher.com/blog&lt;/a&gt; ) losing SEO and ranking, &lt;a href=&quot;http://webapps.stackexchange.com/questions/22586/my-tumblr-blog-disappeared&quot;&gt;having less control and reliability on our blog content.&lt;/a&gt;, eventually.&lt;/p&gt;
 
@@ -56,7 +54,7 @@ end
    <link href="http://gitwatcher.com/blog/blog/mongoid-odm-as-fast-as-you-can.html"/>
    <updated>2012-07-31T00:00:00+08:00</updated>
    <id>http://gitwatcher.com/blog/blog/mongoid-odm-as-fast-as-you-can.html</id>
-   <content type="html">&lt;p&gt;In the &lt;a href=&quot;http://gitwatcher.com/blog/easy-and-cooperative-project-categorization-is-now-open-to-gitwatcher-users.html&quot;&gt;previous article&lt;/a&gt;,
+   <content type="html">&lt;p&gt;In the &lt;a href=&quot;http://gitwatcher.com/blog/easy-and-cooperative-project-categorization-is-now-open-to-gitwatcher-users.html&quot;&gt;previous article&lt;/a&gt;, 
 we announced our first attempt of croudsourcing repository categorization on GitWatcher platform.&lt;/p&gt;
 
 &lt;p&gt;Based on hybrid model, &lt;a href=&quot;http://gitwatcher.com/categories&quot;&gt;gitwatcher
@@ -70,21 +68,18 @@ the same tag set, that repo will be displayed into the list, after being
 collected ( which currently happen once a day ).&lt;/p&gt;
 
 &lt;p&gt;Now, part of the the collector code, was looking like the following at first :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Competitor  = Struct.new(:html_url, :description, :user)
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;Competitor  = Struct.new(:html_url, :description, :user)
 competitors = []
 User.all.map do |user|
   user.watchlists.all.map do |wl|
-    if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;, &quot;framework&quot;]
+    if wl.tags_array == [&amp;quot;ruby&amp;quot;, &amp;quot;web&amp;quot;, &amp;quot;framework&amp;quot;]
        competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
    end
  end
 end
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;and a semplified underline datamodel was similar to the following:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;class User
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and a semplified underline datamodel was similar to the following:  &lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;class User
   include Mongoid::Document
   field :nickname
   embeds_many :watchlists
@@ -97,8 +92,7 @@ class Watchlist
   field :tags_array, type: Array
   embedded_in :user
 end
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Well, that was great at first, but the data was growing and the entire
 operation became time and CPU consuming. I start googling around, looking for
 better, more efficient and effective way to use the amazing&lt;a href=&quot;http://mongoid.org/&quot;&gt; mongoid
@@ -114,51 +108,46 @@ to consider the following enhancements ( thanks goes to
 &lt;li&gt;only fetch fields you need from db, rather than the whole user objects&lt;/li&gt;
 &lt;/ul&gt;
 
-
 &lt;p&gt;the code example was posted on the same answer. Here it is :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Competitor = Struct.new(:html_url, :description, :user)
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;Competitor = Struct.new(:html_url, :description, :user)
 competitors = []
-User.where('watchlists.tags_array' =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each do |u|
+User.where(&amp;#39;watchlists.tags_array&amp;#39; =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each do |u|
   u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each do |wl|
     competitors « Competitor.new(wl.html_url, wl.description, u.nickname)
   end
 end
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;I Took the time to get some measures … and surprise,  it results really faster
 and less cpu consuming:&lt;/p&gt;
 
-&lt;p&gt;first code :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;1.9.2p290 :157 &amp;gt; Competitor  = Struct.new(:html_url, :description, :user)
-1.9.2p290 :158 &amp;gt; competitors = []
-=&amp;gt; []
-
-1.9.2p290 :159 &amp;gt; Benchmark.bm(10) do |x|
-1.9.2p290 :160 &amp;gt;     x.report(&quot;first:&quot;) do
+&lt;p&gt;first code :
+    1.9.2p290 :157 &amp;gt; Competitor  = Struct.new(:html_url, :description, :user)
+    1.9.2p290 :158 &amp;gt; competitors = []
+    =&amp;gt; []&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;1.9.2p290 :159 &amp;gt; Benchmark.bm(10) do |x|
+1.9.2p290 :160 &amp;gt;     x.report(&amp;quot;first:&amp;quot;) do
 1.9.2p290 :161 &amp;gt;       User.all.map do |user|
 1.9.2p290 :162 &amp;gt;           user.watchlists.all.map do |wl|
-1.9.2p290 :163 &amp;gt;               if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;,
-&quot;framework&quot;]
+1.9.2p290 :163 &amp;gt;               if wl.tags_array == [&amp;quot;ruby&amp;quot;, &amp;quot;web&amp;quot;,
+&amp;quot;framework&amp;quot;]
 1.9.2p290 :164?&amp;gt;                   competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
 1.9.2p290 :165?&amp;gt;               end
 1.9.2p290 :166?&amp;gt;           end
 1.9.2p290 :167?&amp;gt;       end
 1.9.2p290 :168?&amp;gt;     end
-1.9.2p290 :169?&amp;gt;   x.report(&quot;second:&quot;) do
+1.9.2p290 :169?&amp;gt;   x.report(&amp;quot;second:&amp;quot;) do
 1.9.2p290 :170 &amp;gt;       User.all.map do |user|
 1.9.2p290 :171 &amp;gt;           user.watchlists.all.map do |wl|
-1.9.2p290 :172 &amp;gt;               if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;, &quot;framework&quot;]
+1.9.2p290 :172 &amp;gt;               if wl.tags_array == [&amp;quot;ruby&amp;quot;, &amp;quot;web&amp;quot;, &amp;quot;framework&amp;quot;]
 1.9.2p290 :173?&amp;gt;                   competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
 1.9.2p290 :174?&amp;gt;               end
 1.9.2p290 :175?&amp;gt;           end
 1.9.2p290 :176?&amp;gt;       end
 1.9.2p290 :177?&amp;gt;     end
-1.9.2p290 :178?&amp;gt;   x.report(&quot;third:&quot;) do
+1.9.2p290 :178?&amp;gt;   x.report(&amp;quot;third:&amp;quot;) do
 1.9.2p290 :179 &amp;gt;       User.all.map do |user|
 1.9.2p290 :180 &amp;gt;           user.watchlists.all.map do |wl|
-1.9.2p290 :181 &amp;gt;               if wl.tags_array == [&quot;ruby&quot;, &quot;web&quot;, &quot;framework&quot;]
+1.9.2p290 :181 &amp;gt;               if wl.tags_array == [&amp;quot;ruby&amp;quot;, &amp;quot;web&amp;quot;, &amp;quot;framework&amp;quot;]
 1.9.2p290 :182?&amp;gt;                   competitors « Competitor.new(wl.html_url, wl.description, wl.user.nickname)
 1.9.2p290 :183?&amp;gt;               end
 1.9.2p290 :184?&amp;gt;           end
@@ -168,7 +157,7 @@ and less cpu consuming:&lt;/p&gt;
 
                user     system      total        real
 
-first:    MONGODB (30ms) heroku_app1707530['users'].find({})
+first:    MONGODB (30ms) heroku_app1707530[&amp;#39;users&amp;#39;].find({})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 6320857008182747446
 
@@ -176,7 +165,7 @@ MONGODB [DEBUG] cursor.refresh() for cursor 6320857008182747446
 
  1.460000   0.010000   1.470000 (  1.475545)
 
-second:   MONGODB (24ms) heroku_app1707530['users'].find({})
+second:   MONGODB (24ms) heroku_app1707530[&amp;#39;users&amp;#39;].find({})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 8580701579081246457
 
@@ -184,7 +173,7 @@ MONGODB [DEBUG] cursor.refresh() for cursor 8580701579081246457
 
  1.470000   0.010000   1.480000 (  1.494812)
 
-third:    MONGODB (24ms) heroku_app1707530['users'].find({})
+third:    MONGODB (24ms) heroku_app1707530[&amp;#39;users&amp;#39;].find({})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 6472818135140756688
 
@@ -195,42 +184,40 @@ MONGODB [DEBUG] cursor.refresh() for cursor 6472818135140756688
 =&amp;gt; true
 
 1.9.2p290 :188 &amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;vs. second code :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;1.9.2p290 :065 &amp;gt; Competitor  = Struct.new(:html_url, :description, :user)
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;1.9.2p290 :065 &amp;gt; Competitor  = Struct.new(:html_url, :description, :user)
 1.9.2p290 :066 &amp;gt; competitors = []
 =&amp;gt; []
 1.9.2p290 :067 &amp;gt; Benchmark.bm(10) do |x|
-1.9.2p290 :068 &amp;gt;     x.report(&quot;first:&quot;) {User.where('watchlists.tags_array' =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
+1.9.2p290 :068 &amp;gt;     x.report(&amp;quot;first:&amp;quot;) {User.where(&amp;#39;watchlists.tags_array&amp;#39; =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
 
-1.9.2p290 :069?&amp;gt;   x.report(&quot;second:&quot;) {User.where('watchlists.tags_array' =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
+1.9.2p290 :069?&amp;gt;   x.report(&amp;quot;second:&amp;quot;) {User.where(&amp;#39;watchlists.tags_array&amp;#39; =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
 
-1.9.2p290 :070?&amp;gt;   x.report(&quot;third:&quot;) {User.where('watchlists.tags_array' =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
+1.9.2p290 :070?&amp;gt;   x.report(&amp;quot;third:&amp;quot;) {User.where(&amp;#39;watchlists.tags_array&amp;#39; =&amp;gt; %w[ruby web framework]).only(:nickname, :watchlists).each{|u|u.watchlists.where(:tags_array =&amp;gt; %w[ruby web framework]).each{|wl|competitors « Competitor.new(wl.html_url, wl.description, u.nickname)}}}
 1.9.2p290 :071?&amp;gt;   end
 
                user     system      total        real
 
 first:    MONGODB (163ms)
-heroku_app1707530['users'].find({&quot;watchlists.tags_array&quot;=&amp;gt;[&quot;ruby&quot;, &quot;web&quot;,
-&quot;framework&quot;]}, {:_type=&amp;gt;1, :nickname=&amp;gt;1, :watchlists=&amp;gt;1})
+heroku_app1707530[&amp;#39;users&amp;#39;].find({&amp;quot;watchlists.tags_array&amp;quot;=&amp;gt;[&amp;quot;ruby&amp;quot;, &amp;quot;web&amp;quot;,
+&amp;quot;framework&amp;quot;]}, {:_type=&amp;gt;1, :nickname=&amp;gt;1, :watchlists=&amp;gt;1})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 7239021952645827000
 
  0.330000   0.000000   0.330000 (  0.380199)
 
 second:   MONGODB (164ms)
-heroku_app1707530['users'].find({&quot;watchlists.tags_array&quot;=&amp;gt;[&quot;ruby&quot;, &quot;web&quot;,
-&quot;framework&quot;]}, {:_type=&amp;gt;1, :nickname=&amp;gt;1, :watchlists=&amp;gt;1})
+heroku_app1707530[&amp;#39;users&amp;#39;].find({&amp;quot;watchlists.tags_array&amp;quot;=&amp;gt;[&amp;quot;ruby&amp;quot;, &amp;quot;web&amp;quot;,
+&amp;quot;framework&amp;quot;]}, {:_type=&amp;gt;1, :nickname=&amp;gt;1, :watchlists=&amp;gt;1})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 4816095738351422260
 
  0.320000   0.010000   0.330000 (  0.381196)
 
 third:    MONGODB (125ms)
-heroku_app1707530['users'].find({&quot;watchlists.tags_array&quot;=&amp;gt;[&quot;ruby&quot;, &quot;web&quot;,
-&quot;framework&quot;]}, {:_type=&amp;gt;1, :nickname=&amp;gt;1, :watchlists=&amp;gt;1})
+heroku_app1707530[&amp;#39;users&amp;#39;].find({&amp;quot;watchlists.tags_array&amp;quot;=&amp;gt;[&amp;quot;ruby&amp;quot;, &amp;quot;web&amp;quot;,
+&amp;quot;framework&amp;quot;]}, {:_type=&amp;gt;1, :nickname=&amp;gt;1, :watchlists=&amp;gt;1})
 
 MONGODB [DEBUG] cursor.refresh() for cursor 5014359782446173361
 
@@ -239,12 +226,11 @@ MONGODB [DEBUG] cursor.refresh() for cursor 5014359782446173361
 =&amp;gt; true
 
 1.9.2p290 :072 &amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;As you can see the speed up is quite impressive. MongoID/MongoDB is a defacto
 NoSQL tech for data crunching and big data in Ruby&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;http://www.indeed.com/jobtrends?q=mongodb%2C+riack%2C+couchdb%2C+elasticsearch%2C+cassandra&quot;&gt; &lt;img src=&quot;http://www.indeed.com/trendgraph/jobgraph.png?q=mongodb%2C+riack%2C+couchdb%2C+elasticsearch%2C+cassandra&quot; alt=&quot;mongodb, riack, couchdb, elasticsearch, cassandra Job Trends graph&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.indeed.com/jobtrends?q=mongodb%2C+riack%2C+couchdb%2C+elasticsearch%2C+cassandra&quot;&gt; &lt;img src=&quot;http://www.indeed.com/trendgraph/jobgraph.png?q=mongodb%2C+riack%2C+couchdb%2C+elasticsearch%2C+cassandra&quot; alt=&quot;mongodb, riack, couchdb, elasticsearch, cassandra Job Trends graph&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;… but it takes some mind shift to be fully understood and utilized.&lt;/p&gt;
 
@@ -266,7 +252,7 @@ Github&lt;/a&gt; then going to &lt;a href=&quot;http://gitwatcher.com/categories
 page&lt;/a&gt;. You’ll find a list of categories
 already in place and a form where you can add your own.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://lh3.googleusercontent.com/THY2EJOfMljmIwjzfDI_InbYTzVb_pbx_9U8I-%0AYuw62Wv1N0fR2VXilHkVCkCau2zU0BYSvGiy0OJkGfI9xMm2utmKyYVanlw4vP3w4PjWl7BLxnkJQ&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://lh3.googleusercontent.com/THY2EJOfMljmIwjzfDI_InbYTzVb_pbx_9U8I-%0AYuw62Wv1N0fR2VXilHkVCkCau2zU0BYSvGiy0OJkGfI9xMm2utmKyYVanlw4vP3w4PjWl7BLxnkJQ&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;Suppose you are interested in the emerging web presentation model “&lt;a href=&quot;http://en.wikipedia.org/wiki/Model_View_ViewModel&quot;&gt;Model View
 ViewModel (MVVM)&lt;/a&gt;” and you
@@ -280,7 +266,7 @@ Frameworks&lt;/a&gt; and you’ll see a list of trending
 projects extracted from how GitWatcher users have already tagged their own
 watched repositories, with at last three tags: javascript - mvc - framework.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://lh4.googleusercontent.com/68joG4d0-SaEx5OPXNYSXmc9LLGh3DOVMwqDuyyW%0ALdFHi48tTgFiKdq1Wnet48eVvaeY3oJsARe0C974To1pwR_feZWj5kQJzXGjZMlGO_ngPgiFuoc&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://lh4.googleusercontent.com/68joG4d0-SaEx5OPXNYSXmc9LLGh3DOVMwqDuyyW%0ALdFHi48tTgFiKdq1Wnet48eVvaeY3oJsARe0C974To1pwR_feZWj5kQJzXGjZMlGO_ngPgiFuoc&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;That is just a category I made for myself to stay on top of that field but you
 can now make your own, just &lt;a href=&quot;http://gitwatcher.com/categories&quot;&gt;add category field and one or more
@@ -292,13 +278,12 @@ category.&lt;/p&gt;
 few conventions :&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Categories should be most of all plural, even if not necessarily, like fore example “Content Management Systems”, “Ruby Web Frameworks”, “Mongodb Clients” and so on.&lt;/li&gt;
-&lt;li&gt;Tags should be singular. When composed, like in “api-client “ or  “api-builder”, minus (&quot;-&quot;) char should be used to join two words.&lt;/li&gt;
+&lt;li&gt;Categories should be most of all plural, even if not necessarily, like fore example “Content Management Systems”, “Ruby Web Frameworks”, “Mongodb Clients” and so on.&lt;br&gt;&lt;/li&gt;
+&lt;li&gt;Tags should be singular. When composed, like in “api-client “ or  “api-builder”, minus (&amp;quot;-&amp;quot;) char should be used to join two words.&lt;br&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-
 &lt;p&gt;GitWatcher, will probably put in place some automatic normalization,
-aggregation or correction filters but until now, let's see how will it work
+aggregation or correction filters but until now, let&amp;#39;s see how will it work
 the easiest way. Of course any suggestion are welcome.&lt;/p&gt;
 
 &lt;p&gt;Please let me know what do you think about and how would you do that, post
@@ -364,7 +349,7 @@ the GitWatcher free platform.&lt;/p&gt;
    <link href="http://gitwatcher.com/blog/blog/gitWatcher-is-built-on-top-of-several-amazing-ruby-gems.html"/>
    <updated>2012-03-24T00:00:00+08:00</updated>
    <id>http://gitwatcher.com/blog/blog/gitWatcher-is-built-on-top-of-several-amazing-ruby-gems.html</id>
-   <content type="html">&lt;p&gt;I'd like to thanks one by one all the developers who contributed directly or
+   <content type="html">&lt;p&gt;I&amp;#39;d like to thanks one by one all the developers who contributed directly or
 undirectly to the amazing edge we are living in Ruby domain.&lt;/p&gt;
 
 &lt;p&gt;Here it is a dump of Ruby Gems which GitWatcher is currently built on top of.&lt;/p&gt;
@@ -374,8 +359,7 @@ in special way to &lt;a href=&quot;https://github.com/durran&quot;&gt;durran &lt
 
 &lt;p&gt;Without his support &lt;a href=&quot;http://gitwatcher.com/&quot;&gt;GitWatcher&lt;/a&gt; would have never been
 started.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;GIT
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;GIT
 
   remote: [https://github.com/mongoid/mongoid.git](https://github.com/mongoid/
 mongoid.git)
@@ -1105,8 +1089,7 @@ DEPENDENCIES
   twitter-bootstrap-rails (~&amp;gt; 2.0.1.0)
 
   uglifier
-&lt;/code&gt;&lt;/pre&gt;
-</content>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
  </entry>
  
  <entry>
@@ -1139,7 +1122,6 @@ constraints here:&lt;/p&gt;
 &lt;li&gt;deploy on heroku without having to pay for add-ons, initially&lt;/li&gt;
 &lt;/ol&gt;
 
-
 &lt;p&gt;All heroku Full-Text Search add-ons currently, seem to have just paying plans
 which are not good to start with, see &lt;a href=&quot;http://addons.heroku.com/flying_sphinx&quot;&gt;Flying
 Sphinx&lt;/a&gt; and
@@ -1156,16 +1138,16 @@ many&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;That said, the search is very simple and restrictive : you insert a set of
 words and it match a permutation of the exact terms only, case unsensitive,
-looking full-text into &quot;repo&quot;, &quot;description&quot; and &quot;tags&quot; fields  of each
-repository, which means that in my case, searching for&lt;em&gt; &quot;authentication
-omniath&quot; &lt;/em&gt;will find the following five responces :&lt;/p&gt;
+looking full-text into &amp;quot;repo&amp;quot;, &amp;quot;description&amp;quot; and &amp;quot;tags&amp;quot; fields  of each
+repository, which means that in my case, searching for_ &amp;quot;authentication
+omniath&amp;quot; _will find the following five responces :&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/full_text_search.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/full_text_search.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 
-&lt;p&gt;but searching for &lt;em&gt;&quot;rack __authentication omniath&quot;&lt;/em&gt;  gets back  just one
+&lt;p&gt;but searching for &lt;em&gt;&amp;quot;rack _&lt;/em&gt;authentication omniath&amp;quot;_  gets back  just one
 responce, as you can see :&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/full_text_search_result.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/full_text_search_result.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;Very simple, but is what we need at the moment. Any feedback is welcome.&lt;/p&gt;
 </content>
@@ -1204,22 +1186,17 @@ you.&lt;/p&gt;
 the  web console  or through the command line interface ( see &lt;a href=&quot;http://devcenter.heroku.com/articles/managing-add-ons&quot;&gt;managing-add-
 ons&lt;/a&gt; for more details )
 :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ # ADD HEROKU ADDONS:  
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;$ # ADD HEROKU ADDONS:  
 $ heroku addons:add mongolab:starter
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;than we query Heroku config to get MongoHQ connection user and password for
 current application :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ # QUERY HEROKU CONFIG:  
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;$ # QUERY HEROKU CONFIG:  
 $ heroku config --long | grep MONGOHQ_URL   
 MONGOHQ_URL =&amp;gt; mongodb://&amp;lt;user&amp;gt;:&amp;lt;password&amp;gt;@staff.mongohq.com:10075/app1707530
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;now we dump MongoDB from MongoHQ :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ # DUMP MongoHQ DB:  
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;$ # DUMP MongoHQ DB:  
 $ mongodump -h staff.mongohq.com:10075 -d app1707530 -u user -p password     
 connected to: staff.mongohq.com:10075  
 DATABASE: app1707530     to     dump/app1707530  
@@ -1230,12 +1207,10 @@ DATABASE: app1707530     to     dump/app1707530
         app1707530.users to dump/app1707530/users.bson  
                  2 objects  
 ...
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;and we restore the DB on MongoLab, after extracting user and password the same
 way we did before :&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ # RESTORE ON MongoLab:  
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;$ # RESTORE ON MongoLab:  
 $ mongorestore -h ds029257.mongolab.com:29257 -d gitwatcher-db -u user -p password ./dump/app1707530  
 connected to: ds029257.mongolab.com:29257  
 Wed Jan 11 23:05:17 ./dump/app1707530/users.bson  
@@ -1248,16 +1223,13 @@ Wed Jan 11 23:05:24 ./dump/app1707530/system.indexes.bson
 Wed Jan 11 23:05:24      going into namespace [gitwatcher-db.system.indexes]  
 Wed Jan 11 23:05:24      2 objects found  
 ...
-&lt;/code&gt;&lt;/pre&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;last, change production configuration in config/mongoid.yml, which should look
 like the following :&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;production:
 
-&lt;pre&gt;&lt;code&gt;production:
-
- uri: &amp;lt;%= ENV['MONGOLAB_URI'] %&amp;gt;  
-&lt;/code&gt;&lt;/pre&gt;
-
+ uri: &amp;lt;%= ENV[&amp;#39;MONGOLAB_URI&amp;#39;] %&amp;gt;  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;just remain to commit and push back to Heroku.&lt;/p&gt;
 
 &lt;p&gt;Done in 10 minutes.&lt;/p&gt;
@@ -1270,7 +1242,7 @@ access to your application for some length of time.&lt;/p&gt;
 will serve a static page to all visitors, while still allowing you to run rake
 tasks or console commands.&lt;/p&gt;
 
-&lt;p&gt;It's great isn't it ? Let me know what you think about.&lt;/p&gt;
+&lt;p&gt;It&amp;#39;s great isn&amp;#39;t it ? Let me know what you think about.&lt;/p&gt;
 </content>
  </entry>
  
@@ -1283,40 +1255,40 @@ tasks or console commands.&lt;/p&gt;
 track of it because you know, sooner or later you will have to get ride of a
 similar problem in your own work.&lt;/p&gt;
 
-&lt;p&gt;Then you hit the watch button and in a blink of eyes, your &quot;Watched
-Repositories&quot; list, grows to the point it will be very difficult looking for
+&lt;p&gt;Then you hit the watch button and in a blink of eyes, your &amp;quot;Watched
+Repositories&amp;quot; list, grows to the point it will be very difficult looking for
 something when you will have to ( my own list count 1641 repos, today ).&lt;/p&gt;
 
-&lt;p&gt;That's the way  GitWatcher has been thought, sync and watch your github watch-list
-is just a matter of &quot;&lt;a href=&quot;http://gitwatcher.com/auth/github&quot;&gt;sign in&lt;/a&gt;&quot;, if
+&lt;p&gt;That&amp;#39;s the way  GitWatcher has been thought, sync and watch your github watch-list 
+is just a matter of &amp;quot;&lt;a href=&quot;http://gitwatcher.com/auth/github&quot;&gt;sign in&lt;/a&gt;&amp;quot;, if
 you already have a GitHub account, infact, it utilize GitHub as authentication
 system provider.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/watchlist.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/watchlist.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;Now you are logged in and you will see the list of all repositories you are
 watching on GitHub. Then you can assign an arbitrary tag (or multiple) to any
 repository, being able to find it again the next time you need it.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/add_tag.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/add_tag.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;By clicking on the respective column header, you can also reorder your list,
 sorting by number of watchers, by number of forks, by creating date or by
 pushing date.&lt;/p&gt;
 
-&lt;p&gt;That is very useful coupled with &quot;tag categorization&quot; which I will explain in
+&lt;p&gt;That is very useful coupled with &amp;quot;tag categorization&amp;quot; which I will explain in
 a minute, because it gives you the dimension of popularity in a given field.&lt;/p&gt;
 
 &lt;p&gt;Let me explain. By adding tags to a repositories, the system will also fill a
-categorization tab dropdown called &quot;By Tag&quot;. Next time you reload the page,
-you will be able to display just the repositories tagged with &quot;css3&quot;, for
+categorization tab dropdown called &amp;quot;By Tag&amp;quot;. Next time you reload the page,
+you will be able to display just the repositories tagged with &amp;quot;css3&amp;quot;, for
 example ( see following image ).&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/by_tag_dropdown.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://gitwatcher.com/blog/img/by_tag_dropdown.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
 
 &lt;p&gt;At this point, sorting by number of watchers you can have a quick filling of
-the cascading interest the community is falling down &quot;&lt;a href=&quot;http://twitter.github.com/bootstrap/&quot;&gt;Twitter
-Bootstrap&lt;/a&gt;&quot;, for example, in comparison
+the cascading interest the community is falling down &amp;quot;&lt;a href=&quot;http://twitter.github.com/bootstrap/&quot;&gt;Twitter
+Bootstrap&lt;/a&gt;&amp;quot;, for example, in comparison
 to other CSS3/JS/HTML5 frameworks, as  you can see.&lt;/p&gt;
 
 &lt;p&gt;Than you sort the same CSS3 set by pushing date and you can have an idea if a
@@ -1328,8 +1300,7 @@ the same field, in a blink of eyes.&lt;/p&gt;
 &lt;p&gt;But remember, &lt;a href=&quot;http://gitwatcher.com/&quot;&gt;GitWatcher&lt;/a&gt; is very experimental, work
 in progress, spare time project and moreover it is free. Anyone can contribute
 at any level of knowledge, please start by commenting this article or send me
-your feedback on Twitter to &lt;a href=&quot;https://twitter.com/#!/gitwatcher&quot;&gt;@&lt;/a&gt;[gitwatcher]
-(https://twitter.com/#!/gitwatcher)&lt;/p&gt;
+your feedback on Twitter to &lt;a href=&quot;https://twitter.com/#!/gitwatcher&quot;&gt;@&lt;/a&gt;&lt;a href=&quot;https://twitter.com/#!/gitwatcher&quot;&gt;gitwatcher&lt;/a&gt;&lt;/p&gt;
 </content>
  </entry>
  
