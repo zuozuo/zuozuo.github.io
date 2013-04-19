@@ -3,9 +3,9 @@ layout: post
 title: 使用jekyll在github上搭建个人博客
 ---
 
-haha 
-
-		{% highlight ruby %}
-      def hahha
-      end
-		{% endhighlight %}
+无意之中看到了这个叫 jekyll 的东西，挺吸引我的，于是研究了一下，最后搭建了这个博客，第一篇就写一下自己配置搭建 jekyll 的一些经验吧。
+# 介绍
+# 安装
+# 配置
+# 发布
+# 增强

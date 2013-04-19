@@ -4,7 +4,7 @@
  <title>GitWatcher Blog</title>
  <link href="http://gitwatcher.com/blog/feed/atom.xml" rel="self"/>
  <link href="http://gitwatcher.com/blog/feed"/>
- <updated>2013-04-18T18:19:06+08:00</updated>
+ <updated>2013-04-18T18:56:58+08:00</updated>
  <id>http://gitwatcher.com/blog/feed</id>
  <author>
    <name>Luca G. Soave</name>
@@ -17,12 +17,17 @@
    <link href="http://gitwatcher.com/blog/blog/using-jekyll-to-build-blog-on-github.html"/>
    <updated>2013-04-18T00:00:00+08:00</updated>
    <id>http://gitwatcher.com/blog/blog/using-jekyll-to-build-blog-on-github.html</id>
-   <content type="html">&lt;p&gt;haha &lt;/p&gt;
+   <content type="html">&lt;p&gt;无意之中看到了这个叫 jekyll 的东西，挺吸引我的，于是研究了一下，最后搭建了这个博客，第一篇就写一下自己配置搭建 jekyll 的一些经验吧。&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;      &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;hahha&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-        
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h1&gt;介绍&lt;/h1&gt;
+
+&lt;h1&gt;安装&lt;/h1&gt;
+
+&lt;h1&gt;配置&lt;/h1&gt;
+
+&lt;h1&gt;发布&lt;/h1&gt;
+
+&lt;h1&gt;增强&lt;/h1&gt;
 </content>
  </entry>
  

@@ -4,7 +4,7 @@
 
    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
    <title>GitWatcher Blog</title>
-   <meta name="author" content="GitWatcher" />
+   <meta name="author" content="左左" />
 
    <!-- syntax highlighting CSS -->
    <link rel="stylesheet" href="../css/main.css" type="text/css" />
@@ -47,16 +47,21 @@
 			<!-- <header class="page-header"> -->
 				<!-- <h1></h1> -->
 			<!-- </header> -->
-			<div id="content" class="span8">
+			<div id="content" class="span9">
 				    
       <div class="hero-unit">
         <p><h2><a href="/blog/blog/using-jekyll-to-build-blog-on-github.html">使用jekyll在github上搭建个人博客</a></h2>18 Apr 2013 - 左左</p>
-        <p>haha 
+        <p>无意之中看到了这个叫 jekyll 的东西，挺吸引我的，于是研究了一下，最后搭建了这个博客，第一篇就写一下自己配置搭建 jekyll 的一些经验吧。
 
-      def hahha
-      end
-        
+介绍
 
+安装
+
+配置
+
+发布
+
+增强
 </p>
         <p><a href="/blog/blog/using-jekyll-to-build-blog-on-github.html">Read more ...</a></p>
       </div>
