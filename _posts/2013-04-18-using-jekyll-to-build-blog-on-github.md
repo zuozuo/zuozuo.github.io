@@ -9,11 +9,3 @@ title: 使用jekyll在github上搭建个人博客
 # 配置
 # 发布
 # 增强
-
-    ActiveRecord::Base.connection.execute("delete from authentications where user_id not in (select id from users);")
-    ActiveRecord::Base.connection.execute("delete from access_grants where user_id not in(select id from users);")
-    ActiveRecord::Base.connection.execute("update users set id=id+100000;")
-    ActiveRecord::Base.connection.execute("UPDATE users SET id=(@temp:=id), id = circle_id, circle_id = @temp where circle_id is not null;")
-    ActiveRecord::Base.connection.execute("update users set circle_id=id-100000 where id > 100000;")
-    ActiveRecord::Base.connection.execute("update users set circle_id=circle_id-100000 where circle_id > 100000;")
-
