@@ -230,7 +230,7 @@ body {
   background-color: #ffffff;
 }
 
-a {
+#content a {
   color: #0088cc;
   text-decoration: none;
 }
@@ -982,7 +982,7 @@ pre {
 
 code {
   padding: 2px 4px;
-  color: #d14;
+  color: #1a68ef;
   white-space: nowrap;
   background-color: #f7f7f9;
   border: 1px solid #e1e1e8;

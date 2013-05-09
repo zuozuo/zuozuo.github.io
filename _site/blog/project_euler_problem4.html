@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Project Euler Problem 4 最大回文数问题</title>
+   <meta name="author" content="左左" />
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="../css/main.css" type="text/css" />
+   <link rel="stylesheet" href="../css/bootstrap.css" type="text/css" />
+   <link rel="stylesheet" href="../css/pygments.css" type="text/css" />
+   <link rel="stylesheet" href="../css/bootstrap-responsive.min.css" type="text/css" />
+</head>
+
+<body>
+
+  <div id="page">
+
+   <!-- Twitter Bootstrap navbar -->
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+					<a class="brand" href="/"><strong></strong>左左<small>的博客</small></a>
+          <div class="nav-collapse">
+            <ul class="nav pull-right">
+              <li><a href="/">首页</a></li>
+              <li><a href="/blog.html">博客</a></li>
+              <li><a href="/categories.html">分类</a></li>
+              <li><a href="/about.html">关于我</a></li>
+              <!-- <li><a href="/trends">Trends</a></li> -->
+              <!-- <li><a href="/auth/github">Sign in with Github</a></li> -->
+            </ul>
+            <!-- form method="get" action="http://www.google.com/search" class="navbar-search pull-right">
+              <input type="text" name="q" class="span2 search-query" placeholder="Search" maxlength="255" value="">
+              <input name="sitesearch" type="hidden" value="">
+            </form -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+
+    <div class="container">
+			<!-- <header class="page-header"> -->
+				<!-- <h1></h1> -->
+			<!-- </header> -->
+			<div id="content" class="span9">
+				<article>
+  <header>
+    <h4>
+      <a href="/blog/project_euler_problem4.html" rel="bookmark" title="Permanent link to ">Project Euler Problem 4 最大回文数问题</a>
+    </h4>
+    <!-- <h5> -->
+			<!-- <time>May  8, 2013</time> -  -->
+			<!-- <author>zuozuo</author> -->
+    <!-- </h5> -->
+  </header>
+	<section> <br /> <p>先来看题目：</p>
+<div class="highlight"><pre><code class="text">A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 * 99. Find the largest palindrome made from the product of two 3-digit numbers.
+
+回文数即是指从前向后读和从后向前读都是相同的数，已知：所有两个两位数的乘积所组成的集合中的最大回文数是： 9009 = 91 * 99；请找出所有两个三位数乘积所组成的集合中的最大回文数。 
+</code></pre></div>
+<p>拿到问题之后先用最直接的思路写出了一个程序：</p>
+<div class="highlight"><pre><code class="ruby">  <span class="k">def</span> <span class="nf">largest_palindrome_product</span>
+    <span class="o">[].</span><span class="n">tap</span> <span class="p">{</span><span class="o">|</span><span class="n">arr</span><span class="o">|</span> 
+      <span class="mi">100</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="mi">100</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">j</span><span class="o">|</span>
+          <span class="n">prod</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">j</span>
+          <span class="n">prod</span><span class="o">.</span><span class="n">to_s</span> <span class="o">==</span> <span class="n">prod</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">reverse!</span> <span class="ow">and</span> <span class="n">arr</span> <span class="o">&lt;&lt;</span> <span class="n">prod</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="p">}</span><span class="o">.</span><span class="n">max</span>
+  <span class="k">end</span>
+  <span class="nb">p</span> <span class="n">largest_palindrome_product</span>       <span class="c1">#output=&gt;:     906609</span>
+</code></pre></div>
+<p>上面的程序思路非常简单：就是从遍历所有两位数乘积然后将其中是回文数的放入数组<code>arr</code>中，然后取出回文数数组中的最大值 <code>arr.max</code>, 执行程序得出了正确答案：<code>906609</code></p>
+
+<p>但是稍微多想一下就会发现上面的程序的效率很低，两层循环，对 <strong>i</strong>（被乘数）和 <strong>j</strong>（乘数）都是从 <strong>999</strong> 遍历到 <strong>100</strong>，很显然这里面是有重复遍历的情况的：<strong>123 * 321</strong> 和 <strong>321 * 123</strong> 都会被遍历，但是我们由于他们相乘的结果是相同的，所以我们只需要遍历一边，所以优化的方法是在内层循环中，对 <strong>j</strong> 只遍历比当前 <strong>i</strong> 大的三位数。</p>
+
+<p>下面优化过的程序：</p>
+<div class="highlight"><pre><code class="ruby">  <span class="k">def</span> <span class="nf">largest_palindrome_product_optimized</span>
+    <span class="o">[].</span><span class="n">tap</span> <span class="p">{</span><span class="o">|</span><span class="n">arr</span><span class="o">|</span> 
+      <span class="mi">100</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">j</span><span class="o">|</span>
+          <span class="n">prod</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">j</span>
+          <span class="n">prod</span><span class="o">.</span><span class="n">to_s</span> <span class="o">==</span> <span class="n">prod</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">reverse!</span> <span class="ow">and</span> <span class="n">arr</span> <span class="o">&lt;&lt;</span> <span class="n">prod</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="p">}</span><span class="o">.</span><span class="n">max</span>
+  <span class="k">end</span>
+  <span class="nb">p</span> <span class="n">largest_palindrome_product_optimized</span>       <span class="c1">#output=&gt;:     906609</span>
+</code></pre></div>
+<p>但是上面的程序需要将所有的回文数放入数组中再取最大，这就增加了<br>
+空间复杂度：<code>O(arr.length) = O(1239)</code> 和 时间复杂度：遍历数组取最大元素<code>O(a.length) = O(1239)</code><br>
+那有没有更好的方法呢？<br>
+观察之后我们会发现我们的两层循环在遍历三位数乘积的时候同时也是对所有的回文数做了一边遍历，我们可以直接在第一次遍历的时候就取出最大元素：</p>
+<div class="highlight"><pre><code class="ruby">  <span class="k">def</span> <span class="nf">largest_palindrome_product_optimized1</span>
+    <span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="mi">100</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">j</span><span class="o">|</span>
+        <span class="n">prod</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">j</span>
+        <span class="n">prod</span><span class="o">.</span><span class="n">to_s</span> <span class="o">==</span> <span class="n">prod</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">reverse!</span> <span class="o">&amp;&amp;</span> <span class="n">prod</span> <span class="o">&gt;</span> <span class="n">max</span> <span class="ow">and</span> <span class="n">max</span> <span class="o">=</span> <span class="n">prod</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="n">max</span>
+  <span class="k">end</span>
+  <span class="nb">p</span> <span class="n">largest_palindrome_product_optimized1</span>
+</code></pre></div>
+<p>到此为止就得到了一个相对较优的算法，但是<a href="http://projecteuler.net/thread=4" target="_blank" >projecteuler</a>上面给出的代码里还有一个更优的方案</p>
+
+<p>首先因为：<code>999*999 = 998001</code> 并且<strong>100001</strong> 是一个回文数，这样就确定了我们所找的最大回文数一定是一个六位数。
+然后有就有下面的先来看一个数学推导： </p>
+<div class="highlight"><pre><code class="text">abccba  = a*100000 + b*10000 + c*1000 + c*100 + b*10 +a*1
+        = a*(100001) + b*(10010) + c*(1100)
+        = 11*(9091*a + 910*b + 100*c)
+</code></pre></div>
+<p>其中 <strong>abccba</strong> 代表一个六位的回文数，而 <strong>a, b, c</strong> 满足 <code>0 &lt;= a, b, c &lt;= 9</code>，这样根据上面的推导我们就能简单有效的的遍历六位数中的所有回文数，这个可以通过一个三层的循环分别从 <strong>0..9</strong> 遍历 <strong>a, b, c</strong> 来实现。  </p>
+
+<p>根据推导式我们还能得出更多的信息：由于 <strong>a, b, c</strong> 在六位回文数中的占位是从高到低的，所以我们遍历的时候选择最高位的 <strong>a</strong> 为最外层循环，最低位的 <strong>c</strong> 为最内层循环，这样我们遍历到的第一个“符合条件”的回文数就是最大的回文数，这样就减少了遍历次数，进一步提高了效率。  </p>
+
+<p>上面我们提到“符合条件”的回文数，那这个条件是指什么条件呢？ 我们的推导式只限制了遍历到的数字是回文数，但是不能保证这个数可以从两个三位数的乘积得到。</p>
+<div class="highlight"><pre><code class="text">abccba = 11*(9091*a + 910*b + 100*c)
+       = 11 * x * y
+       = (11*x) * y
+其中： 
+  99 &lt; 11*x, y &lt;= 999
+  9  &lt;     x   &lt;= 90
+  99 &lt;     y   &lt;= 999
+</code></pre></div>
+<p>我们只需要验证 <strong>abccba</strong> 能够拆分为两个三位数 <strong>(11*x)</strong> 和 <strong>y</strong> 的乘积就可以了，所以我们需要在 <strong>10..90</strong> 上面遍历 <strong>x</strong> 只要这时候 <strong>abccba</strong> 能够整除 <strong>11*x</strong> 并且所除的的结果 <strong>y</strong> 满足 <code>99 &lt; y &lt;= 999</code>, 那这个回文数就是符合条件的数了。</p>
+
+<p>下面是具体的实现代码：</p>
+<div class="highlight"><pre><code class="ruby">  <span class="k">def</span> <span class="nf">largest_palindrome_product_best</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="mi">999</span><span class="o">*</span><span class="mi">999</span>
+    <span class="mi">9</span><span class="o">.</span><span class="n">downto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">a</span><span class="o">|</span>
+      <span class="mi">9</span><span class="o">.</span><span class="n">downto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">b</span><span class="o">|</span>
+        <span class="mi">9</span><span class="o">.</span><span class="n">downto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+          <span class="n">num</span> <span class="o">=</span> <span class="mi">9091</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="mi">910</span><span class="o">*</span><span class="n">b</span> <span class="o">+</span> <span class="mi">100</span><span class="o">*</span><span class="n">c</span>
+          <span class="n">num</span> <span class="o">&gt;</span> <span class="n">top</span> <span class="ow">and</span> <span class="k">next</span>
+          <span class="mi">90</span><span class="o">.</span><span class="n">downto</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">divider</span><span class="o">|</span>
+            <span class="n">num</span><span class="o">%</span><span class="n">divider</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">num</span><span class="o">/</span><span class="n">divider</span> <span class="o">&lt;</span> <span class="mi">999</span> <span class="ow">and</span> <span class="k">return</span> <span class="n">num</span><span class="o">*</span><span class="mi">11</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="mi">100001</span>
+  <span class="k">end</span>
+  <span class="nb">p</span> <span class="n">largest_palindrome_product_best</span>        <span class="c1">#output=&gt;:     906609</span>
+</code></pre></div>
+<p>下面我们来做一个 <strong>benchmark</strong> 看一下上面几个算法的效率如何：</p>
+<div class="highlight"><pre><code class="ruby">  <span class="nb">require</span> <span class="s1">&#39;benchmark&#39;</span>
+  <span class="no">Benchmark</span><span class="o">.</span><span class="n">bmbm</span> <span class="k">do</span> <span class="o">|</span><span class="n">results</span><span class="o">|</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="s2">&quot;first&quot;</span><span class="p">)</span>      <span class="p">{</span> <span class="n">largest_palindrome_product</span> <span class="p">}</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="s2">&quot;optimized&quot;</span><span class="p">)</span>  <span class="p">{</span> <span class="n">largest_palindrome_product_optimized</span> <span class="p">}</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="s2">&quot;optimized1&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">largest_palindrome_product_optimized1</span> <span class="p">}</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>       <span class="p">{</span> <span class="n">largest_palindrome_product_best</span> <span class="p">}</span>
+  <span class="k">end</span>
+</code></pre></div>
+<p>运行结果：</p>
+<div class="highlight"><pre><code class="text">  Rehearsal ----------------------------------------------
+  first        0.430000   0.000000   0.430000 (0.424545)
+  optimized    0.200000   0.000000   0.200000 (0.209293)
+  optimized1   0.220000   0.000000   0.220000 (0.212343)
+  best         0.000000   0.000000   0.000000 (0.000646)
+  ------------------------------------- total: 0.850000sec
+
+                   user     system      total       real
+  first        0.430000   0.000000   0.430000 (0.427489)
+  optimized    0.210000   0.000000   0.210000 (0.211230)
+  optimized1   0.210000   0.000000   0.210000 (0.210999)
+  best         0.000000   0.000000   0.000000 (0.000624)
+</code></pre></div> </section>
+
+<!-- <div class="hero-unit"> -->
+<!--   <nav id="related"> -->
+<!--     <h3>Related Posts</h3> -->
+<!--     <ul class="posts"> -->
+<!--        -->
+<!--     </ul> -->
+<!--   </nav> -->
+<!-- </div> -->
+<!--  -->
+<!--   -->
+<!--         <div id="disqus_thread"></div> -->
+<!--         <script type="text/javascript"> -->
+<!--             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */ -->
+<!--             var disqus_shortname = 'gitwatcher'; // required: replace example with your forum shortname -->
+<!--             /*var disqus_developer = 1; // This turns developer mode on -->
+<!--                                       // Make sure you remove this before you push this -->
+<!--                                       // to your live site. -->
+<!--  -->
+<!--             /* * * DON'T EDIT BELOW THIS LINE * * */ -->
+<!--             (function() { -->
+<!--                 var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; -->
+<!--                 dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js'; -->
+<!--                 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); -->
+<!--             })(); -->
+<!--         </script> -->
+<!--         <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
+<!--         <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> -->
+<!--   -->
+<!--  -->
+<!-- <!--  -->
+<!--    -->
+<!--  -->
+</article>
+
+			</div>
+      <footer>
+  <div class="row">
+    <div class="span10">
+      <p class="Copyright">&copy; 2013 左左</p>
+    </div>
+    <!-- .span2 -->
+    <!-- %a.pull-right{:href => "http://flow.mixpanel.com/f/partner"} -->
+    <!-- %img{:alt => "Real Time Web Analytics", :src => "http://mixpanel.com/site_media/images/partner/badge_blue.png"} -->
+  </div>
+</footer>
+
+    </div> 
+  </div> 
+</body>
+</html>
+
