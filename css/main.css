@@ -12,40 +12,40 @@ body {
   background: -moz-linear-gradient(#999999, #666666) fixed;
   background: -o-linear-gradient(#999999, #666666) fixed;
   background: linear-gradient(#999999, #666666) fixed; 
-	background-color: hsl(214, 37%, 28%) !important;
+  background-color: hsl(214, 37%, 28%) !important;
   background-repeat: repeat-x;
 
 }
 
 .navbar-inner {
-	background: url('../images/nav-bg.png');
-	height: 15px;
-	background-repeat: repeat;
-	background-position: 0 0;
-	background-color: white;
-	margin-bottom: 1.625em;
-	padding-top: 1.625em;
-	padding-bottom: 1.625em;
+  background: url('../images/nav-bg.png');
+  height: 15px;
+  background-repeat: repeat;
+  background-position: 0 0;
+  background-color: white;
+  margin-bottom: 1.625em;
+  padding-top: 1.625em;
+  padding-bottom: 1.625em;
 }
 
 .navbar-inner a.brand {
-	padding: 0px;
+  padding: 0px;
 }
 
 .navbar-inner .container {
-	width: 675px !important;
+  width: 675px !important;
 }
 
 .navbar .nav > li > a {
-	padding: 10px 0px 10px 30px !important;
+  padding: 10px 0px 10px 30px !important;
 }
 
 #content {
-	margin: 50px 0px 20px 110px;
+  margin: 50px 0px 20px 110px;
 }
 
 #content .hero-unit {
-	background: white;
+  background: white;
 }
 
 .wrapper {
@@ -72,6 +72,7 @@ p {
 strong {
   color: #222222;
   font-weight: 700; }
+
 #content .hero-unit {
 
 }
@@ -97,11 +98,11 @@ header {
     line-height: 1.2;
     color: #006699;
     text-shadow: rgba(255, 255, 255, 0.9) 0 1px 0; 
-	}
-	header h4 a{
-		color: #d7e0d9;
-		text-decoration: none;
-	}
+  }
+  header h4 a{
+    color: #d7e0d9;
+    text-decoration: none;
+  }
   header.without-description h1 {
     margin: 10px 0; }
   header p {
@@ -139,7 +140,7 @@ section {
   padding: 15px 20px;
   font-size: 14px;
   border-top: 1px solid white;
-	background: white;
+  background: white;
   /* background: -webkit-gradient(linear, 50% 0%, 50% 700, color-stop(0%, #fafafa), color-stop(100%, #dedede)); */
   /* background: -webkit-linear-gradient(#fafafa, #dedede 700px); */
   /* background: -moz-linear-gradient(#fafafa, #dedede 700px); */
@@ -153,7 +154,7 @@ section {
   position: relative; }
 
 section h1{
-	font-size: 16px;
+  font-size: 16px;
 }
 
 h1, h2, h3, h4, h5, h6 {

@@ -230,9 +230,8 @@ body {
   background-color: #ffffff;
 }
 
-section a {
-  color: #0088cc;
-	font-weight: bold;
+#content a {
+  /* color: #0088cc; */
   text-decoration: none;
 }
 
