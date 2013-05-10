@@ -5,14 +5,14 @@ comments: true
 <article>
   <header>
     <h4>
-      <a href="{{ page.url }}" rel="bookmark" title="Permanent link to ">{{ page.title }}</a>
+			{{ page.title }}
+      <!-- <a href="{{ page.url }}" rel="bookmark" title="Permanent link to ">{{ page.title }}</a> -->
     </h4>
-    <!-- <h5> -->
-			<!-- <time>{{ page.date | date: '%B' }} {{ page.date | date: '%e' }}, {{ page.date | date: '%Y' }}</time> -  -->
+		<!-- <time>{{ page.date | date: '%B' }} {{ page.date | date: '%e' }}, {{ page.date | date: '%Y' }}</time> -->
 			<!-- <author>{{ site.author }}</author> -->
-    <!-- </h5> -->
   </header>
-	<section> <br /> {{ content }} </section>
+	<section> {{ content }} 
+	</section>
 
 <!-- <div class="hero-unit"> -->
 <!--   <nav id="related"> -->

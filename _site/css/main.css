@@ -3,7 +3,6 @@
 body {
   padding: 50px 0;
   margin: 0;
-  font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   color: #555555;
   font-weight: 300; 
   background: #999999;
@@ -44,6 +43,12 @@ body {
   margin: 50px 0px 20px 110px;
 }
 
+#content a {
+  /* color: #0088cc; */
+  text-decoration: none;
+}
+
+
 #content .hero-unit {
   background: white;
 }
@@ -82,23 +87,18 @@ header {
   -ms-border-radius: 8px 8px 0 0;
   -o-border-radius: 8px 8px 0 0;
   border-radius: 8px 8px 0 0;
-  background: #336666;
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ddfbfc), color-stop(100%, #c6eafa));
-  background: -webkit-linear-gradient(#336666, #669999);
-  background: -moz-linear-gradient(#336666, #669999);
-  background: -o-linear-gradient(#336666, #669999);
-  background: linear-gradient(#336666, #669999);
+	background: white;
+	text-align: center;
+  /* background: #336666; */
+  /* background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ddfbfc), color-stop(100%, #c6eafa)); */
+  /* background: -webkit-linear-gradient(#336666, #669999); */
+  /* background: -moz-linear-gradient(#336666, #669999); */
+  /* background: -o-linear-gradient(#336666, #669999); */
+  /* background: linear-gradient(#336666, #669999); */
   position: relative;
-  padding: 15px 20px;
-  border-bottom: 1px solid #b2d2e1; }
-  header h1 {
-    margin: 0;
-    padding: 0;
-    font-size: 18px;
-    line-height: 1.2;
-    color: #006699;
-    text-shadow: rgba(255, 255, 255, 0.9) 0 1px 0; 
-  }
+  /* border-bottom: 1px solid #b2d2e1; */
+  padding: 40px 0px 10px 0px;
+}
   header h4 a{
     color: #d7e0d9;
     text-decoration: none;
@@ -137,7 +137,8 @@ header {
         -webkit-font-smoothing: antialiased; }
 
 section {
-  padding: 15px 20px;
+  /* padding: 15px 20px; */
+	padding-bottom: 100px;
   font-size: 14px;
   border-top: 1px solid white;
   background: white;
@@ -155,6 +156,9 @@ section {
 
 section h1{
   font-size: 16px;
+}
+section p {
+	margin: 10px 10px 10px 10px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -204,7 +208,7 @@ pre {
   padding: 20px;
   background: #3a3c42 !important;
   color: #f8f8f2 !important;
-  margin: 0 -20px 20px; }
+  margin: 10px 0px 10px 0px !important; }
   pre code {
     color: #f8f8f2;
     padding-left: 0;
