@@ -18,7 +18,7 @@ body {
 }
 
 .navbar-inner {
-  background: url('../images/nav-bg.png');
+  /* background: url('../images/nav-bg.png'); */
   height: 15px;
   background-repeat: repeat;
   background-position: 0 0;
@@ -33,11 +33,11 @@ body {
 }
 
 .navbar-inner .container {
-  width: 675px !important;
+  width: 700px;
 }
 
-.navbar .nav > li > a {
-  padding: 10px 0px 10px 30px !important;
+.navbar a {
+	color: red;
 }
 
 #content {
