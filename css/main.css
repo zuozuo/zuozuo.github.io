@@ -44,6 +44,12 @@ body {
   margin: 50px 0px 20px 110px;
 }
 
+#content a {
+  /* color: #0088cc; */
+  text-decoration: none;
+}
+
+
 #content .hero-unit {
   background: white;
 }

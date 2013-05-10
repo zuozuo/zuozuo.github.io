@@ -230,11 +230,6 @@ body {
   background-color: #ffffff;
 }
 
-#content a {
-  color: #0088cc;
-  text-decoration: none;
-}
-
 a:hover,
 a:focus {
   color: #005580;
