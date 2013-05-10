@@ -4,7 +4,7 @@
  <title>GitWatcher Blog</title>
  <link href="http://gitwatcher.com/blog/feed/atom.xml" rel="self"/>
  <link href="http://gitwatcher.com/blog/feed"/>
- <updated>2013-05-10T14:56:43-07:00</updated>
+ <updated>2013-05-10T14:58:14-07:00</updated>
  <id>http://gitwatcher.com/blog/feed</id>
  <author>
    <name>Luca G. Soave</name>
@@ -72,22 +72,22 @@
 
 &lt;p&gt;首先因为：&lt;code&gt;999*999 = 998001&lt;/code&gt; 并且&lt;strong&gt;100001&lt;/strong&gt; 是一个回文数，这样就确定了我们所找的最大回文数一定是一个六位数。
 然后有就有下面的先来看一个数学推导： &lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;abccba  = a*100000 + b*10000 + c*1000 + c*100 + b*10 +a*1
-        = a*(100001) + b*(10010) + c*(1100)
-        = 11*(9091*a + 910*b + 100*c)
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;  abccba  = a*100000 + b*10000 + c*1000 + c*100 + b*10 +a*1
+          = a*(100001) + b*(10010) + c*(1100)
+          = 11*(9091*a + 910*b + 100*c)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;其中 &lt;strong&gt;abccba&lt;/strong&gt; 代表一个六位的回文数，而 &lt;strong&gt;a, b, c&lt;/strong&gt; 满足 &lt;code&gt;0 &amp;lt;= a, b, c &amp;lt;= 9&lt;/code&gt;，这样根据上面的推导我们就能简单有效的的遍历六位数中的所有回文数，这个可以通过一个三层的循环分别从 &lt;strong&gt;0..9&lt;/strong&gt; 遍历 &lt;strong&gt;a, b, c&lt;/strong&gt; 来实现。  &lt;/p&gt;
 
 &lt;p&gt;根据推导式我们还能得出更多的信息：由于 &lt;strong&gt;a, b, c&lt;/strong&gt; 在六位回文数中的占位是从高到低的，所以我们遍历的时候选择最高位的 &lt;strong&gt;a&lt;/strong&gt; 为最外层循环，最低位的 &lt;strong&gt;c&lt;/strong&gt; 为最内层循环，这样我们遍历到的第一个“符合条件”的回文数就是最大的回文数，这样就减少了遍历次数，进一步提高了效率。  &lt;/p&gt;
 
 &lt;p&gt;上面我们提到“符合条件”的回文数，那这个条件是指什么条件呢？ 我们的推导式只限制了遍历到的数字是回文数，但是不能保证这个数可以从两个三位数的乘积得到。&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;abccba = 11*(9091*a + 910*b + 100*c)
-       = 11 * x * y
-       = (11*x) * y
-其中： 
-  99 &amp;lt; 11*x, y &amp;lt;= 999
-  9  &amp;lt;     x   &amp;lt;= 90
-  99 &amp;lt;     y   &amp;lt;= 999
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;  abccba = 11*(9091*a + 910*b + 100*c)
+         = 11 * x * y
+         = (11*x) * y
+  其中： 
+    99 &amp;lt; 11*x, y &amp;lt;= 999
+    9  &amp;lt;     x   &amp;lt;= 90
+    99 &amp;lt;     y   &amp;lt;= 999
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;我们只需要验证 &lt;strong&gt;abccba&lt;/strong&gt; 能够拆分为两个三位数 &lt;strong&gt;(11*x)&lt;/strong&gt; 和 &lt;strong&gt;y&lt;/strong&gt; 的乘积就可以了，所以我们需要在 &lt;strong&gt;10..90&lt;/strong&gt; 上面遍历 &lt;strong&gt;x&lt;/strong&gt; 只要这时候 &lt;strong&gt;abccba&lt;/strong&gt; 能够整除 &lt;strong&gt;11*x&lt;/strong&gt; 并且所除的的结果 &lt;strong&gt;y&lt;/strong&gt; 满足 &lt;code&gt;99 &amp;lt; y &amp;lt;= 999&lt;/code&gt;, 那这个回文数就是符合条件的数了。&lt;/p&gt;
 
@@ -119,18 +119,18 @@
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;运行结果：&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt; Rehearsal ----------------------------------------------
- first        0.430000   0.000000   0.430000 (0.424545)
- optimized    0.200000   0.000000   0.200000 (0.209293)
- optimized1   0.220000   0.000000   0.220000 (0.212343)
- best         0.000000   0.000000   0.000000 (0.000646)
- ------------------------------------- total: 0.850000sec
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;   Rehearsal ----------------------------------------------
+   first        0.430000   0.000000   0.430000 (0.424545)
+   optimized    0.200000   0.000000   0.200000 (0.209293)
+   optimized1   0.220000   0.000000   0.220000 (0.212343)
+   best         0.000000   0.000000   0.000000 (0.000646)
+   ------------------------------------- total: 0.850000sec
 
-                  user     system      total       real
- first        0.430000   0.000000   0.430000 (0.427489)
- optimized    0.210000   0.000000   0.210000 (0.211230)
- optimized1   0.210000   0.000000   0.210000 (0.210999)
- best         0.000000   0.000000   0.000000 (0.000624)
+                    user     system      total       real
+   first        0.430000   0.000000   0.430000 (0.427489)
+   optimized    0.210000   0.000000   0.210000 (0.211230)
+   optimized1   0.210000   0.000000   0.210000 (0.210999)
+   best         0.000000   0.000000   0.000000 (0.000624)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;从上面&lt;code&gt;benchmark&lt;/code&gt;的结果可以看出最优算法的性能要远远优于前面几个算法。&lt;/p&gt;
 </content>

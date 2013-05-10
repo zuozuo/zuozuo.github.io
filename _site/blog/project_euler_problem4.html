@@ -112,22 +112,22 @@
 
 <p>首先因为：<code>999*999 = 998001</code> 并且<strong>100001</strong> 是一个回文数，这样就确定了我们所找的最大回文数一定是一个六位数。
 然后有就有下面的先来看一个数学推导： </p>
-<div class="highlight"><pre><code class="text">abccba  = a*100000 + b*10000 + c*1000 + c*100 + b*10 +a*1
-        = a*(100001) + b*(10010) + c*(1100)
-        = 11*(9091*a + 910*b + 100*c)
+<div class="highlight"><pre><code class="text">  abccba  = a*100000 + b*10000 + c*1000 + c*100 + b*10 +a*1
+          = a*(100001) + b*(10010) + c*(1100)
+          = 11*(9091*a + 910*b + 100*c)
 </code></pre></div>
 <p>其中 <strong>abccba</strong> 代表一个六位的回文数，而 <strong>a, b, c</strong> 满足 <code>0 &lt;= a, b, c &lt;= 9</code>，这样根据上面的推导我们就能简单有效的的遍历六位数中的所有回文数，这个可以通过一个三层的循环分别从 <strong>0..9</strong> 遍历 <strong>a, b, c</strong> 来实现。  </p>
 
 <p>根据推导式我们还能得出更多的信息：由于 <strong>a, b, c</strong> 在六位回文数中的占位是从高到低的，所以我们遍历的时候选择最高位的 <strong>a</strong> 为最外层循环，最低位的 <strong>c</strong> 为最内层循环，这样我们遍历到的第一个“符合条件”的回文数就是最大的回文数，这样就减少了遍历次数，进一步提高了效率。  </p>
 
 <p>上面我们提到“符合条件”的回文数，那这个条件是指什么条件呢？ 我们的推导式只限制了遍历到的数字是回文数，但是不能保证这个数可以从两个三位数的乘积得到。</p>
-<div class="highlight"><pre><code class="text">abccba = 11*(9091*a + 910*b + 100*c)
-       = 11 * x * y
-       = (11*x) * y
-其中： 
-  99 &lt; 11*x, y &lt;= 999
-  9  &lt;     x   &lt;= 90
-  99 &lt;     y   &lt;= 999
+<div class="highlight"><pre><code class="text">  abccba = 11*(9091*a + 910*b + 100*c)
+         = 11 * x * y
+         = (11*x) * y
+  其中： 
+    99 &lt; 11*x, y &lt;= 999
+    9  &lt;     x   &lt;= 90
+    99 &lt;     y   &lt;= 999
 </code></pre></div>
 <p>我们只需要验证 <strong>abccba</strong> 能够拆分为两个三位数 <strong>(11*x)</strong> 和 <strong>y</strong> 的乘积就可以了，所以我们需要在 <strong>10..90</strong> 上面遍历 <strong>x</strong> 只要这时候 <strong>abccba</strong> 能够整除 <strong>11*x</strong> 并且所除的的结果 <strong>y</strong> 满足 <code>99 &lt; y &lt;= 999</code>, 那这个回文数就是符合条件的数了。</p>
 
@@ -159,18 +159,18 @@
   <span class="k">end</span>
 </code></pre></div>
 <p>运行结果：</p>
-<div class="highlight"><pre><code class="text"> Rehearsal ----------------------------------------------
- first        0.430000   0.000000   0.430000 (0.424545)
- optimized    0.200000   0.000000   0.200000 (0.209293)
- optimized1   0.220000   0.000000   0.220000 (0.212343)
- best         0.000000   0.000000   0.000000 (0.000646)
- ------------------------------------- total: 0.850000sec
+<div class="highlight"><pre><code class="text">   Rehearsal ----------------------------------------------
+   first        0.430000   0.000000   0.430000 (0.424545)
+   optimized    0.200000   0.000000   0.200000 (0.209293)
+   optimized1   0.220000   0.000000   0.220000 (0.212343)
+   best         0.000000   0.000000   0.000000 (0.000646)
+   ------------------------------------- total: 0.850000sec
 
-                  user     system      total       real
- first        0.430000   0.000000   0.430000 (0.427489)
- optimized    0.210000   0.000000   0.210000 (0.211230)
- optimized1   0.210000   0.000000   0.210000 (0.210999)
- best         0.000000   0.000000   0.000000 (0.000624)
+                    user     system      total       real
+   first        0.430000   0.000000   0.430000 (0.427489)
+   optimized    0.210000   0.000000   0.210000 (0.211230)
+   optimized1   0.210000   0.000000   0.210000 (0.210999)
+   best         0.000000   0.000000   0.000000 (0.000624)
 </code></pre></div>
 <p>从上面<code>benchmark</code>的结果可以看出最优算法的性能要远远优于前面几个算法。</p>
  
