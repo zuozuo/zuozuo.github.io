@@ -197,17 +197,23 @@ blockquote {
   color: #222222; }
 blockquote p {
 	font-size: 12px ;
-	
+	line-height: 1.5;
 }
 
 img {
   max-width: 100%; }
 
+strong {
+	font-style: oblique;
+}
 code {
 	margin: 0px 3px 0px 3px;
   font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
   font-size: 12px;
-	color: #08a0d2;
+	font-style: oblique;
+	font-weight: bold;
+	color: black;
+	/* color: #08a0d2; */
   overflow-x: auto;
   padding: 2px 3px ;
   -webkit-border-radius: 3px;
@@ -221,13 +227,16 @@ pre {
   overflow-x: auto;
   padding: 20px;
   /* background: #3a3c42 !important; */
-  background: #444444;
-	/* background: #cccccc; */
-	
+  /* background: #555555; */
+	background: rgba(0, 0, 0, 0.06);
+	border: 0px;
   color: #f8f8f2;
   margin: 15px 0px 15px 0px; }
   pre code {
-    color: #f8f8f2;
+    /* color: #f8f8f2; */
+		color: black;
+		font-weight: normal;
+		font-style: normal;
     padding-left: 0;
     padding-right: 0; }
 
