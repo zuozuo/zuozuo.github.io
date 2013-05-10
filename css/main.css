@@ -5,12 +5,13 @@ body {
   margin: 0;
   color: #555555;
   font-weight: 300; 
-  background: #999999;
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #666666)) fixed;
-  background: -webkit-linear-gradient(#999999, #666666) fixed;
-  background: -moz-linear-gradient(#999999, #666666) fixed;
-  background: -o-linear-gradient(#999999, #666666) fixed;
-  background: linear-gradient(#999999, #666666) fixed; 
+  background: #d8d8d8;
+	/* 999999-666666 */
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d8d8d8), color-stop(100%, #a0a0a0)) fixed;
+  background: -webkit-linear-gradient(#d8d8d8, #a0a0a0) fixed;
+  background: -moz-linear-gradient(#d8d8d8, #a0a0a0) fixed;
+  background: -o-linear-gradient(#d8d8d8, #a0a0a0) fixed;
+  background: linear-gradient(#d8d8d8, #a0a0a0) fixed; 
   background-color: hsl(214, 37%, 28%) !important;
   background-repeat: repeat-x;
 
@@ -28,7 +29,7 @@ body {
 }
 
 .navbar-inner a.brand {
-  padding: 0px;
+	text-decoration: none;
 }
 
 .navbar-inner .container {
@@ -139,7 +140,8 @@ header {
 section {
   /* padding: 15px 20px; */
 	padding-bottom: 100px;
-  font-size: 14px;
+  font-size: 12px;
+	line-height: 2.0;
   border-top: 1px solid white;
   background: white;
   /* background: -webkit-gradient(linear, 50% 0%, 50% 700, color-stop(0%, #fafafa), color-stop(100%, #dedede)); */
@@ -158,7 +160,7 @@ section h1{
   font-size: 16px;
 }
 section p {
-	margin: 10px 10px 10px 10px;
+	margin: 10px 15px 15px 10px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -194,7 +196,8 @@ img {
   max-width: 100%; }
 
 code {
-  font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal !important;
+	margin: 0px 3px 0px 3px;
+  font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
   color: #333333;
   font-size: 12px;
   overflow-x: auto;
@@ -202,13 +205,15 @@ code {
   padding-right: 3px; }
 
 pre {
-  font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal !important;
+  font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
   font-size: 12px;
   overflow-x: auto;
   padding: 20px;
-  background: #3a3c42 !important;
+  /* background: #3a3c42 !important; */
+  background: #444444 !important;
+	
   color: #f8f8f2 !important;
-  margin: 10px 0px 10px 0px !important; }
+  margin: 15px 0px 15px 0px !important; }
   pre code {
     color: #f8f8f2;
     padding-left: 0;

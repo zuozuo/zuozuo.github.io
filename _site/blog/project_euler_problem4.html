@@ -92,10 +92,7 @@
   <span class="k">end</span>
   <span class="nb">p</span> <span class="n">largest_palindrome_product_optimized</span>       <span class="c1">#output=&gt;:     906609</span>
 </code></pre></div>
-<p>但是上面的程序需要将所有的回文数放入数组中再取最大，这就增加了<br>
-空间复杂度：<code>O(arr.length) = O(1239)</code> 和 时间复杂度：遍历数组取最大元素<code>O(a.length) = O(1239)</code><br>
-那有没有更好的方法呢？<br>
-观察之后我们会发现我们的两层循环在遍历三位数乘积的时候同时也是对所有的回文数做了一边遍历，我们可以直接在第一次遍历的时候就取出最大元素：</p>
+<p>但是上面的程序需要将所有的回文数放入数组中再取最大，这就增加了空间复杂度：<code>O(arr.length) = O(1239)</code> 和 时间复杂度：遍历数组取最大元素  <code>O(a.length) = O(1239)</code>  那有没有更好的方法呢？ 观察之后我们会发现我们的两层循环在遍历三位数乘积的时候同时也是对所有的回文数做了一边遍历，我们可以直接在第一次遍历的时候就取出最大元素：</p>
 <div class="highlight"><pre><code class="ruby">  <span class="k">def</span> <span class="nf">largest_palindrome_product_optimized1</span>
     <span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="mi">100</span><span class="o">.</span><span class="n">upto</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>

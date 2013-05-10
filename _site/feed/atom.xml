@@ -4,7 +4,7 @@
  <title>GitWatcher Blog</title>
  <link href="http://gitwatcher.com/blog/feed/atom.xml" rel="self"/>
  <link href="http://gitwatcher.com/blog/feed"/>
- <updated>2013-05-10T01:58:45-07:00</updated>
+ <updated>2013-05-10T02:41:05-07:00</updated>
  <id>http://gitwatcher.com/blog/feed</id>
  <author>
    <name>Luca G. Soave</name>
@@ -52,10 +52,7 @@
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
   &lt;span class=&quot;nb&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;largest_palindrome_product_optimized&lt;/span&gt;       &lt;span class=&quot;c1&quot;&gt;#output=&amp;gt;:     906609&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;但是上面的程序需要将所有的回文数放入数组中再取最大，这就增加了&lt;br&gt;
-空间复杂度：&lt;code&gt;O(arr.length) = O(1239)&lt;/code&gt; 和 时间复杂度：遍历数组取最大元素&lt;code&gt;O(a.length) = O(1239)&lt;/code&gt;&lt;br&gt;
-那有没有更好的方法呢？&lt;br&gt;
-观察之后我们会发现我们的两层循环在遍历三位数乘积的时候同时也是对所有的回文数做了一边遍历，我们可以直接在第一次遍历的时候就取出最大元素：&lt;/p&gt;
+&lt;p&gt;但是上面的程序需要将所有的回文数放入数组中再取最大，这就增加了空间复杂度：&lt;code&gt;O(arr.length) = O(1239)&lt;/code&gt; 和 时间复杂度：遍历数组取最大元素  &lt;code&gt;O(a.length) = O(1239)&lt;/code&gt;  那有没有更好的方法呢？ 观察之后我们会发现我们的两层循环在遍历三位数乘积的时候同时也是对所有的回文数做了一边遍历，我们可以直接在第一次遍历的时候就取出最大元素：&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;largest_palindrome_product_optimized1&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;max&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
     &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;upto&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;999&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
