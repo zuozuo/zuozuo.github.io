@@ -58,10 +58,13 @@
 			<!-- <author>zuozuo</author> -->
   </header>
 	<section> <p>先来看题目：</p>
-<div class="highlight"><pre><code class="text">A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 * 99. Find the largest palindrome made from the product of two 3-digit numbers.
 
-回文数即是指从前向后读和从后向前读都是相同的数，已知：所有两个两位数的乘积所组成的集合中的最大回文数是： 9009 = 91 * 99；请找出所有两个三位数乘积所组成的集合中的最大回文数。 
-</code></pre></div>
+<blockquote>
+<p>A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 * 99. Find the largest palindrome made from the product of two 3-digit numbers.</p>
+
+<p>回文数即是指从前向后读和从后向前读都是相同的数，已知：所有两个两位数的乘积所组成的集合中的最大回文数是： 9009 = 91 * 99；请找出所有两个三位数乘积所组成的集合中的最大回文数。 </p>
+</blockquote>
+
 <p>拿到问题之后先用最直接的思路写出了一个程序：</p>
 <div class="highlight"><pre><code class="ruby">  <span class="k">def</span> <span class="nf">largest_palindrome_product</span>
     <span class="o">[].</span><span class="n">tap</span> <span class="p">{</span><span class="o">|</span><span class="n">arr</span><span class="o">|</span> 
@@ -105,7 +108,7 @@
   <span class="k">end</span>
   <span class="nb">p</span> <span class="n">largest_palindrome_product_optimized1</span>
 </code></pre></div>
-<p>到此为止就得到了一个相对较优的算法，但是<a href="http://projecteuler.net/thread=4" target="_blank" >projecteuler</a>上面给出的代码里还有一个更优的方案</p>
+<p>到此为止就得到了一个相对较优的算法，但是<a href="http://projecteuler.net/thread=4" target="_blank" >projecteuler.net</a>上面给出的代码里还有一个更优的方案</p>
 
 <p>首先因为：<code>999*999 = 998001</code> 并且<strong>100001</strong> 是一个回文数，这样就确定了我们所找的最大回文数一定是一个六位数。
 然后有就有下面的先来看一个数学推导： </p>
@@ -156,19 +159,21 @@
   <span class="k">end</span>
 </code></pre></div>
 <p>运行结果：</p>
-<div class="highlight"><pre><code class="text">  Rehearsal ----------------------------------------------
-  first        0.430000   0.000000   0.430000 (0.424545)
-  optimized    0.200000   0.000000   0.200000 (0.209293)
-  optimized1   0.220000   0.000000   0.220000 (0.212343)
-  best         0.000000   0.000000   0.000000 (0.000646)
-  ------------------------------------- total: 0.850000sec
+<div class="highlight"><pre><code class="text"> Rehearsal ----------------------------------------------
+ first        0.430000   0.000000   0.430000 (0.424545)
+ optimized    0.200000   0.000000   0.200000 (0.209293)
+ optimized1   0.220000   0.000000   0.220000 (0.212343)
+ best         0.000000   0.000000   0.000000 (0.000646)
+ ------------------------------------- total: 0.850000sec
 
-                   user     system      total       real
-  first        0.430000   0.000000   0.430000 (0.427489)
-  optimized    0.210000   0.000000   0.210000 (0.211230)
-  optimized1   0.210000   0.000000   0.210000 (0.210999)
-  best         0.000000   0.000000   0.000000 (0.000624)
-</code></pre></div> 
+                  user     system      total       real
+ first        0.430000   0.000000   0.430000 (0.427489)
+ optimized    0.210000   0.000000   0.210000 (0.211230)
+ optimized1   0.210000   0.000000   0.210000 (0.210999)
+ best         0.000000   0.000000   0.000000 (0.000624)
+</code></pre></div>
+<p>从上面<code>benchmark</code>的结果可以看出最优算法的性能要远远优于前面几个算法。</p>
+ 
 	</section>
 
 <!-- <div class="hero-unit"> -->

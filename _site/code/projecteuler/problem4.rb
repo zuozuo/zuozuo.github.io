@@ -1,40 +1,6 @@
 #!/usr/bin/env ruby
 # encoding=utf-8
-# problem 3
-require 'pry'
-
-def is_prime?(num)
-  tmp = num/2
-  while tmp > 1 do
-    num%tmp == 0 and return false
-    tmp -= 1
-  end
-  true
-end
-
-# def largest_prime_factor(num)
-#   tmp = num/2
-#   while tmp > 0 do
-#     num%tmp == 0 && is_prime?(tmp) and return tmp
-#     tmp -= 1
-#   end
-# end
-
-large = 600851475143
-
-def largest_prime_factor(num)
-  tmp = Math.sqrt(num).to_i
-  while tmp > 0 do
-    if num%tmp == 0 && is_prime?(tmp) 
-      return tmp
-    end
-    tmp -= 1
-  end
-	end
-# p largest_prime_factor(600851475143)
-# p is_prime?(large/6857)
-
-# problem 4
+# problem 4 on http://www/projecteuler.net
 
 def largest_palindrome_product
   [].tap {|arr| 

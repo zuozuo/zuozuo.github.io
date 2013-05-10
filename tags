@@ -4,3 +4,8 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
+largest_palindrome_product	code/projecteuler/problem4.rb	/^def largest_palindrome_product$/;"	f
+largest_palindrome_product_best	code/projecteuler/problem4.rb	/^def largest_palindrome_product_best$/;"	f
+largest_palindrome_product_optimized	code/projecteuler/problem4.rb	/^def largest_palindrome_product_optimized$/;"	f
+largest_palindrome_product_optimized1	code/projecteuler/problem4.rb	/^def largest_palindrome_product_optimized1$/;"	f
+largest_palindrome_product_optimized2	code/projecteuler/problem4.rb	/^def largest_palindrome_product_optimized2$/;"	f

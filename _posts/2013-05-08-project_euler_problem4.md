@@ -5,9 +5,9 @@ title: Project Euler Problem 4 最大回文数问题
 
 先来看题目：
 
-    A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 * 99. Find the largest palindrome made from the product of two 3-digit numbers.
+>A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 * 99. Find the largest palindrome made from the product of two 3-digit numbers.
 
-    回文数即是指从前向后读和从后向前读都是相同的数，已知：所有两个两位数的乘积所组成的集合中的最大回文数是： 9009 = 91 * 99；请找出所有两个三位数乘积所组成的集合中的最大回文数。 
+>回文数即是指从前向后读和从后向前读都是相同的数，已知：所有两个两位数的乘积所组成的集合中的最大回文数是： 9009 = 91 * 99；请找出所有两个三位数乘积所组成的集合中的最大回文数。 
 
 
 拿到问题之后先用最直接的思路写出了一个程序：
@@ -62,7 +62,7 @@ title: Project Euler Problem 4 最大回文数问题
   p largest_palindrome_product_optimized1
 ```
 
-到此为止就得到了一个相对较优的算法，但是<a href="http://projecteuler.net/thread=4" target="_blank" >projecteuler</a>上面给出的代码里还有一个更优的方案
+到此为止就得到了一个相对较优的算法，但是<a href="http://projecteuler.net/thread=4" target="_blank" >projecteuler.net</a>上面给出的代码里还有一个更优的方案
 
 首先因为：` 999*999 = 998001 ` 并且**100001** 是一个回文数，这样就确定了我们所找的最大回文数一定是一个六位数。
 然后有就有下面的先来看一个数学推导： 
@@ -124,19 +124,20 @@ title: Project Euler Problem 4 最大回文数问题
 
 运行结果：
 
-      Rehearsal ----------------------------------------------
-      first        0.430000   0.000000   0.430000 (0.424545)
-      optimized    0.200000   0.000000   0.200000 (0.209293)
-      optimized1   0.220000   0.000000   0.220000 (0.212343)
-      best         0.000000   0.000000   0.000000 (0.000646)
-      ------------------------------------- total: 0.850000sec
+     Rehearsal ----------------------------------------------
+     first        0.430000   0.000000   0.430000 (0.424545)
+     optimized    0.200000   0.000000   0.200000 (0.209293)
+     optimized1   0.220000   0.000000   0.220000 (0.212343)
+     best         0.000000   0.000000   0.000000 (0.000646)
+     ------------------------------------- total: 0.850000sec
 
-                       user     system      total       real
-      first        0.430000   0.000000   0.430000 (0.427489)
-      optimized    0.210000   0.000000   0.210000 (0.211230)
-      optimized1   0.210000   0.000000   0.210000 (0.210999)
-      best         0.000000   0.000000   0.000000 (0.000624)
+                      user     system      total       real
+     first        0.430000   0.000000   0.430000 (0.427489)
+     optimized    0.210000   0.000000   0.210000 (0.211230)
+     optimized1   0.210000   0.000000   0.210000 (0.210999)
+     best         0.000000   0.000000   0.000000 (0.000624)
 
+从上面`benchmark`的结果可以看出最优算法的性能要远远优于前面几个算法。
 
 
 
