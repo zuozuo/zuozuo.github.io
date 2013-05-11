@@ -5,24 +5,26 @@ body {
   margin: 0;
   color: #555555;
   font-weight: 300; 
-  background: #d8d8d8;
+  background: url('../images/body-bg.png');
+  background-repeat: repeat;
+  /* background: #d8d8d8; */
 	/* 999999-666666 */
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d8d8d8), color-stop(100%, #a0a0a0)) fixed;
-  background: -webkit-linear-gradient(#d8d8d8, #a0a0a0) fixed;
-  background: -moz-linear-gradient(#d8d8d8, #a0a0a0) fixed;
-  background: -o-linear-gradient(#d8d8d8, #a0a0a0) fixed;
-  background: linear-gradient(#d8d8d8, #a0a0a0) fixed; 
-  background-color: hsl(214, 37%, 28%) !important;
-  background-repeat: repeat-x;
+  /* background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d8d8d8), color-stop(100%, #a0a0a0)) fixed; */
+  /* background: -webkit-linear-gradient(#d8d8d8, #a0a0a0) fixed; */
+  /* background: -moz-linear-gradient(#d8d8d8, #a0a0a0) fixed; */
+  /* background: -o-linear-gradient(#d8d8d8, #a0a0a0) fixed; */
+  /* background: linear-gradient(#d8d8d8, #a0a0a0) fixed;  */
+  /* background-color: hsl(214, 37%, 28%) !important; */
+  /* background-repeat: repeat-x; */
 
 }
 
 .navbar-inner {
-  /* background: url('../images/nav-bg.png'); */
+  background: url('../images/bg.jpg');
   height: 15px;
   background-repeat: repeat;
   background-position: 0 0;
-  background-color: white;
+  /* background-color: white; */
   margin-bottom: 1.625em;
   padding-top: 1.625em;
   padding-bottom: 1.625em;
