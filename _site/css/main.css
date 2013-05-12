@@ -5,8 +5,10 @@ body {
   margin: 0;
   color: #555555;
   font-weight: 300; 
-  background: url('../images/body-bg.png');
+  background: url('../images/bg-blue.jpg');
+  /* background: url('../images/body-bg.png'); */
   background-repeat: repeat;
+	/* background-color: rgb(223, 223, 223); */
   /* background: #d8d8d8; */
 	/* 999999-666666 */
   /* background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #d8d8d8), color-stop(100%, #a0a0a0)) fixed; */
@@ -20,7 +22,9 @@ body {
 }
 
 .navbar-inner {
-  background: url('../images/bg.jpg');
+  /* background: #333333; */
+  background: url('../images/nav-bg.png');
+	background-color: white;
   height: 15px;
   background-repeat: repeat;
   background-position: 0 0;
@@ -208,6 +212,7 @@ img {
 strong {
 	font-style: oblique;
 }
+
 code {
 	margin: 0px 3px 0px 3px;
   font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
