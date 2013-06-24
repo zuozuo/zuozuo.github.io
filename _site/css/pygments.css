@@ -3,7 +3,7 @@
 .err { border: 1px solid #FF0000 } /* Error */
 .k { color: #7f0755; font-weight: bold } /* Keyword */
 .o { color: #333333 } /* Operator */
-/* .n { color: #298543 } */
+.n { color: #333333; font-weight: bold }
 .cm { color: #86888c; font-style: italic } /* Comment.Multiline */
 .cp { color: #BC7A00 } /* Comment.Preproc */
 .c1 { color: #86888c; font-style: italic } /* Comment.Single */

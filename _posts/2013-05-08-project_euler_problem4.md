@@ -1,6 +1,6 @@
 ---
 layout: post 
-title: Project Euler Problem 4 最大回文数问题
+title: Project Euler Problem 4 最大回文数问题 
 --- 
 
 先来看题目：
