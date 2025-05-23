@@ -15,8 +15,8 @@ keywords: ["时序差分算法", "Sarsa算法", "Q-learning算法", "参数衰�
 
 本文将深入分析**Sarsa算法**和**Q-learning算法**在悬崖漫步环境中的表现，并重点探讨**参数衰减机制**对算法收敛性和稳定性的重要影响。
 
-![时序差分算法对比](/assets/images/temporal_difference_comparison.png)
-*时序差分算法学习过程对比：在线策略 vs 离线策略*
+![悬崖漫步环境示意图](/assets/images/cliff_walking_diagram.png)
+*悬崖漫步环境：智能体需要从起点到达终点，同时避免掉入悬崖*
 
 ## 时序差分算法基础
 
