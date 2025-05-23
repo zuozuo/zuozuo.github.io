@@ -306,6 +306,37 @@
                     4. <b>实战启示</b>：若需快速得到「可用」策略，可选原始算法；若更看重后期性能与部署稳定性，应选用带参数衰减的改进算法。<br>
                     通过切换上方快捷按钮（只看 Moving-Average / 只看 Sarsa / 只看 Q-learning），可以进一步验证上述结论。
                 </div>
+                <div class="mt-6 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                    <h3 class="text-md font-semibold text-gray-700 px-4 py-3 border-b border-gray-200 text-center">最近10回合奖励概览</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">算法</th>
+                                    <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">最近10回合奖励 (从新到旧)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                                <tr>
+                                    <td class="px-4 py-2 whitespace-nowrap font-medium text-blue-700">Sarsa (固定参数)</td>
+                                    <td class="px-4 py-2 whitespace-normal text-gray-600" id="sarsaLastTenRewards">无数据</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 whitespace-nowrap font-medium text-green-700">Q-learning (固定参数)</td>
+                                    <td class="px-4 py-2 whitespace-normal text-gray-600" id="qlearningLastTenRewards">无数据</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 whitespace-nowrap font-medium text-purple-700">改进 Sarsa (参数衰减)</td>
+                                    <td class="px-4 py-2 whitespace-normal text-gray-600" id="improvedSarsaLastTenRewards">无数据</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 whitespace-nowrap font-medium text-orange-700">改进 Q-learning (参数衰减)</td>
+                                    <td class="px-4 py-2 whitespace-normal text-gray-600" id="improvedQlearningLastTenRewards">无数据</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1476,6 +1507,7 @@
             
             // 更新学习率分析图表
             updateAnalysisCharts();
+            updateLastTenRewardsTable(); // Add call to update the new table
         }
         
         // 更新学习率分析图表
@@ -2034,6 +2066,28 @@
             const recent = agent.episode_rewards.slice(-N);
             const sum = recent.reduce((a, b) => a + b, 0);
             return sum / recent.length;
+        }
+
+        // 新增：更新最近10回合奖励表格的函数
+        function updateLastTenRewardsTable() {
+            const agents = [
+                { agent: sarsaAgent, id: 'sarsaLastTenRewards' },
+                { agent: qlearningAgent, id: 'qlearningLastTenRewards' },
+                { agent: improvedSarsaAgent, id: 'improvedSarsaLastTenRewards' },
+                { agent: improvedQlearningAgent, id: 'improvedQlearningLastTenRewards' }
+            ];
+
+            agents.forEach(item => {
+                const rewards = item.agent.episode_rewards;
+                const lastTen = rewards.slice(-10).reverse(); // 从新到旧排序
+                const displayString = lastTen.length > 0 ? lastTen.join(', ') : '无数据';
+                const cell = document.getElementById(item.id);
+                if (cell) {
+                    cell.textContent = displayString;
+                } else {
+                    console.warn(`Element with id ${item.id} not found for last ten rewards table.`);
+                }
+            });
         }
     </script>
 </body>
