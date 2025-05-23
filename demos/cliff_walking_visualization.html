@@ -4,62 +4,7 @@ title: 悬崖漫步环境可视化
 permalink: /demos/cliff-walking/
 ---
 
-<!-- 引入 Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          border: "hsl(214.3 31.8% 91.4%)",
-          input: "hsl(214.3 31.8% 91.4%)",
-          ring: "hsl(222.2 84% 4.9%)",
-          background: "hsl(0 0% 100%)",
-          foreground: "hsl(222.2 84% 4.9%)",
-          primary: {
-            DEFAULT: "hsl(222.2 47.4% 11.2%)",
-            foreground: "hsl(210 40% 98%)",
-          },
-          secondary: {
-            DEFAULT: "hsl(210 40% 96%)",
-            foreground: "hsl(222.2 84% 4.9%)",
-          },
-          destructive: {
-            DEFAULT: "hsl(0 84.2% 60.2%)",
-            foreground: "hsl(210 40% 98%)",
-          },
-          muted: {
-            DEFAULT: "hsl(210 40% 96%)",
-            foreground: "hsl(215.4 16.3% 46.9%)",
-          },
-          accent: {
-            DEFAULT: "hsl(210 40% 96%)",
-            foreground: "hsl(222.2 84% 4.9%)",
-          },
-          popover: {
-            DEFAULT: "hsl(0 0% 100%)",
-            foreground: "hsl(222.2 84% 4.9%)",
-          },
-          card: {
-            DEFAULT: "hsl(0 0% 100%)",
-            foreground: "hsl(222.2 84% 4.9%)",
-          },
-        },
-        borderRadius: {
-          lg: "var(--radius)",
-          md: "calc(var(--radius) - 2px)",
-          sm: "calc(var(--radius) - 4px)",
-        }
-      }
-    }
-  }
-</script>
-
 <style>
-  :root {
-    --radius: 0.5rem;
-  }
-  
   /* 隐藏Jekyll自动生成的页面标题 */
   .page-header h1,
   .post-title,
@@ -68,63 +13,382 @@ permalink: /demos/cliff-walking/
     display: none !important;
   }
   
-  /* 自定义网格样式 */
-  .grid-container {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 0.25rem;
-    aspect-ratio: 3/1;
-    width: 100%;
-    max-width: 600px;
+  /* 可视化容器 - 作用域化样式 */
+  .viz-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+    padding: 2rem 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
   
-  .grid-cell {
-    aspect-ratio: 1;
-    border: 2px solid rgb(226 232 240);
+  .viz-container .viz-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  /* 标题样式 */
+  .viz-container .viz-title {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .viz-container .viz-title h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    line-height: 1.2;
+  }
+  
+  .viz-container .viz-subtitle {
+    font-size: 1.125rem;
+    color: #64748b;
+    text-align: center;
+    margin: 1rem 0 0 0;
+  }
+  
+  /* 卡片样式 */
+  .viz-container .viz-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .viz-container .viz-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* 使用指南 */
+  .viz-container .guide-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .viz-container .guide-header .icon {
+    font-size: 1.25rem;
+  }
+  
+  .viz-container .guide-header h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+  }
+  
+  .viz-container .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+  
+  .viz-container .guide-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+  
+  .viz-container .guide-item .label {
+    font-weight: 500;
+    color: #1f2937;
+    flex-shrink: 0;
+  }
+  
+  /* 图例样式 */
+  .viz-container .legend-title {
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 1rem;
+  }
+  
+  .viz-container .legend-items {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .viz-container .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #f1f5f9;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .viz-container .legend-color {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+  }
+  
+  .viz-container .color-start {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+  }
+  
+  .viz-container .color-goal {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  }
+  
+  .viz-container .color-cliff {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+  }
+  
+  /* 算法容器 */
+  .viz-container .algorithm-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+    overflow: hidden;
+  }
+  
+  .viz-container .algorithm-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .viz-container .algorithm-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .viz-container .algorithm-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    color: #1f2937;
+    margin: 0;
+  }
+  
+  .viz-container .algorithm-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  /* 结果显示 */
+  .viz-container .results-display {
+    background: #f8fafc;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+  
+  .viz-container .result-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .viz-container .result-icon {
+    font-size: 1.125rem;
+  }
+  
+  .viz-container .result-label {
+    font-weight: 600;
+    color: #1f2937;
+  }
+  
+  .viz-container .result-tag {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  .viz-container .tag-blue {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+  
+  .viz-container .tag-green {
+    background: #dcfce7;
+    color: #166534;
+  }
+  
+  .viz-container .tag-purple {
+    background: #f3e8ff;
+    color: #7c2d12;
+  }
+  
+  .viz-container .tag-success {
+    color: #059669;
+    font-weight: 600;
+  }
+  
+  /* 网格布局 */
+  .viz-container .grids-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+  }
+  
+  .viz-container .grid-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .viz-container .grid-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-align: center;
+    color: #1f2937;
+  }
+  
+  .viz-container .grid-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* 网格样式 */
+  .viz-container .grid-container {
+    display: grid;
+    grid-template-columns: repeat(12, 40px);
+    grid-template-rows: repeat(4, 40px);
+    gap: 2px;
+    background: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .viz-container .grid-cell {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #e5e7eb;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    font-size: 0.875rem;
-    border-radius: 0.375rem;
-    transition: all 0.2s ease-in-out;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
     cursor: default;
-    background: white;
+    background: #ffffff;
   }
   
-  .grid-cell:hover {
+  .viz-container .grid-cell:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 10;
   }
   
-  .cell-start {
-    background: linear-gradient(135deg, rgb(34 197 94), rgb(21 128 61));
+  .viz-container .cell-start {
+    background: linear-gradient(135deg, #22c55e, #15803d);
     color: white;
-    border-color: rgb(21 128 61);
+    border-color: #15803d;
     box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
   }
   
-  .cell-goal {
-    background: linear-gradient(135deg, rgb(251 191 36), rgb(245 158 11));
+  .viz-container .cell-goal {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
     color: white;
-    border-color: rgb(245 158 11);
+    border-color: #f59e0b;
     box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
   }
   
-  .cell-cliff {
-    background: linear-gradient(135deg, rgb(239 68 68), rgb(220 38 38));
+  .viz-container .cell-cliff {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
-    border-color: rgb(220 38 38);
+    border-color: #dc2626;
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
   }
   
-  .value-text {
-    font-size: 0.75rem;
+  .viz-container .value-text {
+    font-size: 0.625rem;
     opacity: 0.9;
     margin-top: 2px;
+  }
+  
+  /* 按钮样式 */
+  .viz-container .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  
+  .viz-container .viz-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    height: 2.5rem;
+    padding: 0 1rem;
+    min-width: 120px;
+    font-family: inherit;
+  }
+  
+  .viz-container .viz-button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+  
+  .viz-container .viz-button:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  
+  .viz-container .btn-primary {
+    background: #1f2937;
+    color: white;
+  }
+  
+  .viz-container .btn-primary:hover {
+    background: #111827;
+  }
+  
+  .viz-container .btn-secondary {
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #1f2937;
+  }
+  
+  .viz-container .btn-secondary:hover {
+    background: #f9fafb;
+    color: #1f2937;
+  }
+  
+  .viz-container .btn-destructive {
+    background: #dc2626;
+    color: white;
+  }
+  
+  .viz-container .btn-destructive:hover {
+    background: #b91c1c;
   }
   
   /* 动画效果 */
@@ -133,7 +397,7 @@ permalink: /demos/cliff-walking/
     to { opacity: 1; transform: translateY(0); }
   }
   
-  .animate-fade-in {
+  .viz-container .animate-fade-in {
     animation: fadeIn 0.5s ease-out;
   }
   
@@ -142,175 +406,215 @@ permalink: /demos/cliff-walking/
     50% { transform: scale(1.02); }
   }
   
-  .animate-pulse-update {
+  .viz-container .animate-pulse-update {
     animation: pulse-update 0.6s ease-in-out;
+  }
+  
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .viz-container {
+      padding: 1rem 0.5rem;
+    }
+    
+    .viz-container .viz-title h1 {
+      font-size: 2.5rem;
+    }
+    
+    .viz-container .grid-container {
+      grid-template-columns: repeat(12, 32px);
+      grid-template-rows: repeat(4, 32px);
+      gap: 1px;
+      padding: 0.75rem;
+    }
+    
+    .viz-container .grid-cell {
+      width: 32px;
+      height: 32px;
+      font-size: 0.625rem;
+    }
+    
+    .viz-container .grids-container {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .viz-container .guide-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .viz-container .controls {
+      gap: 0.5rem;
+    }
+    
+    .viz-container .viz-button {
+      min-width: 100px;
+      font-size: 0.8rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .viz-container .legend-items {
+      gap: 1rem;
+    }
+    
+    .viz-container .result-content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
   }
 </style>
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 px-4">
-  <div class="max-w-7xl mx-auto space-y-8">
+<div class="viz-container">
+  <div class="viz-content">
     
     <!-- 页面标题 -->
-    <div class="text-center space-y-4">
-      <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-        悬崖漫步环境可视化
-      </h1>
-      <p class="text-lg text-muted-foreground">
-        探索强化学习中的策略迭代与价值迭代算法
-      </p>
+    <div class="viz-title">
+      <h1>悬崖漫步环境可视化</h1>
+      <p class="viz-subtitle">探索强化学习中的策略迭代与价值迭代算法</p>
     </div>
     
     <!-- 使用指南 -->
-    <div class="bg-card border border-border rounded-lg p-6">
-      <div class="flex items-center gap-2 mb-4">
-        <div class="text-xl">💡</div>
-        <h3 class="text-lg font-semibold text-foreground">使用指南</h3>
+    <div class="viz-card">
+      <div class="guide-header">
+        <div class="icon">💡</div>
+        <h3>使用指南</h3>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
-        <div class="flex items-start gap-2">
-          <span class="font-medium text-foreground">完整运行：</span>
+      <div class="guide-grid">
+        <div class="guide-item">
+          <span class="label">完整运行：</span>
           <span>点击「运行策略迭代」或「运行价值迭代」查看完整收敛过程</span>
         </div>
-        <div class="flex items-start gap-2">
-          <span class="font-medium text-foreground">单步调试：</span>
+        <div class="guide-item">
+          <span class="label">单步调试：</span>
           <span>使用「运行一步迭代」按钮逐步观察算法进展</span>
         </div>
-        <div class="flex items-start gap-2">
-          <span class="font-medium text-foreground">重新开始：</span>
+        <div class="guide-item">
+          <span class="label">重新开始：</span>
           <span>点击「重置」按钮清空结果并重新初始化</span>
         </div>
-        <div class="flex items-start gap-2">
-          <span class="font-medium text-foreground">对比学习：</span>
+        <div class="guide-item">
+          <span class="label">对比学习：</span>
           <span>同时运行两种算法，比较它们的收敛速度和最终结果</span>
         </div>
       </div>
     </div>
     
     <!-- 图例说明 -->
-    <div class="bg-card border border-border rounded-lg p-6">
-      <h3 class="text-center text-sm font-medium text-muted-foreground mb-4">
-        📋 网格表格图例说明
-      </h3>
-      <div class="flex justify-center gap-6 flex-wrap">
-        <div class="flex items-center gap-2 px-3 py-2 bg-secondary rounded-md">
-          <div class="w-4 h-4 rounded cell-start"></div>
-          <span class="text-sm font-medium">起点 (Start)</span>
+    <div class="viz-card">
+      <h3 class="legend-title">📋 网格表格图例说明</h3>
+      <div class="legend-items">
+        <div class="legend-item">
+          <div class="legend-color color-start"></div>
+          <span>起点 (Start)</span>
         </div>
-        <div class="flex items-center gap-2 px-3 py-2 bg-secondary rounded-md">
-          <div class="w-4 h-4 rounded cell-goal"></div>
-          <span class="text-sm font-medium">终点 (Goal)</span>
+        <div class="legend-item">
+          <div class="legend-color color-goal"></div>
+          <span>终点 (Goal)</span>
         </div>
-        <div class="flex items-center gap-2 px-3 py-2 bg-secondary rounded-md">
-          <div class="w-4 h-4 rounded cell-cliff"></div>
-          <span class="text-sm font-medium">悬崖 (Cliff)</span>
+        <div class="legend-item">
+          <div class="legend-color color-cliff"></div>
+          <span>悬崖 (Cliff)</span>
         </div>
       </div>
     </div>
     
-    <!-- 算法容器 -->
-    <div class="space-y-8">
-      
-      <!-- 策略迭代 -->
-      <div class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <div class="p-6 border-b border-border">
-          <h2 class="text-2xl font-semibold text-center text-foreground">
-            策略迭代 (Policy Iteration)
-          </h2>
-        </div>
-        
-        <div class="p-6 space-y-6">
-          <!-- 结果显示 -->
-          <div id="policyIterationResults" class="bg-muted rounded-md p-4 font-mono text-sm text-muted-foreground">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">🎯</span>
-              <span class="font-semibold text-foreground">准备就绪</span>
-              <span>|</span>
-              <span>点击运行按钮开始策略迭代算法</span>
-            </div>
-          </div>
-          
-          <!-- 网格显示 -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="space-y-4">
-              <h3 class="text-lg font-medium text-center text-foreground">最优策略</h3>
-              <div class="flex justify-center">
-                <div class="grid-container" id="policyIterationPolicyGrid"></div>
-              </div>
-            </div>
-            <div class="space-y-4">
-              <h3 class="text-lg font-medium text-center text-foreground">状态价值</h3>
-              <div class="flex justify-center">
-                <div class="grid-container" id="policyIterationValueGrid"></div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- 控制按钮 -->
-          <div class="flex flex-wrap justify-center gap-3">
-            <button id="policyIterationBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-              运行策略迭代
-            </button>
-            <button id="singleStepPolicyBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-              运行一步迭代
-            </button>
-            <button id="resetPolicyIterationBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
-              重置策略迭代
-            </button>
-          </div>
-        </div>
+    <!-- 策略迭代 -->
+    <div class="algorithm-card">
+      <div class="algorithm-header">
+        <h2>策略迭代 (Policy Iteration)</h2>
       </div>
       
-      <!-- 价值迭代 -->
-      <div class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <div class="p-6 border-b border-border">
-          <h2 class="text-2xl font-semibold text-center text-foreground">
-            价值迭代 (Value Iteration)
-          </h2>
+      <div class="algorithm-content">
+        <!-- 结果显示 -->
+        <div id="policyIterationResults" class="results-display">
+          <div class="result-content">
+            <span class="result-icon">🎯</span>
+            <span class="result-label">准备就绪</span>
+            <span>|</span>
+            <span>点击运行按钮开始策略迭代算法</span>
+          </div>
         </div>
         
-        <div class="p-6 space-y-6">
-          <!-- 结果显示 -->
-          <div id="valueIterationResults" class="bg-muted rounded-md p-4 font-mono text-sm text-muted-foreground">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">🎯</span>
-              <span class="font-semibold text-foreground">准备就绪</span>
-              <span>|</span>
-              <span>点击运行按钮开始价值迭代算法</span>
+        <!-- 网格显示 -->
+        <div class="grids-container">
+          <div class="grid-section">
+            <h3 class="grid-title">最优策略</h3>
+            <div class="grid-wrapper">
+              <div class="grid-container" id="policyIterationPolicyGrid"></div>
             </div>
           </div>
-          
-          <!-- 网格显示 -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="space-y-4">
-              <h3 class="text-lg font-medium text-center text-foreground">最优策略</h3>
-              <div class="flex justify-center">
-                <div class="grid-container" id="valueIterationPolicyGrid"></div>
-              </div>
+          <div class="grid-section">
+            <h3 class="grid-title">状态价值</h3>
+            <div class="grid-wrapper">
+              <div class="grid-container" id="policyIterationValueGrid"></div>
             </div>
-            <div class="space-y-4">
-              <h3 class="text-lg font-medium text-center text-foreground">状态价值</h3>
-              <div class="flex justify-center">
-                <div class="grid-container" id="valueIterationValueGrid"></div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- 控制按钮 -->
-          <div class="flex flex-wrap justify-center gap-3">
-            <button id="valueIterationBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-              运行价值迭代
-            </button>
-            <button id="singleStepValueBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-              运行一步迭代
-            </button>
-            <button id="resetValueIterationBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
-              重置价值迭代
-            </button>
           </div>
         </div>
+        
+        <!-- 控制按钮 -->
+        <div class="controls">
+          <button id="policyIterationBtn" class="viz-button btn-primary">
+            运行策略迭代
+          </button>
+          <button id="singleStepPolicyBtn" class="viz-button btn-secondary">
+            运行一步迭代
+          </button>
+          <button id="resetPolicyIterationBtn" class="viz-button btn-destructive">
+            重置策略迭代
+          </button>
+        </div>
       </div>
-      
     </div>
+    
+    <!-- 价值迭代 -->
+    <div class="algorithm-card">
+      <div class="algorithm-header">
+        <h2>价值迭代 (Value Iteration)</h2>
+      </div>
+      
+      <div class="algorithm-content">
+        <!-- 结果显示 -->
+        <div id="valueIterationResults" class="results-display">
+          <div class="result-content">
+            <span class="result-icon">🎯</span>
+            <span class="result-label">准备就绪</span>
+            <span>|</span>
+            <span>点击运行按钮开始价值迭代算法</span>
+          </div>
+        </div>
+        
+        <!-- 网格显示 -->
+        <div class="grids-container">
+          <div class="grid-section">
+            <h3 class="grid-title">最优策略</h3>
+            <div class="grid-wrapper">
+              <div class="grid-container" id="valueIterationPolicyGrid"></div>
+            </div>
+          </div>
+          <div class="grid-section">
+            <h3 class="grid-title">状态价值</h3>
+            <div class="grid-wrapper">
+              <div class="grid-container" id="valueIterationValueGrid"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 控制按钮 -->
+        <div class="controls">
+          <button id="valueIterationBtn" class="viz-button btn-primary">
+            运行价值迭代
+          </button>
+          <button id="singleStepValueBtn" class="viz-button btn-secondary">
+            运行一步迭代
+          </button>
+          <button id="resetValueIterationBtn" class="viz-button btn-destructive">
+            重置价值迭代
+          </button>
+        </div>
+      </div>
+    </div>
+    
   </div>
 </div>
 
@@ -732,9 +1036,9 @@ permalink: /demos/cliff-walking/
       
       // 显示默认结果提示
       document.getElementById('policyIterationResults').innerHTML = 
-        '<div class="flex items-center gap-2"><span class="text-lg">🎯</span><span class="font-semibold text-foreground">准备就绪</span><span>|</span><span>点击运行按钮开始策略迭代算法</span></div>';
+        '<div class="result-content"><span class="result-icon">🎯</span><span class="result-label">准备就绪</span><span>|</span><span>点击运行按钮开始策略迭代算法</span></div>';
       document.getElementById('valueIterationResults').innerHTML = 
-        '<div class="flex items-center gap-2"><span class="text-lg">🎯</span><span class="font-semibold text-foreground">准备就绪</span><span>|</span><span>点击运行按钮开始价值迭代算法</span></div>';
+        '<div class="result-content"><span class="result-icon">🎯</span><span class="result-label">准备就绪</span><span>|</span><span>点击运行按钮开始价值迭代算法</span></div>';
     }
     
     // 显示初始状态值
@@ -860,7 +1164,7 @@ permalink: /demos/cliff-walking/
       
       // 显示默认结果提示
       document.getElementById('policyIterationResults').innerHTML = 
-        '<div class="flex items-center gap-2"><span class="text-lg">🎯</span><span class="font-semibold text-foreground">准备就绪</span><span>|</span><span>点击运行按钮开始策略迭代算法</span></div>';
+        '<div class="result-content"><span class="result-icon">🎯</span><span class="result-label">准备就绪</span><span>|</span><span>点击运行按钮开始策略迭代算法</span></div>';
     }
     
     // 重置价值迭代环境
@@ -879,7 +1183,7 @@ permalink: /demos/cliff-walking/
       
       // 显示默认结果提示
       document.getElementById('valueIterationResults').innerHTML = 
-        '<div class="flex items-center gap-2"><span class="text-lg">🎯</span><span class="font-semibold text-foreground">准备就绪</span><span>|</span><span>点击运行按钮开始价值迭代算法</span></div>';
+        '<div class="result-content"><span class="result-icon">🎯</span><span class="result-label">准备就绪</span><span>|</span><span>点击运行按钮开始价值迭代算法</span></div>';
     }
     
     // 显示结果
@@ -890,29 +1194,29 @@ permalink: /demos/cliff-walking/
       
       if (algorithmName === '策略迭代') {
         html += `<div class="animate-fade-in">`;
-        html += `<div class="flex items-center gap-2 flex-wrap">`;
-        html += `<span class="text-lg">📊</span>`;
-        html += `<span class="font-semibold text-foreground">策略迭代次数:</span>`;
-        html += `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">${iterations.policyIterations}</span>`;
+        html += `<div class="result-content">`;
+        html += `<span class="result-icon">📊</span>`;
+        html += `<span class="result-label">策略迭代次数:</span>`;
+        html += `<span class="result-tag tag-blue">${iterations.policyIterations}</span>`;
         html += `<span>|</span>`;
-        html += `<span class="font-semibold text-foreground">每次策略评估:</span>`;
-        html += `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">${iterations.policyEvaluation.join(', ')}</span>`;
+        html += `<span class="result-label">每次策略评估:</span>`;
+        html += `<span class="result-tag tag-green">${iterations.policyEvaluation.join(', ')}</span>`;
         if (iterations.isComplete) {
-          html += `<span>|</span><span class="text-green-600 font-semibold">✅ 策略已收敛!</span>`;
+          html += `<span>|</span><span class="tag-success">✅ 策略已收敛!</span>`;
         }
         html += `</div>`;
         html += `</div>`;
       } else {
         html += `<div class="animate-fade-in">`;
-        html += `<div class="flex items-center gap-2 flex-wrap">`;
-        html += `<span class="text-lg">📈</span>`;
-        html += `<span class="font-semibold text-foreground">价值迭代次数:</span>`;
-        html += `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">${iterations.iterationCount}</span>`;
+        html += `<div class="result-content">`;
+        html += `<span class="result-icon">📈</span>`;
+        html += `<span class="result-label">价值迭代次数:</span>`;
+        html += `<span class="result-tag tag-blue">${iterations.iterationCount}</span>`;
         html += `<span>|</span>`;
-        html += `<span class="font-semibold text-foreground">最大误差:</span>`;
-        html += `<span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm">${iterations.maxDelta?.toFixed(5) || 'N/A'}</span>`;
+        html += `<span class="result-label">最大误差:</span>`;
+        html += `<span class="result-tag tag-purple">${iterations.maxDelta?.toFixed(5) || 'N/A'}</span>`;
         if (iterations.isComplete) {
-          html += `<span>|</span><span class="text-green-600 font-semibold">✅ 价值已收敛!</span>`;
+          html += `<span>|</span><span class="tag-success">✅ 价值已收敛!</span>`;
         }
         html += `</div>`;
         html += `</div>`;
