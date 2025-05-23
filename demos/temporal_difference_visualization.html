@@ -120,7 +120,8 @@
             justify-content: center;
             font-weight: 600;
             font-size: 10px;
-            background-color: white;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            color: #1e293b;
             border-right: 1px solid hsl(214.3 31.8% 91.4%);
             border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
             transition: all 0.2s ease;
@@ -159,26 +160,44 @@
         .start {
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
+            font-weight: 700;
             box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.4);
         }
         
         .goal {
             background: linear-gradient(135deg, #f59e0b, #d97706);
             color: white;
+            font-weight: 700;
             box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.4);
         }
         
         .cliff {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
+            font-weight: 700;
             box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.4);
         }
         
         .value-text {
-            font-weight: 400;
-            font-size: 8px;
-            color: hsl(215.4 16.3% 46.9%);
+            font-weight: 600;
+            font-size: 9px;
             margin-top: 2px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 普通单元格的状态值文字 */
+        .cell:not(.start):not(.goal):not(.cliff) .value-text {
+            color: #334155;
+            font-weight: 700;
+        }
+        
+        /* 特殊单元格的状态值文字 */
+        .start .value-text,
+        .goal .value-text,
+        .cliff .value-text {
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
         }
         
         /* 现代化按钮样式 */
