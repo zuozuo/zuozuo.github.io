@@ -147,11 +147,11 @@
         <div class="bg-card rounded-lg border shadow-sm p-6 mb-8">
             <h3 class="text-lg font-semibold mb-4">全局控制</h3>
             <div class="flex flex-wrap items-center gap-3 mb-4">
-                <button id="trainBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 text-white hover:bg-green-700 h-10 px-4 py-2">
-                    训练
+                <button id="trainBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                    同时训练两个算法
                 </button>
                 <button id="stepBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-                    单步训练
+                    同时单步训练
                 </button>
                 <button id="resetBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
                     重置所有算法
@@ -163,17 +163,30 @@
                     重新检查最优策略
                 </button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4">
-                <div class="space-y-2 md:col-span-1 lg:col-span-1">
-                    <label for="alphaInput" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">学习率 α</label>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">训练回合数</label>
+                    <input type="number" id="episodesInput" value="500" min="1" max="1000" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">移动平均窗口</label>
+                    <input type="number" id="smoothingWindow" value="20" min="5" max="100" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">学习率 α</label>
                     <input type="number" id="alphaInput" value="0.1" min="0.01" max="1.0" step="0.01" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                 </div>
-                <div class="space-y-2 md:col-span-1 lg:col-span-1">
-                    <label for="epsilonInput" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">探索率 ε</label>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">探索率 ε</label>
                     <input type="number" id="epsilonInput" value="0.1" min="0.01" max="1.0" step="0.01" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                 </div>
-                 <!-- Spacer to push trainingSteps to the end or adjust layout if 5 items in a row -->
-                <div class="lg:col-span-1"></div> <!-- Optional: spacer for 5-column layout -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">训练进度</label>
+                    <div class="flex h-10 w-full rounded-md border border-input bg-slate-50 px-3 py-2 items-center justify-center">
+                        <span class="text-lg font-bold text-gray-700" id="trainingSteps">0</span>
+                        <span class="text-sm text-muted-foreground ml-2">回合</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -299,8 +312,7 @@
                     2. <b>稳定性对比</b>：改进算法采用 <code>ε</code>、<code>α</code> 衰减（紫、橙曲线），前 20% 回合保持大步探索，随后逐步收敛；虽首次达标用时更长（≈2000 回合），但后期波动显著更小，平均回报与最近 100 回合均值均优于原始版本。<br>
                     3. <b>保守 vs 激进</b>：Sarsa 路径远离悬崖 → 回报稳但上限受限；Q-learning 沿悬崖边最优路径 → 理论回报更高，但探索期掉崖导致尖锐下探。改进版在降低掉崖频率的同时，仍保留各自策略特性。<br>
                     4. <b>实战启示</b>：若需快速得到「可用」策略，可选原始算法；若更看重后期性能与部署稳定性，应选用带参数衰减的改进算法。<br>
-                    通过切换上方快捷按钮（只看 Moving-Average / 只看 Sarsa / 只看 Q-learning），可以进一步验证上述结论。<br>
-                    更详细的数据参考下方的"学习率与收敛性深度分析"部分。
+                    通过切换上方快捷按钮（只看 Moving-Average / 只看 Sarsa / 只看 Q-learning），可以进一步验证上述结论。
                 </div>
             </div>
         </div>
@@ -339,37 +351,6 @@
                     <div class="relative h-64">
                         <canvas id="stabilityChart" class="w-full h-full"></canvas>
                     </div>
-                </div>
-            </div>
-            <div class="mt-6 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                <h3 class="text-md font-semibold text-gray-700 px-4 py-3 border-b border-gray-200 text-center">最近20回合奖励概览</h3>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-slate-50">
-                            <tr>
-                                <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">算法</th>
-                                <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">最近20回合奖励 (从新到旧)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200 text-sm">
-                            <tr>
-                                <td class="px-4 py-2 whitespace-nowrap font-medium text-blue-700">Sarsa (固定参数)</td>
-                                <td class="px-4 py-2 whitespace-normal text-gray-600" id="sarsaLastTenRewards">无数据</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 whitespace-nowrap font-medium text-green-700">Q-learning (固定参数)</td>
-                                <td class="px-4 py-2 whitespace-normal text-gray-600" id="qlearningLastTenRewards">无数据</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 whitespace-nowrap font-medium text-purple-700">改进 Sarsa (参数衰减)</td>
-                                <td class="px-4 py-2 whitespace-normal text-gray-600" id="improvedSarsaLastTenRewards">无数据</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-2 whitespace-nowrap font-medium text-orange-700">改进 Q-learning (参数衰减)</td>
-                                <td class="px-4 py-2 whitespace-normal text-gray-600" id="improvedQlearningLastTenRewards">无数据</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
@@ -965,7 +946,7 @@
         const startPos = (env.nrow - 1) * env.ncol;
 
         // 算法实例
-        let sarsaAgent; 
+        let sarsaAgent;
         let qlearningAgent;
         let improvedSarsaAgent;
         let improvedQlearningAgent;
@@ -1503,7 +1484,6 @@
             
             // 更新学习率分析图表
             updateAnalysisCharts();
-            updateLastTwentyRewardsTable(); // Add call to update the new table
         }
         
         // 更新学习率分析图表
@@ -1544,8 +1524,7 @@
                 learningRateChart.data.labels = episodes;
                 
                 // 固定学习率（sarsa和q-learning）
-                const fixedAlpha = parseFloat(document.getElementById('alphaInput').value);
-                const fixedLR = Array(episodes.length).fill(fixedAlpha);
+                const fixedLR = Array(episodes.length).fill(0.1);
                 learningRateChart.data.datasets[0].data = fixedLR;
                 
                 // 衰减学习率
@@ -1857,18 +1836,11 @@
             
             const alpha = parseFloat(document.getElementById('alphaInput').value);
             const epsilon = parseFloat(document.getElementById('epsilonInput').value);
-
+            
             sarsaAgent = new Sarsa(env.ncol, env.nrow, epsilon, alpha);
             qlearningAgent = new QLearning(env.ncol, env.nrow, epsilon, alpha);
             improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, epsilon, 0.01, 0.995, alpha, 0.01, 0.995);
             improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, epsilon, 0.01, 0.995, alpha, 0.01, 0.995);
-            
-            // Clear stats for improved agents as well
-            if(improvedSarsaAgent.epsilon_history) improvedSarsaAgent.epsilon_history = []; 
-            if(improvedSarsaAgent.alpha_history) improvedSarsaAgent.alpha_history = [];
-            if(improvedQlearningAgent.epsilon_history) improvedQlearningAgent.epsilon_history = [];
-            if(improvedQlearningAgent.alpha_history) improvedQlearningAgent.alpha_history = [];
-
             initializeGrids();
             updateCharts();
             updateStepsDisplay();
@@ -1894,7 +1866,7 @@
         window.addEventListener('load', function() {
             const initialAlpha = parseFloat(document.getElementById('alphaInput').value);
             const initialEpsilon = parseFloat(document.getElementById('epsilonInput').value);
-
+            
             sarsaAgent = new Sarsa(env.ncol, env.nrow, initialEpsilon, initialAlpha);
             qlearningAgent = new QLearning(env.ncol, env.nrow, initialEpsilon, initialAlpha);
             improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, initialEpsilon, 0.01, 0.995, initialAlpha, 0.01, 0.995);
@@ -1903,7 +1875,6 @@
             initializeCharts();
             initializeGrids();
             updateStepsDisplay();
-            updateLastTwentyRewardsTable(); // Add call to update the new table
         });
 
         // 异步训练函数，分批训练避免UI阻塞
@@ -1981,7 +1952,7 @@
                     button.classList.remove('opacity-50', 'cursor-not-allowed');
                     // 根据按钮类型恢复hover效果
                     if (buttonId === 'trainBothBtn') {
-                        button.classList.add('hover:bg-green-700'); // Updated hover class
+                        button.classList.add('hover:bg-primary/90');
                     } else if (buttonId === 'resetBothBtn') {
                         button.classList.add('hover:bg-destructive/90');
                     } else {
@@ -1992,6 +1963,7 @@
             
             // 同时禁用/启用输入框
             const inputs = ['episodesInput', 'smoothingWindow', 'alphaInput', 'epsilonInput'];
+            const inputs = ['episodesInput', 'smoothingWindow'];
             inputs.forEach(inputId => {
                 const input = document.getElementById(inputId);
                 input.disabled = !enabled;
@@ -2082,28 +2054,6 @@
             const recent = agent.episode_rewards.slice(-N);
             const sum = recent.reduce((a, b) => a + b, 0);
             return sum / recent.length;
-        }
-
-        // 新增：更新最近20回合奖励表格的函数
-        function updateLastTwentyRewardsTable() {
-            const agents = [
-                { agent: sarsaAgent, id: 'sarsaLastTenRewards' }, // IDs remain the same for now
-                { agent: qlearningAgent, id: 'qlearningLastTenRewards' },
-                { agent: improvedSarsaAgent, id: 'improvedSarsaLastTenRewards' },
-                { agent: improvedQlearningAgent, id: 'improvedQlearningLastTenRewards' }
-            ];
-
-            agents.forEach(item => {
-                const rewards = item.agent.episode_rewards;
-                const lastTwenty = rewards.slice(-20).reverse(); // 从新到旧排序
-                const displayString = lastTwenty.length > 0 ? lastTwenty.join(', ') : '无数据';
-                const cell = document.getElementById(item.id);
-                if (cell) {
-                    cell.textContent = displayString;
-                } else {
-                    console.warn(`Element with id ${item.id} not found for last twenty rewards table.`);
-                }
-            });
         }
     </script>
 </body>
