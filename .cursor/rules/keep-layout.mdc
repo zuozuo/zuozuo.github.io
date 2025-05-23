@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+任何的code change都不要改变Jekyll博客的整体布局框架，只需要改动单个博客文章内部的样式。

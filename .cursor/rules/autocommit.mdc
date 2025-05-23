@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+每次code change之后自动帮我commit代码，然后根据code change 的内容来更新  [README.md](mdc:README.md) 

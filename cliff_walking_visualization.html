@@ -4,1206 +4,1185 @@ title: 悬崖漫步环境可视化
 permalink: /cliff-walking/
 ---
 
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>悬崖漫步环境可视化</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 2rem 1rem;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            padding: 3rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        h1 {
-            color: #2d3748;
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: #64748b;
-            font-size: 1.1rem;
-            margin-bottom: 2.5rem;
-            font-weight: 400;
-        }
-        
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 2rem 0 3rem 0;
-            flex-wrap: wrap;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            font-weight: 500;
-            color: #374151;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        .legend-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 6px;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .algorithm-container {
-            margin: 3rem 0;
-            padding: 2.5rem;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(229, 231, 235, 0.8);
-            transition: box-shadow 0.3s ease;
-        }
-        
-        .algorithm-container:hover {
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-        }
-        
-        .algorithm-container h2 {
-            color: #1e293b;
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            position: relative;
-            padding-bottom: 1rem;
-        }
-        
-        .algorithm-container h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 2px;
-        }
-        
-        .results {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            border-left: 4px solid #667eea;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-            font-size: 0.95rem;
-            color: #475569;
-            font-weight: 500;
-        }
-        
+<style>
+    /* 隐藏Jekyll自动生成的页面标题 */
+    .page-header h1,
+    .post-title,
+    .page-title,
+    h1:first-of-type {
+        display: none !important;
+    }
+    
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    .visualization-container {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        max-width: 1400px;
+        margin: 2rem auto;
+        line-height: 1.6;
+    }
+    
+    .viz-title {
+        color: #2d3748;
+        font-size: 2.25rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 0.75rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .viz-subtitle {
+        text-align: center;
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        font-weight: 400;
+    }
+    
+    .usage-guide {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        padding: 1.5rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        border-left: 4px solid #3b82f6;
+    }
+    
+    .usage-guide h3 {
+        color: #1e40af;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .usage-guide ul {
+        color: #374151;
+        line-height: 1.8;
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+    
+    .usage-guide li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin: 2rem 0 3rem 0;
+        flex-wrap: wrap;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-weight: 500;
+        color: #374151;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid rgba(229, 231, 235, 0.6);
+    }
+    
+    .legend-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .algorithm-container {
+        margin: 3rem 0;
+        padding: 2.5rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(229, 231, 235, 0.6);
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .algorithm-container:hover {
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    }
+    
+    .algorithm-container h2 {
+        color: #1e293b;
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+    
+    .algorithm-container h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+    }
+    
+    .results {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        border-left: 4px solid #667eea;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-size: 0.95rem;
+        color: #475569;
+        font-weight: 500;
+    }
+    
+    .grid-wrapper {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+        margin: 2.5rem auto;
+    }
+    
+    .grid-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .grid-section h3 {
+        color: #374151;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(12, 48px);
+        grid-template-rows: repeat(4, 48px);
+        gap: 3px;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(229, 231, 235, 0.6);
+    }
+    
+    .cell {
+        width: 48px;
+        height: 48px;
+        border: 2px solid #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: #ffffff;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: default;
+    }
+    
+    .cell:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+    }
+    
+    .start {
+        background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+        color: white;
+        border-color: #059669;
+        box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+    }
+    
+    .goal {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: white;
+        border-color: #f59e0b;
+        box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+    }
+    
+    .cliff {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        border-color: #dc2626;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+    
+    .value-text {
+        font-weight: 500;
+        font-size: 0.75rem;
+        color: inherit;
+        margin-top: 2px;
+        opacity: 0.9;
+    }
+    
+    .controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2.5rem 0 0 0;
+        flex-wrap: wrap;
+    }
+    
+    .viz-button {
+        padding: 0.875rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        min-width: 160px;
+        font-family: inherit;
+    }
+    
+    .viz-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    }
+    
+    .viz-button:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .viz-button:disabled {
+        background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
+    }
+    
+    .viz-button:disabled:hover {
+        transform: none;
+        box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
+    }
+    
+    .reset-btn {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+    
+    .reset-btn:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+    }
+    
+    .step-btn {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    
+    .step-btn:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 1200px) {
         .grid-wrapper {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            flex-wrap: wrap;
-            margin: 2.5rem auto;
-        }
-        
-        .grid-section {
-            display: flex;
             flex-direction: column;
-            align-items: center;
-        }
-        
-        .grid-section h3 {
-            color: #374151;
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            gap: 2rem;
         }
         
         .grid-container {
-            display: grid;
-            grid-template-columns: repeat(12, 48px);
-            grid-template-rows: repeat(4, 48px);
-            gap: 3px;
-            padding: 1.5rem;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(229, 231, 235, 0.6);
+            grid-template-columns: repeat(12, 40px);
+            grid-template-rows: repeat(4, 40px);
         }
         
         .cell {
-            width: 48px;
-            height: 48px;
-            border: 2px solid #e5e7eb;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            background: #ffffff;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            cursor: default;
+            width: 40px;
+            height: 40px;
+            font-size: 0.8rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .visualization-container {
+            margin: 1rem;
         }
         
-        .cell:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 10;
+        .viz-title {
+            font-size: 1.75rem;
         }
         
-        .start {
-            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-            color: white;
-            border-color: #059669;
-            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+        .grid-container {
+            grid-template-columns: repeat(12, 32px);
+            grid-template-rows: repeat(4, 32px);
+            gap: 2px;
+            padding: 1rem;
         }
         
-        .goal {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            color: white;
-            border-color: #f59e0b;
-            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
-        }
-        
-        .cliff {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border-color: #dc2626;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-        
-        .value-text {
-            font-weight: 500;
-            font-size: 0.75rem;
-            color: inherit;
-            margin-top: 2px;
-            opacity: 0.9;
+        .cell {
+            width: 32px;
+            height: 32px;
+            font-size: 0.7rem;
+            border-radius: 6px;
         }
         
         .controls {
-            display: flex;
-            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .viz-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            min-width: 140px;
+        }
+        
+        .legend {
             gap: 1rem;
-            margin: 2.5rem 0 0 0;
-            flex-wrap: wrap;
         }
         
-        button {
-            padding: 0.875rem 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-            min-width: 160px;
-            font-family: inherit;
+        .legend-item {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
         }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    }
+    
+    /* 动画效果 */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
         }
-        
-        button:active {
+        to {
+            opacity: 1;
             transform: translateY(0);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
-        
-        button:disabled {
-            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
-        }
-        
-        button:disabled:hover {
-            transform: none;
-            box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
-        }
-        
-        .reset-btn {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-        
-        .reset-btn:hover {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-        }
-        
-        .step-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-        
-        .step-btn:hover {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 1200px) {
-            .grid-wrapper {
-                flex-direction: column;
-                gap: 2rem;
-            }
-            
-            .grid-container {
-                grid-template-columns: repeat(12, 40px);
-                grid-template-rows: repeat(4, 40px);
-            }
-            
-            .cell {
-                width: 40px;
-                height: 40px;
-                font-size: 0.8rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 2rem 1.5rem;
-                border-radius: 16px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .grid-container {
-                grid-template-columns: repeat(12, 32px);
-                grid-template-rows: repeat(4, 32px);
-                gap: 2px;
-                padding: 1rem;
-            }
-            
-            .cell {
-                width: 32px;
-                height: 32px;
-                font-size: 0.7rem;
-                border-radius: 6px;
-            }
-            
-            .controls {
-                gap: 0.5rem;
-            }
-            
-            button {
-                padding: 0.75rem 1.5rem;
-                font-size: 0.9rem;
-                min-width: 140px;
-            }
-            
-            .legend {
-                gap: 1rem;
-            }
-            
-            .legend-item {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
-            }
-        }
-        
-        /* 动画效果 */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .algorithm-container {
-            animation: fadeInUp 0.6s ease-out;
-        }
-        
-        .algorithm-container:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        
-        /* 加载状态指示器 */
-        .loading {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            animation: loading 1.5s infinite;
-        }
-        
-        @keyframes loading {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>悬崖漫步环境可视化</h1>
-        <p class="subtitle">探索强化学习中的策略迭代与价值迭代算法</p>
-        
-        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; border-left: 4px solid #3b82f6;">
-            <h3 style="color: #1e40af; margin-bottom: 0.75rem; font-size: 1.1rem;">💡 使用指南</h3>
-            <ul style="color: #374151; line-height: 1.8; margin: 0; padding-left: 1.5rem;">
-                <li><strong>完整运行</strong>：点击「运行策略迭代」或「运行价值迭代」查看完整收敛过程</li>
-                <li><strong>单步调试</strong>：使用「运行一步迭代」按钮逐步观察算法进展</li>
-                <li><strong>重新开始</strong>：点击「重置」按钮清空结果并重新初始化</li>
-                <li><strong>对比学习</strong>：同时运行两种算法，比较它们的收敛速度和最终结果</li>
-            </ul>
+    }
+    
+    .algorithm-container {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .algorithm-container:nth-child(odd) {
+        animation-delay: 0.2s;
+    }
+    
+    @keyframes fadeInResult {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+    }
+    
+    .updating {
+        animation: pulse 0.6s ease-in-out;
+    }
+</style>
+
+<div class="visualization-container">
+    <h1 class="viz-title">悬崖漫步环境可视化</h1>
+    <p class="viz-subtitle">探索强化学习中的策略迭代与价值迭代算法</p>
+    
+    <div class="usage-guide">
+        <h3>💡 使用指南</h3>
+        <ul>
+            <li><strong>完整运行</strong>：点击「运行策略迭代」或「运行价值迭代」查看完整收敛过程</li>
+            <li><strong>单步调试</strong>：使用「运行一步迭代」按钮逐步观察算法进展</li>
+            <li><strong>重新开始</strong>：点击「重置」按钮清空结果并重新初始化</li>
+            <li><strong>对比学习</strong>：同时运行两种算法，比较它们的收敛速度和最终结果</li>
+        </ul>
+    </div>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color start"></div>
+            <span>起点 (Start)</span>
         </div>
-        
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color start"></div>
-                <span>起点 (Start)</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color goal"></div>
-                <span>终点 (Goal)</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color cliff"></div>
-                <span>悬崖 (Cliff)</span>
-            </div>
+        <div class="legend-item">
+            <div class="legend-color goal"></div>
+            <span>终点 (Goal)</span>
         </div>
-        
-        <div id="algorithmContainers">
-            <div id="policyIterationContainer" class="algorithm-container">
-                <h2>策略迭代 (Policy Iteration)</h2>
-                <div id="policyIterationResults" class="results"></div>
-                <div class="grid-wrapper">
-                    <div class="grid-section">
-                        <h3>最优策略</h3>
-                        <div class="grid-container" id="policyIterationPolicyGrid"></div>
-                    </div>
-                    <div class="grid-section">
-                        <h3>状态价值</h3>
-                        <div class="grid-container" id="policyIterationValueGrid"></div>
-                    </div>
-                </div>
-                <div class="controls">
-                    <button id="policyIterationBtn">运行策略迭代</button>
-                    <button id="singleStepPolicyBtn" class="step-btn">运行一步迭代</button>
-                    <button id="resetPolicyIterationBtn" class="reset-btn">重置策略迭代</button>
-                </div>
-            </div>
-            
-            <div id="valueIterationContainer" class="algorithm-container">
-                <h2>价值迭代 (Value Iteration)</h2>
-                <div id="valueIterationResults" class="results"></div>
-                <div class="grid-wrapper">
-                    <div class="grid-section">
-                        <h3>最优策略</h3>
-                        <div class="grid-container" id="valueIterationPolicyGrid"></div>
-                    </div>
-                    <div class="grid-section">
-                        <h3>状态价值</h3>
-                        <div class="grid-container" id="valueIterationValueGrid"></div>
-                    </div>
-                </div>
-                <div class="controls">
-                    <button id="valueIterationBtn">运行价值迭代</button>
-                    <button id="singleStepValueBtn" class="step-btn">运行一步迭代</button>
-                    <button id="resetValueIterationBtn" class="reset-btn">重置价值迭代</button>
-                </div>
-            </div>
+        <div class="legend-item">
+            <div class="legend-color cliff"></div>
+            <span>悬崖 (Cliff)</span>
         </div>
     </div>
     
-    <script>
-        /**
-         * 悬崖漫步环境
-         */
-        class CliffWalkingEnv {
-          constructor(ncol = 12, nrow = 4) {
-            this.ncol = ncol; // 网格世界的列数
-            this.nrow = nrow; // 网格世界的行数
-            // 转移矩阵 P[state][action] = [{p, next_state, reward, done}]
-            this.P = this.createP();
-          }
-
-          /**
-           * 创建状态转移矩阵
-           */
-          createP() {
-            // 初始化转移矩阵
-            const P = Array(this.nrow * this.ncol).fill().map(() => 
-              Array(4).fill().map(() => [])
-            );
-
-            // 四种动作: 0-上, 1-下, 2-左, 3-右
-            const change = [[0, -1], [0, 1], [-1, 0], [1, 0]];
-            
-            for (let i = 0; i < this.nrow; i++) {
-              for (let j = 0; j < this.ncol; j++) {
-                for (let a = 0; a < 4; a++) {
-                  const state = i * this.ncol + j;
-                  // 判断是否是悬崖或终点
-                  if (state === this.nrow * this.ncol - 1) {
-                    // 终点
-                    P[state][a].push({
-                      p: 1.0,
-                      next_state: state,
-                      reward: 0,
-                      done: true
-                    });
-                    continue;
-                  }
-                  
-                  if (i === this.nrow - 1 && j > 0 && j < this.ncol - 1) {
-                    // 悬崖
-                    P[state][a].push({
-                      p: 1.0,
-                      next_state: (this.nrow - 1) * this.ncol,
-                      reward: -100,
-                      done: true
-                    });
-                    continue;
-                  }
-                  
-                  // 计算下一个状态
-                  let next_i = i + change[a][1];
-                  let next_j = j + change[a][0];
-                  let reward = -1.0;
-                  let done = false;
-                  
-                  // 边界处理
-                  if (next_i < 0 || next_i >= this.nrow || 
-                      next_j < 0 || next_j >= this.ncol) {
-                    next_i = i;
-                    next_j = j;
-                  }
-                  
-                  let next_state = next_i * this.ncol + next_j;
-                  
-                  // 如果下一个状态是悬崖
-                  if (next_i === this.nrow - 1 && next_j > 0 && next_j < this.ncol - 1) {
-                    next_state = (this.nrow - 1) * this.ncol;
-                    reward = -100;
-                    done = true;
-                  }
-                  
-                  // 如果下一个状态是终点
-                  if (next_state === this.nrow * this.ncol - 1) {
-                    done = true;
-                  }
-                  
-                  P[state][a].push({
-                    p: 1.0,
-                    next_state: next_state,
-                    reward: reward,
-                    done: done
-                  });
-                }
-              }
-            }
-            
-            return P;
-          }
-        }
-
-        /**
-         * 策略迭代算法
-         */
-        class PolicyIteration {
-          constructor(env, theta = 1e-5, gamma = 0.9) {
-            this.env = env;
-            this.theta = theta; // 收敛阈值
-            this.gamma = gamma; // 折扣因子
-            this.v = Array(env.nrow * env.ncol).fill(0); // 状态价值
-            this.pi = Array(env.nrow * env.ncol).fill().map(() => 
-              Array(4).fill(0.25)
-            ); // 初始策略为均匀随机
-            this.policyStable = false; // 策略是否稳定
-            this.iterationCount = 0; // 迭代次数
-            this.evaluationIterations = []; // 每次策略评估的迭代次数
-          }
-
-          /**
-           * 策略评估
-           */
-          policyEvaluation() {
-            let iteration = 0;
-            while (true) {
-              let delta = 0;
-              for (let s = 0; s < this.env.nrow * this.env.ncol; s++) {
-                let v = this.v[s];
-                let new_v = 0;
-                
-                for (let a = 0; a < 4; a++) {
-                  for (const {p, next_state, reward} of this.env.P[s][a]) {
-                    new_v += this.pi[s][a] * p * (reward + this.gamma * this.v[next_state]);
-                  }
-                }
-                
-                this.v[s] = new_v;
-                delta = Math.max(delta, Math.abs(v - new_v));
-              }
-              
-              iteration++;
-              
-              if (delta < this.theta) {
-                return iteration;
-              }
-              
-              // 防止无限循环
-              if (iteration > 1000) {
-                return iteration;
-              }
-            }
-          }
-
-          /**
-           * 策略提升
-           */
-          policyImprovement() {
-            let policy_stable = true;
-            
-            for (let s = 0; s < this.env.nrow * this.env.ncol; s++) {
-              const old_action_probs = [...this.pi[s]];
-              
-              // 计算Q(s,a)
-              const q_sa = Array(4).fill(0);
-              
-              for (let a = 0; a < 4; a++) {
-                for (const {p, next_state, reward} of this.env.P[s][a]) {
-                  q_sa[a] += p * (reward + this.gamma * this.v[next_state]);
-                }
-              }
-              
-              // 找到最优动作
-              const best_a = q_sa.indexOf(Math.max(...q_sa));
-              
-              // 更新策略为确定性策略
-              this.pi[s] = Array(4).fill(0);
-              this.pi[s][best_a] = 1.0;
-              
-              // 检查策略是否稳定
-              if (JSON.stringify(old_action_probs) !== JSON.stringify(this.pi[s])) {
-                policy_stable = false;
-              }
-            }
-            
-            return policy_stable;
-          }
-
-          /**
-           * 策略迭代
-           */
-          policyIteration() {
-            this.policyStable = false;
-            this.iterationCount = 0;
-            this.evaluationIterations = [];
-            
-            while (!this.policyStable) {
-              const evalIterations = this.policyEvaluation();
-              this.evaluationIterations.push(evalIterations);
-              
-              this.policyStable = this.policyImprovement();
-              this.iterationCount++;
-              
-              // 防止无限循环
-              if (this.iterationCount > 20) {
-                break;
-              }
-            }
-            
-            return {
-              policyIterations: this.iterationCount,
-              policyEvaluation: this.evaluationIterations
-            };
-          }
-          
-          /**
-           * 执行单步策略迭代
-           */
-          singleStepIteration() {
-            if (this.policyStable) {
-              return {
-                policyIterations: this.iterationCount,
-                policyEvaluation: this.evaluationIterations,
-                isComplete: true
-              };
-            }
-            
-            const evalIterations = this.policyEvaluation();
-            this.evaluationIterations.push(evalIterations);
-            
-            this.policyStable = this.policyImprovement();
-            this.iterationCount++;
-            
-            // 防止无限循环
-            if (this.iterationCount > 20) {
-              this.policyStable = true;
-            }
-            
-            return {
-              policyIterations: this.iterationCount,
-              policyEvaluation: this.evaluationIterations,
-              isComplete: this.policyStable
-            };
-          }
-        }
-
-        /**
-         * 价值迭代算法
-         */
-        class ValueIteration {
-          constructor(env, theta = 1e-5, gamma = 0.9) {
-            this.env = env;
-            this.theta = theta; // 收敛阈值
-            this.gamma = gamma; // 折扣因子
-            this.v = Array(env.nrow * env.ncol).fill(0); // 状态价值
-            this.pi = Array(env.nrow * env.ncol).fill().map(() => 
-              Array(4).fill(0.25)
-            ); // 策略
-            this.iterationCount = 0; // 迭代次数
-            this.isComplete = false; // 是否完成
-            this.maxDelta = Infinity; // 最大误差
-          }
-
-          /**
-           * 价值迭代
-           */
-          valueIteration() {
-            this.iterationCount = 0;
-            this.isComplete = false;
-            this.maxDelta = Infinity;
-            
-            while (!this.isComplete) {
-              const result = this.singleStepIteration();
-              if (result.isComplete) {
-                break;
-              }
-            }
-            
-            return this.iterationCount;
-          }
-          
-          /**
-           * 执行单步价值迭代
-           */
-          singleStepIteration() {
-            if (this.isComplete) {
-              return {
-                iterationCount: this.iterationCount,
-                isComplete: true
-              };
-            }
-            
-            let delta = 0;
-            this.iterationCount++;
-            
-            for (let s = 0; s < this.env.nrow * this.env.ncol; s++) {
-              const v = this.v[s];
-              
-              // 计算每个动作的价值
-              const q_sa = Array(4).fill(0);
-              
-              for (let a = 0; a < 4; a++) {
-                for (const {p, next_state, reward} of this.env.P[s][a]) {
-                  q_sa[a] += p * (reward + this.gamma * this.v[next_state]);
-                }
-              }
-              
-              // 更新状态价值为最大的动作价值
-              this.v[s] = Math.max(...q_sa);
-              
-              // 计算最大误差
-              delta = Math.max(delta, Math.abs(v - this.v[s]));
-            }
-            
-            this.maxDelta = delta;
-            
-            // 在每次迭代后更新策略，而不是等到收敛
-            this.extractPolicy();
-            
-            // 检查是否收敛
-            if (delta < this.theta || this.iterationCount > 1000) {
-              this.isComplete = true;
-            }
-            
-            return {
-              iterationCount: this.iterationCount,
-              maxDelta: this.maxDelta,
-              isComplete: this.isComplete
-            };
-          }
-          
-          /**
-           * 从价值函数提取策略
-           */
-          extractPolicy() {
-            for (let s = 0; s < this.env.nrow * this.env.ncol; s++) {
-              const q_sa = Array(4).fill(0);
-              
-              for (let a = 0; a < 4; a++) {
-                for (const {p, next_state, reward} of this.env.P[s][a]) {
-                  q_sa[a] += p * (reward + this.gamma * this.v[next_state]);
-                }
-              }
-              
-              // 找到最优动作
-              const best_a = q_sa.indexOf(Math.max(...q_sa));
-              
-              // 更新策略为确定性策略
-              this.pi[s] = Array(4).fill(0);
-              this.pi[s][best_a] = 1.0;
-            }
-          }
-        }
-
-        // 初始化环境
-        const env = new CliffWalkingEnv();
-        const actionMeaning = ['↑', '↓', '←', '→'];
+    <div id="algorithmContainers">
+        <div id="policyIterationContainer" class="algorithm-container">
+            <h2>策略迭代 (Policy Iteration)</h2>
+            <div id="policyIterationResults" class="results"></div>
+            <div class="grid-wrapper">
+                <div class="grid-section">
+                    <h3>最优策略</h3>
+                    <div class="grid-container" id="policyIterationPolicyGrid"></div>
+                </div>
+                <div class="grid-section">
+                    <h3>状态价值</h3>
+                    <div class="grid-container" id="policyIterationValueGrid"></div>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="policyIterationBtn" class="viz-button">运行策略迭代</button>
+                <button id="singleStepPolicyBtn" class="viz-button step-btn">运行一步迭代</button>
+                <button id="resetPolicyIterationBtn" class="viz-button reset-btn">重置策略迭代</button>
+            </div>
+        </div>
         
-        // 悬崖位置和目标位置
-        const cliffPos = Array.from({length: 10}, (_, i) => (env.nrow - 1) * env.ncol + i + 1);
-        const goalPos = [env.nrow * env.ncol - 1];
-        const startPos = (env.nrow - 1) * env.ncol;
-        
-        // 生成随机策略
-        function generateRandomPolicy() {
-          // 创建大小为4的数组，表示四个动作的概率
-          const policy = Array(4).fill(0);
-          
-          // 随机选择一个动作赋予100%概率
-          const randomAction = Math.floor(Math.random() * 4);
-          policy[randomAction] = 1.0;
-          
-          return policy;
-        }
-        
-        // 创建初始随机策略
-        let randomPolicies = Array(env.nrow * env.ncol).fill().map(() => 
-          generateRandomPolicy()
+        <div id="valueIterationContainer" class="algorithm-container">
+            <h2>价值迭代 (Value Iteration)</h2>
+            <div id="valueIterationResults" class="results"></div>
+            <div class="grid-wrapper">
+                <div class="grid-section">
+                    <h3>最优策略</h3>
+                    <div class="grid-container" id="valueIterationPolicyGrid"></div>
+                </div>
+                <div class="grid-section">
+                    <h3>状态价值</h3>
+                    <div class="grid-container" id="valueIterationValueGrid"></div>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="valueIterationBtn" class="viz-button">运行价值迭代</button>
+                <button id="singleStepValueBtn" class="viz-button step-btn">运行一步迭代</button>
+                <button id="resetValueIterationBtn" class="viz-button reset-btn">重置价值迭代</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /**
+     * 悬崖漫步环境
+     */
+    class CliffWalkingEnv {
+      constructor(ncol = 12, nrow = 4) {
+        this.ncol = ncol; // 网格世界的列数
+        this.nrow = nrow; // 网格世界的行数
+        // 转移矩阵 P[state][action] = [{p, next_state, reward, done}]
+        this.P = this.createP();
+      }
+
+      /**
+       * 创建状态转移矩阵
+       */
+      createP() {
+        // 初始化转移矩阵
+        const P = Array(this.nrow * this.ncol).fill().map(() => 
+          Array(4).fill().map(() => [])
         );
+
+        // 四种动作: 0-上, 1-下, 2-左, 3-右
+        const change = [[0, -1], [0, 1], [-1, 0], [1, 0]];
         
-        // 创建所有网格
-        function createAllGrids() {
-          createGrid('policyIterationValueGrid');
-          createGrid('policyIterationPolicyGrid');
-          createGrid('valueIterationValueGrid');
-          createGrid('valueIterationPolicyGrid');
-        }
-        
-        // 创建网格
-        function createGrid(gridId) {
-          const gridContainer = document.getElementById(gridId);
-          gridContainer.innerHTML = '';
-          
-          for (let i = 0; i < env.nrow; i++) {
-            for (let j = 0; j < env.ncol; j++) {
-              const cell = document.createElement('div');
-              cell.className = 'cell';
-              
-              const state = i * env.ncol + j;
-              
-              // 设置单元格类型
-              if (state === startPos) {
-                cell.classList.add('start');
-                cell.innerHTML = 'S';
-              } else if (state === goalPos[0]) {
-                cell.classList.add('goal');
-                cell.innerHTML = 'G';
-              } else if (cliffPos.includes(state)) {
-                cell.classList.add('cliff');
-                cell.innerHTML = 'C';
+        for (let i = 0; i < this.nrow; i++) {
+          for (let j = 0; j < this.ncol; j++) {
+            for (let a = 0; a < 4; a++) {
+              const state = i * this.ncol + j;
+              // 判断是否是悬崖或终点
+              if (state === this.nrow * this.ncol - 1) {
+                // 终点
+                P[state][a].push({
+                  p: 1.0,
+                  next_state: state,
+                  reward: 0,
+                  done: true
+                });
+                continue;
               }
               
-              gridContainer.appendChild(cell);
+              if (i === this.nrow - 1 && j > 0 && j < this.ncol - 1) {
+                // 悬崖
+                P[state][a].push({
+                  p: 1.0,
+                  next_state: (this.nrow - 1) * this.ncol,
+                  reward: -100,
+                  done: true
+                });
+                continue;
+              }
+              
+              // 计算下一个状态
+              let next_i = i + change[a][1];
+              let next_j = j + change[a][0];
+              let reward = -1.0;
+              let done = false;
+              
+              // 边界处理
+              if (next_i < 0 || next_i >= this.nrow || 
+                  next_j < 0 || next_j >= this.ncol) {
+                next_i = i;
+                next_j = j;
+              }
+              
+              let next_state = next_i * this.ncol + next_j;
+              
+              // 如果下一个状态是悬崖
+              if (next_i === this.nrow - 1 && next_j > 0 && next_j < this.ncol - 1) {
+                next_state = (this.nrow - 1) * this.ncol;
+                reward = -100;
+                done = true;
+              }
+              
+              // 如果下一个状态是终点
+              if (next_state === this.nrow * this.ncol - 1) {
+                done = true;
+              }
+              
+              P[state][a].push({
+                p: 1.0,
+                next_state: next_state,
+                reward: reward,
+                done: done
+              });
             }
           }
         }
         
-        // 显示初始环境状态
-        function showInitialState() {
-          // 显示所有状态值为0
-          showInitialValues('policyIterationValueGrid');
-          showInitialValues('valueIterationValueGrid');
-          
-          // 显示随机策略
-          showInitialPolicies('policyIterationPolicyGrid');
-          showInitialPolicies('valueIterationPolicyGrid');
-          
-          // 清空结果区域
-          document.getElementById('policyIterationResults').innerHTML = '';
-          document.getElementById('valueIterationResults').innerHTML = '';
-        }
-        
-        // 显示初始状态值
-        function showInitialValues(gridId) {
-          const cells = document.querySelectorAll(`#${gridId} .cell`);
-          
-          for (let i = 0; i < env.nrow; i++) {
-            for (let j = 0; j < env.ncol; j++) {
-              const state = i * env.ncol + j;
-              const cell = cells[state];
-              
-              // 显示状态价值
-              if (state === startPos) {
-                cell.classList.add('start');
-                cell.innerHTML = `S<br><span class="value-text">0.00</span>`;
-              } else if (state === goalPos[0]) {
-                cell.classList.add('goal');
-                cell.innerHTML = `G<br><span class="value-text">0.00</span>`;
-              } else if (cliffPos.includes(state)) {
-                cell.classList.add('cliff');
-                cell.innerHTML = `C<br><span class="value-text">0.00</span>`;
-              } else {
-                cell.innerHTML = `<span class="value-text">0.00</span>`;
+        return P;
+      }
+    }
+
+    /**
+     * 策略迭代算法
+     */
+    class PolicyIteration {
+      constructor(env, theta = 1e-5, gamma = 0.9) {
+        this.env = env;
+        this.theta = theta; // 收敛阈值
+        this.gamma = gamma; // 折扣因子
+        this.v = Array(env.nrow * env.ncol).fill(0); // 状态价值
+        this.pi = Array(env.nrow * env.ncol).fill().map(() => 
+          Array(4).fill(0.25)
+        ); // 初始策略为均匀随机
+        this.policyStable = false; // 策略是否稳定
+        this.iterationCount = 0; // 迭代次数
+        this.evaluationIterations = []; // 每次策略评估的迭代次数
+      }
+
+      /**
+       * 策略评估
+       */
+      policyEvaluation() {
+        let iteration = 0;
+        while (true) {
+          let delta = 0;
+          for (let s = 0; s < this.env.nrow * this.env.ncol; s++) {
+            let v = this.v[s];
+            let new_v = 0;
+            
+            for (let a = 0; a < 4; a++) {
+              for (const {p, next_state, reward} of this.env.P[s][a]) {
+                new_v += this.pi[s][a] * p * (reward + this.gamma * this.v[next_state]);
               }
             }
+            
+            this.v[s] = new_v;
+            delta = Math.max(delta, Math.abs(v - new_v));
+          }
+          
+          iteration++;
+          
+          if (delta < this.theta) {
+            return iteration;
+          }
+          
+          // 防止无限循环
+          if (iteration > 1000) {
+            return iteration;
+          }
+        }
+      }
+
+      /**
+       * 策略提升
+       */
+      policyImprovement() {
+        let policy_stable = true;
+        
+        for (let s = 0; s < this.env.nrow * this.env.ncol; s++) {
+          const old_action_probs = [...this.pi[s]];
+          
+          // 计算Q(s,a)
+          const q_sa = Array(4).fill(0);
+          
+          for (let a = 0; a < 4; a++) {
+            for (const {p, next_state, reward} of this.env.P[s][a]) {
+              q_sa[a] += p * (reward + this.gamma * this.v[next_state]);
+            }
+          }
+          
+          // 找到最优动作
+          const best_a = q_sa.indexOf(Math.max(...q_sa));
+          
+          // 更新策略为确定性策略
+          this.pi[s] = Array(4).fill(0);
+          this.pi[s][best_a] = 1.0;
+          
+          // 检查策略是否稳定
+          if (JSON.stringify(old_action_probs) !== JSON.stringify(this.pi[s])) {
+            policy_stable = false;
           }
         }
         
-        // 显示初始随机策略
-        function showInitialPolicies(gridId) {
-          const cells = document.querySelectorAll(`#${gridId} .cell`);
+        return policy_stable;
+      }
+
+      /**
+       * 策略迭代
+       */
+      policyIteration() {
+        this.policyStable = false;
+        this.iterationCount = 0;
+        this.evaluationIterations = [];
+        
+        while (!this.policyStable) {
+          const evalIterations = this.policyEvaluation();
+          this.evaluationIterations.push(evalIterations);
           
-          for (let i = 0; i < env.nrow; i++) {
-            for (let j = 0; j < env.ncol; j++) {
-              const state = i * env.ncol + j;
-              const cell = cells[state];
-              
-              if (state === startPos) {
-                cell.innerHTML = 'S';
-              } else if (state === goalPos[0]) {
-                cell.innerHTML = 'G';
-              } else if (cliffPos.includes(state)) {
-                cell.innerHTML = 'C';
-              } else {
-                // 显示随机策略方向
-                const best_a = randomPolicies[state].indexOf(1.0);
-                cell.innerHTML = actionMeaning[best_a];
-              }
-            }
+          this.policyStable = this.policyImprovement();
+          this.iterationCount++;
+          
+          // 防止无限循环
+          if (this.iterationCount > 20) {
+            break;
           }
         }
         
-        // 更新状态价值网格
-        function updateValueGrid(agent, gridId) {
-          const cells = document.querySelectorAll(`#${gridId} .cell`);
-          
-          for (let i = 0; i < env.nrow; i++) {
-            for (let j = 0; j < env.ncol; j++) {
-              const state = i * env.ncol + j;
-              const cell = cells[state];
-              
-              // 显示状态价值
-              const stateValue = agent.v[state].toFixed(2);
-              
-              // 设置单元格类型和内容
-              if (state === startPos) {
-                cell.classList.add('start');
-                cell.innerHTML = `S<br><span class="value-text">${stateValue}</span>`;
-              } else if (state === goalPos[0]) {
-                cell.classList.add('goal');
-                cell.innerHTML = `G<br><span class="value-text">${stateValue}</span>`;
-              } else if (cliffPos.includes(state)) {
-                cell.classList.add('cliff');
-                cell.innerHTML = `C<br><span class="value-text">${stateValue}</span>`;
-              } else {
-                cell.innerHTML = `<span class="value-text">${stateValue}</span>`;
-              }
-            }
+        return {
+          policyIterations: this.iterationCount,
+          policyEvaluation: this.evaluationIterations
+        };
+      }
+      
+      /**
+       * 执行单步策略迭代
+       */
+      singleStepIteration() {
+        if (this.policyStable) {
+          return {
+            policyIterations: this.iterationCount,
+            policyEvaluation: this.evaluationIterations,
+            isComplete: true
+          };
+        }
+        
+        const evalIterations = this.policyEvaluation();
+        this.evaluationIterations.push(evalIterations);
+        
+        this.policyStable = this.policyImprovement();
+        this.iterationCount++;
+        
+        // 防止无限循环
+        if (this.iterationCount > 20) {
+          this.policyStable = true;
+        }
+        
+        return {
+          policyIterations: this.iterationCount,
+          policyEvaluation: this.evaluationIterations,
+          isComplete: this.policyStable
+        };
+      }
+    }
+
+    /**
+     * 价值迭代算法
+     */
+    class ValueIteration {
+      constructor(env, theta = 1e-5, gamma = 0.9) {
+        this.env = env;
+        this.theta = theta; // 收敛阈值
+        this.gamma = gamma; // 折扣因子
+        this.v = Array(env.nrow * env.ncol).fill(0); // 状态价值
+        this.pi = Array(env.nrow * env.ncol).fill().map(() => 
+          Array(4).fill(0.25)
+        ); // 策略
+        this.iterationCount = 0; // 迭代次数
+        this.isComplete = false; // 是否完成
+        this.maxDelta = Infinity; // 最大误差
+      }
+
+      /**
+       * 价值迭代
+       */
+      valueIteration() {
+        this.iterationCount = 0;
+        this.isComplete = false;
+        this.maxDelta = Infinity;
+        
+        while (!this.isComplete) {
+          const result = this.singleStepIteration();
+          if (result.isComplete) {
+            break;
           }
         }
         
-        // 更新策略网格
-        function updatePolicyGrid(agent, gridId) {
-          const cells = document.querySelectorAll(`#${gridId} .cell`);
+        return this.iterationCount;
+      }
+      
+      /**
+       * 执行单步价值迭代
+       */
+      singleStepIteration() {
+        if (this.isComplete) {
+          return {
+            iterationCount: this.iterationCount,
+            isComplete: true
+          };
+        }
+        
+        let delta = 0;
+        this.iterationCount++;
+        
+        for (let s = 0; s < this.env.nrow * this.env.ncol; s++) {
+          const v = this.v[s];
           
-          for (let i = 0; i < env.nrow; i++) {
-            for (let j = 0; j < env.ncol; j++) {
-              const state = i * env.ncol + j;
-              const cell = cells[state];
-              
-              // 设置单元格类型和内容
-              if (state === startPos) {
-                cell.classList.add('start');
-                cell.innerHTML = 'S';
-              } else if (state === goalPos[0]) {
-                cell.classList.add('goal');
-                cell.innerHTML = 'G';
-              } else if (cliffPos.includes(state)) {
-                cell.classList.add('cliff');
-                cell.innerHTML = 'C';
-              } else {
-                // 找到最优动作
-                const best_a = agent.pi[state].indexOf(Math.max(...agent.pi[state]));
-                cell.innerHTML = actionMeaning[best_a];
-              }
+          // 计算每个动作的价值
+          const q_sa = Array(4).fill(0);
+          
+          for (let a = 0; a < 4; a++) {
+            for (const {p, next_state, reward} of this.env.P[s][a]) {
+              q_sa[a] += p * (reward + this.gamma * this.v[next_state]);
             }
           }
+          
+          // 更新状态价值为最大的动作价值
+          this.v[s] = Math.max(...q_sa);
+          
+          // 计算最大误差
+          delta = Math.max(delta, Math.abs(v - this.v[s]));
         }
         
-        // 重置环境
-        function resetEnvironment() {
-          // 重新生成随机策略
-          randomPolicies = Array(env.nrow * env.ncol).fill().map(() => 
-            generateRandomPolicy()
-          );
-          
-          // 显示初始状态
-          showInitialState();
+        this.maxDelta = delta;
+        
+        // 在每次迭代后更新策略，而不是等到收敛
+        this.extractPolicy();
+        
+        // 检查是否收敛
+        if (delta < this.theta || this.iterationCount > 1000) {
+          this.isComplete = true;
         }
         
-        // 重置策略迭代环境
-        function resetPolicyIteration() {
-          // 重新生成随机策略
-          randomPolicies = Array(env.nrow * env.ncol).fill().map(() => 
-            generateRandomPolicy()
-          );
+        return {
+          iterationCount: this.iterationCount,
+          maxDelta: this.maxDelta,
+          isComplete: this.isComplete
+        };
+      }
+      
+      /**
+       * 从价值函数提取策略
+       */
+      extractPolicy() {
+        for (let s = 0; s < this.env.nrow * this.env.ncol; s++) {
+          const q_sa = Array(4).fill(0);
           
-          // 重置算法实例
-          policyAgent = null;
-          
-          // 显示初始状态
-          showInitialValues('policyIterationValueGrid');
-          showInitialPolicies('policyIterationPolicyGrid');
-          
-          // 清空结果区域
-          document.getElementById('policyIterationResults').innerHTML = '';
-        }
-        
-        // 重置价值迭代环境
-        function resetValueIteration() {
-          // 重新生成随机策略
-          randomPolicies = Array(env.nrow * env.ncol).fill().map(() => 
-            generateRandomPolicy()
-          );
-          
-          // 重置算法实例
-          valueAgent = null;
-          
-          // 显示初始状态
-          showInitialValues('valueIterationValueGrid');
-          showInitialPolicies('valueIterationPolicyGrid');
-          
-          // 清空结果区域
-          document.getElementById('valueIterationResults').innerHTML = '';
-        }
-        
-        // 显示结果
-        function showResults(algorithmName, agent, iterations) {
-          const resultsId = algorithmName === '策略迭代' ? 'policyIterationResults' : 'valueIterationResults';
-          const resultsDiv = document.getElementById(resultsId);
-          let html = '';
-          
-          if (algorithmName === '策略迭代') {
-            html += `<div style="opacity: 0; animation: fadeInResult 0.5s ease-out forwards;">`;
-            html += `📊 <strong>策略迭代次数:</strong> ${iterations.policyIterations} | `;
-            html += `🔄 <strong>每次策略评估的迭代次数:</strong> ${iterations.policyEvaluation.join(', ')}`;
-            if (iterations.isComplete) {
-              html += ` | ✅ <strong>策略已收敛!</strong>`;
+          for (let a = 0; a < 4; a++) {
+            for (const {p, next_state, reward} of this.env.P[s][a]) {
+              q_sa[a] += p * (reward + this.gamma * this.v[next_state]);
             }
-            html += `</div>`;
+          }
+          
+          // 找到最优动作
+          const best_a = q_sa.indexOf(Math.max(...q_sa));
+          
+          // 更新策略为确定性策略
+          this.pi[s] = Array(4).fill(0);
+          this.pi[s][best_a] = 1.0;
+        }
+      }
+    }
+
+    // 初始化环境
+    const env = new CliffWalkingEnv();
+    const actionMeaning = ['↑', '↓', '←', '→'];
+    
+    // 悬崖位置和目标位置
+    const cliffPos = Array.from({length: 10}, (_, i) => (env.nrow - 1) * env.ncol + i + 1);
+    const goalPos = [env.nrow * env.ncol - 1];
+    const startPos = (env.nrow - 1) * env.ncol;
+    
+    // 生成随机策略
+    function generateRandomPolicy() {
+      // 创建大小为4的数组，表示四个动作的概率
+      const policy = Array(4).fill(0);
+      
+      // 随机选择一个动作赋予100%概率
+      const randomAction = Math.floor(Math.random() * 4);
+      policy[randomAction] = 1.0;
+      
+      return policy;
+    }
+    
+    // 创建初始随机策略
+    let randomPolicies = Array(env.nrow * env.ncol).fill().map(() => 
+      generateRandomPolicy()
+    );
+    
+    // 创建所有网格
+    function createAllGrids() {
+      createGrid('policyIterationValueGrid');
+      createGrid('policyIterationPolicyGrid');
+      createGrid('valueIterationValueGrid');
+      createGrid('valueIterationPolicyGrid');
+    }
+    
+    // 创建网格
+    function createGrid(gridId) {
+      const gridContainer = document.getElementById(gridId);
+      gridContainer.innerHTML = '';
+      
+      for (let i = 0; i < env.nrow; i++) {
+        for (let j = 0; j < env.ncol; j++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          
+          const state = i * env.ncol + j;
+          
+          // 设置单元格类型
+          if (state === startPos) {
+            cell.classList.add('start');
+            cell.innerHTML = 'S';
+          } else if (state === goalPos[0]) {
+            cell.classList.add('goal');
+            cell.innerHTML = 'G';
+          } else if (cliffPos.includes(state)) {
+            cell.classList.add('cliff');
+            cell.innerHTML = 'C';
+          }
+          
+          gridContainer.appendChild(cell);
+        }
+      }
+    }
+    
+    // 显示初始环境状态
+    function showInitialState() {
+      // 显示所有状态值为0
+      showInitialValues('policyIterationValueGrid');
+      showInitialValues('valueIterationValueGrid');
+      
+      // 显示随机策略
+      showInitialPolicies('policyIterationPolicyGrid');
+      showInitialPolicies('valueIterationPolicyGrid');
+      
+      // 清空结果区域
+      document.getElementById('policyIterationResults').innerHTML = '';
+      document.getElementById('valueIterationResults').innerHTML = '';
+    }
+    
+    // 显示初始状态值
+    function showInitialValues(gridId) {
+      const cells = document.querySelectorAll(`#${gridId} .cell`);
+      
+      for (let i = 0; i < env.nrow; i++) {
+        for (let j = 0; j < env.ncol; j++) {
+          const state = i * env.ncol + j;
+          const cell = cells[state];
+          
+          // 显示状态价值
+          if (state === startPos) {
+            cell.classList.add('start');
+            cell.innerHTML = `S<br><span class="value-text">0.00</span>`;
+          } else if (state === goalPos[0]) {
+            cell.classList.add('goal');
+            cell.innerHTML = `G<br><span class="value-text">0.00</span>`;
+          } else if (cliffPos.includes(state)) {
+            cell.classList.add('cliff');
+            cell.innerHTML = `C<br><span class="value-text">0.00</span>`;
           } else {
-            html += `<div style="opacity: 0; animation: fadeInResult 0.5s ease-out forwards;">`;
-            html += `📈 <strong>价值迭代次数:</strong> ${iterations.iterationCount} | `;
-            html += `📏 <strong>最大误差:</strong> ${iterations.maxDelta?.toFixed(5) || 'N/A'}`;
-            if (iterations.isComplete) {
-              html += ` | ✅ <strong>价值已收敛!</strong>`;
-            }
-            html += `</div>`;
-          }
-          
-          resultsDiv.innerHTML = html;
-          
-          // 添加CSS动画
-          if (!document.querySelector('#result-animations')) {
-            const style = document.createElement('style');
-            style.id = 'result-animations';
-            style.textContent = `
-              @keyframes fadeInResult {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
-              }
-              @keyframes pulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.02); }
-              }
-              .updating {
-                animation: pulse 0.6s ease-in-out;
-              }
-            `;
-            document.head.appendChild(style);
+            cell.innerHTML = `<span class="value-text">0.00</span>`;
           }
         }
-        
-        // 添加按钮点击反馈
-        function addButtonFeedback(buttonId) {
-          const button = document.getElementById(buttonId);
-          button.style.transform = 'scale(0.95)';
-          setTimeout(() => {
-            button.style.transform = '';
-          }, 150);
-        }
-        
-        // 添加网格更新动画
-        function animateGridUpdate(gridId) {
-          const grid = document.getElementById(gridId);
-          grid.classList.add('updating');
-          setTimeout(() => {
-            grid.classList.remove('updating');
-          }, 600);
-        }
-        
-        // 全局算法实例
-        let policyAgent = null;
-        let valueAgent = null;
-        
-        // 绑定按钮事件
-        document.getElementById('policyIterationBtn').addEventListener('click', function() {
-          addButtonFeedback('policyIterationBtn');
-          policyAgent = new PolicyIteration(env);
-          const iterations = policyAgent.policyIteration();
-          updateValueGrid(policyAgent, 'policyIterationValueGrid');
-          updatePolicyGrid(policyAgent, 'policyIterationPolicyGrid');
-          animateGridUpdate('policyIterationValueGrid');
-          animateGridUpdate('policyIterationPolicyGrid');
-          showResults('策略迭代', policyAgent, iterations);
-        });
-        
-        document.getElementById('valueIterationBtn').addEventListener('click', function() {
-          addButtonFeedback('valueIterationBtn');
-          valueAgent = new ValueIteration(env);
-          const iterations = valueAgent.valueIteration();
-          updateValueGrid(valueAgent, 'valueIterationValueGrid');
-          updatePolicyGrid(valueAgent, 'valueIterationPolicyGrid');
-          animateGridUpdate('valueIterationValueGrid');
-          animateGridUpdate('valueIterationPolicyGrid');
-          showResults('价值迭代', valueAgent, {
-            iterationCount: iterations,
-            maxDelta: valueAgent.maxDelta,
-            isComplete: valueAgent.isComplete
-          });
-        });
-        
-        document.getElementById('singleStepPolicyBtn').addEventListener('click', function() {
-          addButtonFeedback('singleStepPolicyBtn');
-          // 如果没有实例，创建一个新的
-          if (!policyAgent) {
-            policyAgent = new PolicyIteration(env);
+      }
+    }
+    
+    // 显示初始随机策略
+    function showInitialPolicies(gridId) {
+      const cells = document.querySelectorAll(`#${gridId} .cell`);
+      
+      for (let i = 0; i < env.nrow; i++) {
+        for (let j = 0; j < env.ncol; j++) {
+          const state = i * env.ncol + j;
+          const cell = cells[state];
+          
+          if (state === startPos) {
+            cell.innerHTML = 'S';
+          } else if (state === goalPos[0]) {
+            cell.innerHTML = 'G';
+          } else if (cliffPos.includes(state)) {
+            cell.innerHTML = 'C';
+          } else {
+            // 显示随机策略方向
+            const best_a = randomPolicies[state].indexOf(1.0);
+            cell.innerHTML = actionMeaning[best_a];
           }
+        }
+      }
+    }
+    
+    // 更新状态价值网格
+    function updateValueGrid(agent, gridId) {
+      const cells = document.querySelectorAll(`#${gridId} .cell`);
+      
+      for (let i = 0; i < env.nrow; i++) {
+        for (let j = 0; j < env.ncol; j++) {
+          const state = i * env.ncol + j;
+          const cell = cells[state];
           
-          // 运行一步迭代
-          const iterations = policyAgent.singleStepIteration();
+          // 显示状态价值
+          const stateValue = agent.v[state].toFixed(2);
           
-          // 更新视图
-          updateValueGrid(policyAgent, 'policyIterationValueGrid');
-          updatePolicyGrid(policyAgent, 'policyIterationPolicyGrid');
-          animateGridUpdate('policyIterationValueGrid');
-          animateGridUpdate('policyIterationPolicyGrid');
-          showResults('策略迭代', policyAgent, iterations);
-        });
-        
-        document.getElementById('singleStepValueBtn').addEventListener('click', function() {
-          addButtonFeedback('singleStepValueBtn');
-          // 如果没有实例，创建一个新的
-          if (!valueAgent) {
-            valueAgent = new ValueIteration(env);
+          // 设置单元格类型和内容
+          if (state === startPos) {
+            cell.classList.add('start');
+            cell.innerHTML = `S<br><span class="value-text">${stateValue}</span>`;
+          } else if (state === goalPos[0]) {
+            cell.classList.add('goal');
+            cell.innerHTML = `G<br><span class="value-text">${stateValue}</span>`;
+          } else if (cliffPos.includes(state)) {
+            cell.classList.add('cliff');
+            cell.innerHTML = `C<br><span class="value-text">${stateValue}</span>`;
+          } else {
+            cell.innerHTML = `<span class="value-text">${stateValue}</span>`;
           }
+        }
+      }
+    }
+    
+    // 更新策略网格
+    function updatePolicyGrid(agent, gridId) {
+      const cells = document.querySelectorAll(`#${gridId} .cell`);
+      
+      for (let i = 0; i < env.nrow; i++) {
+        for (let j = 0; j < env.ncol; j++) {
+          const state = i * env.ncol + j;
+          const cell = cells[state];
           
-          // 运行一步迭代
-          const iterations = valueAgent.singleStepIteration();
-          
-          // 更新视图
-          updateValueGrid(valueAgent, 'valueIterationValueGrid');
-          
-          // 每次迭代后都更新策略网格，不再需要等到迭代完成
-          updatePolicyGrid(valueAgent, 'valueIterationPolicyGrid');
-          
-          animateGridUpdate('valueIterationValueGrid');
-          animateGridUpdate('valueIterationPolicyGrid');
-          showResults('价值迭代', valueAgent, iterations);
-        });
-        
-        document.getElementById('resetPolicyIterationBtn').addEventListener('click', function() {
-          addButtonFeedback('resetPolicyIterationBtn');
-          resetPolicyIteration();
-          animateGridUpdate('policyIterationValueGrid');
-          animateGridUpdate('policyIterationPolicyGrid');
-        });
-        
-        document.getElementById('resetValueIterationBtn').addEventListener('click', function() {
-          addButtonFeedback('resetValueIterationBtn');
-          resetValueIteration();
-          animateGridUpdate('valueIterationValueGrid');
-          animateGridUpdate('valueIterationPolicyGrid');
-        });
-        
-        // 初始化所有网格
-        createAllGrids();
-        
-        // 初始显示环境状态
-        showInitialState();
-    </script>
-</body>
-</html> 
+          // 设置单元格类型和内容
+          if (state === startPos) {
+            cell.classList.add('start');
+            cell.innerHTML = 'S';
+          } else if (state === goalPos[0]) {
+            cell.classList.add('goal');
+            cell.innerHTML = 'G';
+          } else if (cliffPos.includes(state)) {
+            cell.classList.add('cliff');
+            cell.innerHTML = 'C';
+          } else {
+            // 找到最优动作
+            const best_a = agent.pi[state].indexOf(Math.max(...agent.pi[state]));
+            cell.innerHTML = actionMeaning[best_a];
+          }
+        }
+      }
+    }
+    
+    // 重置环境
+    function resetEnvironment() {
+      // 重新生成随机策略
+      randomPolicies = Array(env.nrow * env.ncol).fill().map(() => 
+        generateRandomPolicy()
+      );
+      
+      // 显示初始状态
+      showInitialState();
+    }
+    
+    // 重置策略迭代环境
+    function resetPolicyIteration() {
+      // 重新生成随机策略
+      randomPolicies = Array(env.nrow * env.ncol).fill().map(() => 
+        generateRandomPolicy()
+      );
+      
+      // 重置算法实例
+      policyAgent = null;
+      
+      // 显示初始状态
+      showInitialValues('policyIterationValueGrid');
+      showInitialPolicies('policyIterationPolicyGrid');
+      
+      // 清空结果区域
+      document.getElementById('policyIterationResults').innerHTML = '';
+    }
+    
+    // 重置价值迭代环境
+    function resetValueIteration() {
+      // 重新生成随机策略
+      randomPolicies = Array(env.nrow * env.ncol).fill().map(() => 
+        generateRandomPolicy()
+      );
+      
+      // 重置算法实例
+      valueAgent = null;
+      
+      // 显示初始状态
+      showInitialValues('valueIterationValueGrid');
+      showInitialPolicies('valueIterationPolicyGrid');
+      
+      // 清空结果区域
+      document.getElementById('valueIterationResults').innerHTML = '';
+    }
+    
+    // 显示结果
+    function showResults(algorithmName, agent, iterations) {
+      const resultsId = algorithmName === '策略迭代' ? 'policyIterationResults' : 'valueIterationResults';
+      const resultsDiv = document.getElementById(resultsId);
+      let html = '';
+      
+      if (algorithmName === '策略迭代') {
+        html += `<div style="opacity: 0; animation: fadeInResult 0.5s ease-out forwards;">`;
+        html += `📊 <strong>策略迭代次数:</strong> ${iterations.policyIterations} | `;
+        html += `🔄 <strong>每次策略评估的迭代次数:</strong> ${iterations.policyEvaluation.join(', ')}`;
+        if (iterations.isComplete) {
+          html += ` | ✅ <strong>策略已收敛!</strong>`;
+        }
+        html += `</div>`;
+      } else {
+        html += `<div style="opacity: 0; animation: fadeInResult 0.5s ease-out forwards;">`;
+        html += `📈 <strong>价值迭代次数:</strong> ${iterations.iterationCount} | `;
+        html += `📏 <strong>最大误差:</strong> ${iterations.maxDelta?.toFixed(5) || 'N/A'}`;
+        if (iterations.isComplete) {
+          html += ` | ✅ <strong>价值已收敛!</strong>`;
+        }
+        html += `</div>`;
+      }
+      
+      resultsDiv.innerHTML = html;
+    }
+    
+    // 添加按钮点击反馈
+    function addButtonFeedback(buttonId) {
+      const button = document.getElementById(buttonId);
+      button.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        button.style.transform = '';
+      }, 150);
+    }
+    
+    // 添加网格更新动画
+    function animateGridUpdate(gridId) {
+      const grid = document.getElementById(gridId);
+      grid.classList.add('updating');
+      setTimeout(() => {
+        grid.classList.remove('updating');
+      }, 600);
+    }
+    
+    // 全局算法实例
+    let policyAgent = null;
+    let valueAgent = null;
+    
+    // 绑定按钮事件
+    document.getElementById('policyIterationBtn').addEventListener('click', function() {
+      addButtonFeedback('policyIterationBtn');
+      policyAgent = new PolicyIteration(env);
+      const iterations = policyAgent.policyIteration();
+      updateValueGrid(policyAgent, 'policyIterationValueGrid');
+      updatePolicyGrid(policyAgent, 'policyIterationPolicyGrid');
+      animateGridUpdate('policyIterationValueGrid');
+      animateGridUpdate('policyIterationPolicyGrid');
+      showResults('策略迭代', policyAgent, iterations);
+    });
+    
+    document.getElementById('valueIterationBtn').addEventListener('click', function() {
+      addButtonFeedback('valueIterationBtn');
+      valueAgent = new ValueIteration(env);
+      const iterations = valueAgent.valueIteration();
+      updateValueGrid(valueAgent, 'valueIterationValueGrid');
+      updatePolicyGrid(valueAgent, 'valueIterationPolicyGrid');
+      animateGridUpdate('valueIterationValueGrid');
+      animateGridUpdate('valueIterationPolicyGrid');
+      showResults('价值迭代', valueAgent, {
+        iterationCount: iterations,
+        maxDelta: valueAgent.maxDelta,
+        isComplete: valueAgent.isComplete
+      });
+    });
+    
+    document.getElementById('singleStepPolicyBtn').addEventListener('click', function() {
+      addButtonFeedback('singleStepPolicyBtn');
+      // 如果没有实例，创建一个新的
+      if (!policyAgent) {
+        policyAgent = new PolicyIteration(env);
+      }
+      
+      // 运行一步迭代
+      const iterations = policyAgent.singleStepIteration();
+      
+      // 更新视图
+      updateValueGrid(policyAgent, 'policyIterationValueGrid');
+      updatePolicyGrid(policyAgent, 'policyIterationPolicyGrid');
+      animateGridUpdate('policyIterationValueGrid');
+      animateGridUpdate('policyIterationPolicyGrid');
+      showResults('策略迭代', policyAgent, iterations);
+    });
+    
+    document.getElementById('singleStepValueBtn').addEventListener('click', function() {
+      addButtonFeedback('singleStepValueBtn');
+      // 如果没有实例，创建一个新的
+      if (!valueAgent) {
+        valueAgent = new ValueIteration(env);
+      }
+      
+      // 运行一步迭代
+      const iterations = valueAgent.singleStepIteration();
+      
+      // 更新视图
+      updateValueGrid(valueAgent, 'valueIterationValueGrid');
+      
+      // 每次迭代后都更新策略网格，不再需要等到迭代完成
+      updatePolicyGrid(valueAgent, 'valueIterationPolicyGrid');
+      
+      animateGridUpdate('valueIterationValueGrid');
+      animateGridUpdate('valueIterationPolicyGrid');
+      showResults('价值迭代', valueAgent, iterations);
+    });
+    
+    document.getElementById('resetPolicyIterationBtn').addEventListener('click', function() {
+      addButtonFeedback('resetPolicyIterationBtn');
+      resetPolicyIteration();
+      animateGridUpdate('policyIterationValueGrid');
+      animateGridUpdate('policyIterationPolicyGrid');
+    });
+    
+    document.getElementById('resetValueIterationBtn').addEventListener('click', function() {
+      addButtonFeedback('resetValueIterationBtn');
+      resetValueIteration();
+      animateGridUpdate('valueIterationValueGrid');
+      animateGridUpdate('valueIterationPolicyGrid');
+    });
+    
+    // 初始化所有网格
+    createAllGrids();
+    
+    // 初始显示环境状态
+    showInitialState();
+</script> 
