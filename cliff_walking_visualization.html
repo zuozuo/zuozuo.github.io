@@ -24,22 +24,49 @@ permalink: /cliff-walking/
     
     .viz-title {
         color: #2d3748;
-        font-size: 2.25rem;
-        font-weight: 700;
+        font-size: 3rem;
+        font-weight: 800;
         text-align: center;
-        margin-bottom: 0.75rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        text-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+        animation: titleGlow 2s ease-in-out infinite alternate;
+        letter-spacing: -0.02em;
+        position: relative;
+    }
+    
+    .viz-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 4px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+        border-radius: 2px;
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+    }
+    
+    @keyframes titleGlow {
+        0% {
+            filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.3));
+        }
+        100% {
+            filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.4));
+        }
     }
     
     .viz-subtitle {
         text-align: center;
         color: #64748b;
-        font-size: 1.1rem;
+        font-size: 1.25rem;
         margin-bottom: 2rem;
-        font-weight: 400;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
     
     .usage-guide {
@@ -332,7 +359,17 @@ permalink: /cliff-walking/
         }
         
         .viz-title {
-            font-size: 1.75rem;
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+        
+        .viz-title::after {
+            width: 100px;
+            height: 3px;
+        }
+        
+        .viz-subtitle {
+            font-size: 1.1rem;
         }
         
         .grid-container {
