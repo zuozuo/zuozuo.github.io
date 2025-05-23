@@ -1804,6 +1804,9 @@
                     ? movingAverage(improvedQlearningAgent.episode_rewards, windowSize) 
                     : [];
 
+                // 实时更新参数输入显示
+                updateParamInputs();
+
                 // 更新综合图表
                 combinedChart.data.labels = labels;
                 
@@ -2199,6 +2202,11 @@
             // 重置时也禁用按钮，防止重复操作
             setButtonsEnabled(false);
             
+            // 将 ε、α 重置为 0.1 并更新输入框
+            document.getElementById('epsilonInput').value = 0.1;
+            document.getElementById('alphaInput').value = 0.1;
+            updateParamInputs();
+            
             // 取最新输入的 ε、α 值重新实例化
             const eps = parseFloat(document.getElementById('epsilonInput').value);
             const alp = parseFloat(document.getElementById('alphaInput').value);
@@ -2412,11 +2420,15 @@
             const eps = parseFloat(document.getElementById('epsilonInput').value);
             const alp = parseFloat(document.getElementById('alphaInput').value);
 
-            // 原始算法
-            sarsaAgent.epsilon = eps;
-            sarsaAgent.alpha = alp;
-            qlearningAgent.epsilon = eps;
-            qlearningAgent.alpha = alp;
+            // 原始算法仅在未训练时同步
+            if (sarsaAgent.episode_count === 0) {
+                sarsaAgent.epsilon = eps;
+                sarsaAgent.alpha = alp;
+            }
+            if (qlearningAgent.episode_count === 0) {
+                qlearningAgent.epsilon = eps;
+                qlearningAgent.alpha = alp;
+            }
 
             // 改进算法：仅在尚未开始训练时设置起始 ε、α
             if (improvedSarsaAgent.episode_count === 0) {
@@ -2432,6 +2444,12 @@
                 improvedQlearningAgent.alpha = alp;
                 improvedQlearningAgent.alpha_start = alp;
             }
+        }
+
+        // 实时更新 ε、α 输入框显示为改进Sarsa当前值
+        function updateParamInputs() {
+            document.getElementById('epsilonInput').value = improvedSarsaAgent.epsilon.toFixed(4);
+            document.getElementById('alphaInput').value = improvedSarsaAgent.alpha.toFixed(4);
         }
 
         // 更新最后20回合奖励表格
