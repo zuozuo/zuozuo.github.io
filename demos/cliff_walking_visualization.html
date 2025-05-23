@@ -4,523 +4,314 @@ title: 悬崖漫步环境可视化
 permalink: /demos/cliff-walking/
 ---
 
+<!-- 引入 Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          border: "hsl(214.3 31.8% 91.4%)",
+          input: "hsl(214.3 31.8% 91.4%)",
+          ring: "hsl(222.2 84% 4.9%)",
+          background: "hsl(0 0% 100%)",
+          foreground: "hsl(222.2 84% 4.9%)",
+          primary: {
+            DEFAULT: "hsl(222.2 47.4% 11.2%)",
+            foreground: "hsl(210 40% 98%)",
+          },
+          secondary: {
+            DEFAULT: "hsl(210 40% 96%)",
+            foreground: "hsl(222.2 84% 4.9%)",
+          },
+          destructive: {
+            DEFAULT: "hsl(0 84.2% 60.2%)",
+            foreground: "hsl(210 40% 98%)",
+          },
+          muted: {
+            DEFAULT: "hsl(210 40% 96%)",
+            foreground: "hsl(215.4 16.3% 46.9%)",
+          },
+          accent: {
+            DEFAULT: "hsl(210 40% 96%)",
+            foreground: "hsl(222.2 84% 4.9%)",
+          },
+          popover: {
+            DEFAULT: "hsl(0 0% 100%)",
+            foreground: "hsl(222.2 84% 4.9%)",
+          },
+          card: {
+            DEFAULT: "hsl(0 0% 100%)",
+            foreground: "hsl(222.2 84% 4.9%)",
+          },
+        },
+        borderRadius: {
+          lg: "var(--radius)",
+          md: "calc(var(--radius) - 2px)",
+          sm: "calc(var(--radius) - 4px)",
+        }
+      }
+    }
+  }
+</script>
+
 <style>
-    /* 隐藏Jekyll自动生成的页面标题 */
-    .page-header h1,
-    .post-title,
-    .page-title,
-    h1:first-of-type {
-        display: none !important;
-    }
-    
-    .visualization-container {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        max-width: 1400px;
-        margin: 2rem auto;
-        line-height: 1.6;
-    }
-    
-    .viz-title {
-        color: #2d3748;
-        font-size: 3rem;
-        font-weight: 800;
-        text-align: center;
-        margin-bottom: 1rem;
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
-        animation: titleGlow 2s ease-in-out infinite alternate;
-        letter-spacing: -0.02em;
-        position: relative;
-    }
-    
-    .viz-title::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 120px;
-        height: 4px;
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
-        border-radius: 2px;
-        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
-    }
-    
-    @keyframes titleGlow {
-        0% {
-            filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.3));
-        }
-        100% {
-            filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.4));
-        }
-    }
-    
-    .viz-subtitle {
-        text-align: center;
-        color: #64748b;
-        font-size: 1.25rem;
-        margin-bottom: 2rem;
-        font-weight: 500;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    }
-    
-    .usage-guide {
-        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-        padding: 1.5rem;
-        border-radius: 16px;
-        margin-bottom: 2rem;
-        border-left: 4px solid #3b82f6;
-    }
-    
-    .usage-guide h3 {
-        color: #1e40af;
-        margin-bottom: 0.75rem;
-        font-size: 1.1rem;
-        font-weight: 600;
-    }
-    
-    .usage-guide ul {
-        color: #374151;
-        line-height: 1.8;
-        margin: 0;
-        padding-left: 1.5rem;
-    }
-    
-    .usage-guide li {
-        margin-bottom: 0.5rem;
-    }
-    
-    .legend-section {
-        margin: 2rem 0 3rem 0;
-    }
-    
-    .legend-title {
-        text-align: center;
-        color: #64748b;
-        font-size: 1rem;
-        font-weight: 500;
-        margin-bottom: 1rem;
-        opacity: 0.8;
-    }
-    
-    .legend {
-        display: flex;
-        justify-content: center;
-        gap: 1.5rem;
-        flex-wrap: wrap;
-    }
-    
-    .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        border-radius: 8px;
-        font-weight: 500;
-        color: #475569;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        font-size: 0.9rem;
-        cursor: default;
-    }
-    
-    .legend-color {
-        width: 16px;
-        height: 16px;
-        border-radius: 4px;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        flex-shrink: 0;
-    }
-    
-    .algorithm-container {
-        margin: 3rem 0;
-        padding: 2.5rem;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        border: 1px solid rgba(229, 231, 235, 0.6);
-        transition: box-shadow 0.3s ease;
-    }
-    
-    .algorithm-container:hover {
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-    }
-    
-    .algorithm-container h2 {
-        color: #1e293b;
-        font-size: 1.75rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        position: relative;
-        padding-bottom: 1rem;
-    }
-    
-    .algorithm-container h2::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60px;
-        height: 3px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 2px;
-    }
-    
-    .results {
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin-bottom: 2rem;
-        border-left: 4px solid #667eea;
-        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-        font-size: 0.95rem;
-        color: #475569;
-        font-weight: 500;
-    }
-    
-    .grid-wrapper {
-        display: flex;
-        justify-content: center;
-        gap: 3rem;
-        flex-wrap: wrap;
-        margin: 2.5rem auto;
-    }
-    
-    .grid-section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .grid-section h3 {
-        color: #374151;
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        padding: 0.75rem 1.5rem;
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-    
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(12, 48px);
-        grid-template-rows: repeat(4, 48px);
-        gap: 3px;
-        padding: 1.5rem;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(229, 231, 235, 0.6);
-    }
-    
-    .cell {
-        width: 48px;
-        height: 48px;
-        border: 2px solid #e5e7eb;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        background: #ffffff;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        cursor: default;
-    }
-    
-    .cell:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 10;
-    }
-    
-    .start {
-        background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-        color: white;
-        border-color: #059669;
-        box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
-    }
-    
-    .goal {
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        color: white;
-        border-color: #f59e0b;
-        box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
-    }
-    
-    .cliff {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        color: white;
-        border-color: #dc2626;
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-    }
-    
-    .value-text {
-        font-weight: 500;
-        font-size: 0.75rem;
-        color: inherit;
-        margin-top: 2px;
-        opacity: 0.9;
-    }
-    
-    .controls {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin: 2.5rem 0 0 0;
-        flex-wrap: wrap;
-    }
-    
-    .viz-button {
-        padding: 0.875rem 2rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        min-width: 160px;
-        font-family: inherit;
-    }
-    
-    .viz-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-    }
-    
-    .viz-button:active {
-        transform: translateY(0);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    }
-    
-    .viz-button:disabled {
-        background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
-    }
-    
-    .viz-button:disabled:hover {
-        transform: none;
-        box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
-    }
-    
-    .reset-btn {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-    }
-    
-    .reset-btn:hover {
-        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-    }
-    
-    .step-btn {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    }
-    
-    .step-btn:hover {
-        background: linear-gradient(135deg, #059669 0%, #047857 100%);
-        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-    }
-    
-    /* 响应式设计 */
-    @media (max-width: 1200px) {
-        .grid-wrapper {
-            flex-direction: column;
-            gap: 2rem;
-        }
-        
-        .grid-container {
-            grid-template-columns: repeat(12, 40px);
-            grid-template-rows: repeat(4, 40px);
-        }
-        
-        .cell {
-            width: 40px;
-            height: 40px;
-            font-size: 0.8rem;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .visualization-container {
-            margin: 1rem;
-        }
-        
-        .viz-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-        }
-        
-        .viz-title::after {
-            width: 100px;
-            height: 3px;
-        }
-        
-        .viz-subtitle {
-            font-size: 1.1rem;
-        }
-        
-        .grid-container {
-            grid-template-columns: repeat(12, 32px);
-            grid-template-rows: repeat(4, 32px);
-            gap: 2px;
-            padding: 1rem;
-        }
-        
-        .cell {
-            width: 32px;
-            height: 32px;
-            font-size: 0.7rem;
-            border-radius: 6px;
-        }
-        
-        .controls {
-            gap: 0.5rem;
-        }
-        
-        .viz-button {
-            padding: 0.75rem 1.5rem;
-            font-size: 0.9rem;
-            min-width: 140px;
-        }
-        
-        .legend {
-            gap: 1rem;
-        }
-        
-        .legend-item {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
-    }
-    
-    /* 动画效果 */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .algorithm-container {
-        animation: fadeInUp 0.6s ease-out;
-    }
-    
-    .algorithm-container:nth-child(odd) {
-        animation-delay: 0.2s;
-    }
-    
-    @keyframes fadeInResult {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.02); }
-    }
-    
-    .updating {
-        animation: pulse 0.6s ease-in-out;
-    }
+  :root {
+    --radius: 0.5rem;
+  }
+  
+  /* 隐藏Jekyll自动生成的页面标题 */
+  .page-header h1,
+  .post-title,
+  .page-title,
+  h1:first-of-type {
+    display: none !important;
+  }
+  
+  /* 自定义网格样式 */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 0.25rem;
+    aspect-ratio: 3/1;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .grid-cell {
+    aspect-ratio: 1;
+    border: 2px solid rgb(226 232 240);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease-in-out;
+    cursor: default;
+    background: white;
+  }
+  
+  .grid-cell:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+  }
+  
+  .cell-start {
+    background: linear-gradient(135deg, rgb(34 197 94), rgb(21 128 61));
+    color: white;
+    border-color: rgb(21 128 61);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  }
+  
+  .cell-goal {
+    background: linear-gradient(135deg, rgb(251 191 36), rgb(245 158 11));
+    color: white;
+    border-color: rgb(245 158 11);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+  }
+  
+  .cell-cliff {
+    background: linear-gradient(135deg, rgb(239 68 68), rgb(220 38 38));
+    color: white;
+    border-color: rgb(220 38 38);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+  
+  .value-text {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    margin-top: 2px;
+  }
+  
+  /* 动画效果 */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  @keyframes pulse-update {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+  
+  .animate-pulse-update {
+    animation: pulse-update 0.6s ease-in-out;
+  }
 </style>
 
-<div class="visualization-container">
-    <h1 class="viz-title">悬崖漫步环境可视化</h1>
-    <p class="viz-subtitle">探索强化学习中的策略迭代与价值迭代算法</p>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 px-4">
+  <div class="max-w-7xl mx-auto space-y-8">
     
-    <div class="usage-guide">
-        <h3>💡 使用指南</h3>
-        <ul>
-            <li><strong>完整运行</strong>：点击「运行策略迭代」或「运行价值迭代」查看完整收敛过程</li>
-            <li><strong>单步调试</strong>：使用「运行一步迭代」按钮逐步观察算法进展</li>
-            <li><strong>重新开始</strong>：点击「重置」按钮清空结果并重新初始化</li>
-            <li><strong>对比学习</strong>：同时运行两种算法，比较它们的收敛速度和最终结果</li>
-        </ul>
+    <!-- 页面标题 -->
+    <div class="text-center space-y-4">
+      <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+        悬崖漫步环境可视化
+      </h1>
+      <p class="text-lg text-muted-foreground">
+        探索强化学习中的策略迭代与价值迭代算法
+      </p>
     </div>
     
-    <div class="legend-section">
-        <div class="legend-title">📋 网格表格图例说明</div>
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color start"></div>
-                <span>起点 (Start)</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color goal"></div>
-                <span>终点 (Goal)</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color cliff"></div>
-                <span>悬崖 (Cliff)</span>
-            </div>
+    <!-- 使用指南 -->
+    <div class="bg-card border border-border rounded-lg p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <div class="text-xl">💡</div>
+        <h3 class="text-lg font-semibold text-foreground">使用指南</h3>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
+        <div class="flex items-start gap-2">
+          <span class="font-medium text-foreground">完整运行：</span>
+          <span>点击「运行策略迭代」或「运行价值迭代」查看完整收敛过程</span>
         </div>
+        <div class="flex items-start gap-2">
+          <span class="font-medium text-foreground">单步调试：</span>
+          <span>使用「运行一步迭代」按钮逐步观察算法进展</span>
+        </div>
+        <div class="flex items-start gap-2">
+          <span class="font-medium text-foreground">重新开始：</span>
+          <span>点击「重置」按钮清空结果并重新初始化</span>
+        </div>
+        <div class="flex items-start gap-2">
+          <span class="font-medium text-foreground">对比学习：</span>
+          <span>同时运行两种算法，比较它们的收敛速度和最终结果</span>
+        </div>
+      </div>
     </div>
     
-    <div id="algorithmContainers">
-        <div id="policyIterationContainer" class="algorithm-container">
-            <h2>策略迭代 (Policy Iteration)</h2>
-            <div id="policyIterationResults" class="results"></div>
-            <div class="grid-wrapper">
-                <div class="grid-section">
-                    <h3>最优策略</h3>
-                    <div class="grid-container" id="policyIterationPolicyGrid"></div>
-                </div>
-                <div class="grid-section">
-                    <h3>状态价值</h3>
-                    <div class="grid-container" id="policyIterationValueGrid"></div>
-                </div>
-            </div>
-            <div class="controls">
-                <button id="policyIterationBtn" class="viz-button">运行策略迭代</button>
-                <button id="singleStepPolicyBtn" class="viz-button step-btn">运行一步迭代</button>
-                <button id="resetPolicyIterationBtn" class="viz-button reset-btn">重置策略迭代</button>
-            </div>
+    <!-- 图例说明 -->
+    <div class="bg-card border border-border rounded-lg p-6">
+      <h3 class="text-center text-sm font-medium text-muted-foreground mb-4">
+        📋 网格表格图例说明
+      </h3>
+      <div class="flex justify-center gap-6 flex-wrap">
+        <div class="flex items-center gap-2 px-3 py-2 bg-secondary rounded-md">
+          <div class="w-4 h-4 rounded cell-start"></div>
+          <span class="text-sm font-medium">起点 (Start)</span>
+        </div>
+        <div class="flex items-center gap-2 px-3 py-2 bg-secondary rounded-md">
+          <div class="w-4 h-4 rounded cell-goal"></div>
+          <span class="text-sm font-medium">终点 (Goal)</span>
+        </div>
+        <div class="flex items-center gap-2 px-3 py-2 bg-secondary rounded-md">
+          <div class="w-4 h-4 rounded cell-cliff"></div>
+          <span class="text-sm font-medium">悬崖 (Cliff)</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 算法容器 -->
+    <div class="space-y-8">
+      
+      <!-- 策略迭代 -->
+      <div class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+        <div class="p-6 border-b border-border">
+          <h2 class="text-2xl font-semibold text-center text-foreground">
+            策略迭代 (Policy Iteration)
+          </h2>
         </div>
         
-        <div id="valueIterationContainer" class="algorithm-container">
-            <h2>价值迭代 (Value Iteration)</h2>
-            <div id="valueIterationResults" class="results"></div>
-            <div class="grid-wrapper">
-                <div class="grid-section">
-                    <h3>最优策略</h3>
-                    <div class="grid-container" id="valueIterationPolicyGrid"></div>
-                </div>
-                <div class="grid-section">
-                    <h3>状态价值</h3>
-                    <div class="grid-container" id="valueIterationValueGrid"></div>
-                </div>
+        <div class="p-6 space-y-6">
+          <!-- 结果显示 -->
+          <div id="policyIterationResults" class="bg-muted rounded-md p-4 font-mono text-sm text-muted-foreground">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🎯</span>
+              <span class="font-semibold text-foreground">准备就绪</span>
+              <span>|</span>
+              <span>点击运行按钮开始策略迭代算法</span>
             </div>
-            <div class="controls">
-                <button id="valueIterationBtn" class="viz-button">运行价值迭代</button>
-                <button id="singleStepValueBtn" class="viz-button step-btn">运行一步迭代</button>
-                <button id="resetValueIterationBtn" class="viz-button reset-btn">重置价值迭代</button>
+          </div>
+          
+          <!-- 网格显示 -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-center text-foreground">最优策略</h3>
+              <div class="flex justify-center">
+                <div class="grid-container" id="policyIterationPolicyGrid"></div>
+              </div>
             </div>
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-center text-foreground">状态价值</h3>
+              <div class="flex justify-center">
+                <div class="grid-container" id="policyIterationValueGrid"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 控制按钮 -->
+          <div class="flex flex-wrap justify-center gap-3">
+            <button id="policyIterationBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+              运行策略迭代
+            </button>
+            <button id="singleStepPolicyBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+              运行一步迭代
+            </button>
+            <button id="resetPolicyIterationBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
+              重置策略迭代
+            </button>
+          </div>
         </div>
+      </div>
+      
+      <!-- 价值迭代 -->
+      <div class="bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+        <div class="p-6 border-b border-border">
+          <h2 class="text-2xl font-semibold text-center text-foreground">
+            价值迭代 (Value Iteration)
+          </h2>
+        </div>
+        
+        <div class="p-6 space-y-6">
+          <!-- 结果显示 -->
+          <div id="valueIterationResults" class="bg-muted rounded-md p-4 font-mono text-sm text-muted-foreground">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🎯</span>
+              <span class="font-semibold text-foreground">准备就绪</span>
+              <span>|</span>
+              <span>点击运行按钮开始价值迭代算法</span>
+            </div>
+          </div>
+          
+          <!-- 网格显示 -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-center text-foreground">最优策略</h3>
+              <div class="flex justify-center">
+                <div class="grid-container" id="valueIterationPolicyGrid"></div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-center text-foreground">状态价值</h3>
+              <div class="flex justify-center">
+                <div class="grid-container" id="valueIterationValueGrid"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 控制按钮 -->
+          <div class="flex flex-wrap justify-center gap-3">
+            <button id="valueIterationBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+              运行价值迭代
+            </button>
+            <button id="singleStepValueBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+              运行一步迭代
+            </button>
+            <button id="resetValueIterationBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
+              重置价值迭代
+            </button>
+          </div>
+        </div>
+      </div>
+      
     </div>
+  </div>
 </div>
 
 <script>
@@ -908,19 +699,19 @@ permalink: /demos/cliff-walking/
       for (let i = 0; i < env.nrow; i++) {
         for (let j = 0; j < env.ncol; j++) {
           const cell = document.createElement('div');
-          cell.className = 'cell';
+          cell.className = 'grid-cell';
           
           const state = i * env.ncol + j;
           
           // 设置单元格类型
           if (state === startPos) {
-            cell.classList.add('start');
+            cell.classList.add('cell-start');
             cell.innerHTML = 'S';
           } else if (state === goalPos[0]) {
-            cell.classList.add('goal');
+            cell.classList.add('cell-goal');
             cell.innerHTML = 'G';
           } else if (cliffPos.includes(state)) {
-            cell.classList.add('cliff');
+            cell.classList.add('cell-cliff');
             cell.innerHTML = 'C';
           }
           
@@ -941,14 +732,14 @@ permalink: /demos/cliff-walking/
       
       // 显示默认结果提示
       document.getElementById('policyIterationResults').innerHTML = 
-        '<div style="opacity: 0.7; color: #64748b;">🎯 <strong>准备就绪</strong> | 点击运行按钮开始策略迭代算法</div>';
+        '<div class="flex items-center gap-2"><span class="text-lg">🎯</span><span class="font-semibold text-foreground">准备就绪</span><span>|</span><span>点击运行按钮开始策略迭代算法</span></div>';
       document.getElementById('valueIterationResults').innerHTML = 
-        '<div style="opacity: 0.7; color: #64748b;">🎯 <strong>准备就绪</strong> | 点击运行按钮开始价值迭代算法</div>';
+        '<div class="flex items-center gap-2"><span class="text-lg">🎯</span><span class="font-semibold text-foreground">准备就绪</span><span>|</span><span>点击运行按钮开始价值迭代算法</span></div>';
     }
     
     // 显示初始状态值
     function showInitialValues(gridId) {
-      const cells = document.querySelectorAll(`#${gridId} .cell`);
+      const cells = document.querySelectorAll(`#${gridId} .grid-cell`);
       
       for (let i = 0; i < env.nrow; i++) {
         for (let j = 0; j < env.ncol; j++) {
@@ -957,13 +748,13 @@ permalink: /demos/cliff-walking/
           
           // 显示状态价值
           if (state === startPos) {
-            cell.classList.add('start');
+            cell.classList.add('cell-start');
             cell.innerHTML = `S<br><span class="value-text">0.00</span>`;
           } else if (state === goalPos[0]) {
-            cell.classList.add('goal');
+            cell.classList.add('cell-goal');
             cell.innerHTML = `G<br><span class="value-text">0.00</span>`;
           } else if (cliffPos.includes(state)) {
-            cell.classList.add('cliff');
+            cell.classList.add('cell-cliff');
             cell.innerHTML = `C<br><span class="value-text">0.00</span>`;
           } else {
             cell.innerHTML = `<span class="value-text">0.00</span>`;
@@ -974,7 +765,7 @@ permalink: /demos/cliff-walking/
     
     // 显示初始随机策略
     function showInitialPolicies(gridId) {
-      const cells = document.querySelectorAll(`#${gridId} .cell`);
+      const cells = document.querySelectorAll(`#${gridId} .grid-cell`);
       
       for (let i = 0; i < env.nrow; i++) {
         for (let j = 0; j < env.ncol; j++) {
@@ -998,7 +789,7 @@ permalink: /demos/cliff-walking/
     
     // 更新状态价值网格
     function updateValueGrid(agent, gridId) {
-      const cells = document.querySelectorAll(`#${gridId} .cell`);
+      const cells = document.querySelectorAll(`#${gridId} .grid-cell`);
       
       for (let i = 0; i < env.nrow; i++) {
         for (let j = 0; j < env.ncol; j++) {
@@ -1010,13 +801,13 @@ permalink: /demos/cliff-walking/
           
           // 设置单元格类型和内容
           if (state === startPos) {
-            cell.classList.add('start');
+            cell.classList.add('cell-start');
             cell.innerHTML = `S<br><span class="value-text">${stateValue}</span>`;
           } else if (state === goalPos[0]) {
-            cell.classList.add('goal');
+            cell.classList.add('cell-goal');
             cell.innerHTML = `G<br><span class="value-text">${stateValue}</span>`;
           } else if (cliffPos.includes(state)) {
-            cell.classList.add('cliff');
+            cell.classList.add('cell-cliff');
             cell.innerHTML = `C<br><span class="value-text">${stateValue}</span>`;
           } else {
             cell.innerHTML = `<span class="value-text">${stateValue}</span>`;
@@ -1027,7 +818,7 @@ permalink: /demos/cliff-walking/
     
     // 更新策略网格
     function updatePolicyGrid(agent, gridId) {
-      const cells = document.querySelectorAll(`#${gridId} .cell`);
+      const cells = document.querySelectorAll(`#${gridId} .grid-cell`);
       
       for (let i = 0; i < env.nrow; i++) {
         for (let j = 0; j < env.ncol; j++) {
@@ -1036,13 +827,13 @@ permalink: /demos/cliff-walking/
           
           // 设置单元格类型和内容
           if (state === startPos) {
-            cell.classList.add('start');
+            cell.classList.add('cell-start');
             cell.innerHTML = 'S';
           } else if (state === goalPos[0]) {
-            cell.classList.add('goal');
+            cell.classList.add('cell-goal');
             cell.innerHTML = 'G';
           } else if (cliffPos.includes(state)) {
-            cell.classList.add('cliff');
+            cell.classList.add('cell-cliff');
             cell.innerHTML = 'C';
           } else {
             // 找到最优动作
@@ -1051,17 +842,6 @@ permalink: /demos/cliff-walking/
           }
         }
       }
-    }
-    
-    // 重置环境
-    function resetEnvironment() {
-      // 重新生成随机策略
-      randomPolicies = Array(env.nrow * env.ncol).fill().map(() => 
-        generateRandomPolicy()
-      );
-      
-      // 显示初始状态
-      showInitialState();
     }
     
     // 重置策略迭代环境
@@ -1080,7 +860,7 @@ permalink: /demos/cliff-walking/
       
       // 显示默认结果提示
       document.getElementById('policyIterationResults').innerHTML = 
-        '<div style="opacity: 0.7; color: #64748b;">🎯 <strong>准备就绪</strong> | 点击运行按钮开始策略迭代算法</div>';
+        '<div class="flex items-center gap-2"><span class="text-lg">🎯</span><span class="font-semibold text-foreground">准备就绪</span><span>|</span><span>点击运行按钮开始策略迭代算法</span></div>';
     }
     
     // 重置价值迭代环境
@@ -1099,7 +879,7 @@ permalink: /demos/cliff-walking/
       
       // 显示默认结果提示
       document.getElementById('valueIterationResults').innerHTML = 
-        '<div style="opacity: 0.7; color: #64748b;">🎯 <strong>准备就绪</strong> | 点击运行按钮开始价值迭代算法</div>';
+        '<div class="flex items-center gap-2"><span class="text-lg">🎯</span><span class="font-semibold text-foreground">准备就绪</span><span>|</span><span>点击运行按钮开始价值迭代算法</span></div>';
     }
     
     // 显示结果
@@ -1109,41 +889,44 @@ permalink: /demos/cliff-walking/
       let html = '';
       
       if (algorithmName === '策略迭代') {
-        html += `<div style="opacity: 0; animation: fadeInResult 0.5s ease-out forwards;">`;
-        html += `📊 <strong>策略迭代次数:</strong> ${iterations.policyIterations} | `;
-        html += `🔄 <strong>每次策略评估的迭代次数:</strong> ${iterations.policyEvaluation.join(', ')}`;
+        html += `<div class="animate-fade-in">`;
+        html += `<div class="flex items-center gap-2 flex-wrap">`;
+        html += `<span class="text-lg">📊</span>`;
+        html += `<span class="font-semibold text-foreground">策略迭代次数:</span>`;
+        html += `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">${iterations.policyIterations}</span>`;
+        html += `<span>|</span>`;
+        html += `<span class="font-semibold text-foreground">每次策略评估:</span>`;
+        html += `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">${iterations.policyEvaluation.join(', ')}</span>`;
         if (iterations.isComplete) {
-          html += ` | ✅ <strong>策略已收敛!</strong>`;
+          html += `<span>|</span><span class="text-green-600 font-semibold">✅ 策略已收敛!</span>`;
         }
         html += `</div>`;
+        html += `</div>`;
       } else {
-        html += `<div style="opacity: 0; animation: fadeInResult 0.5s ease-out forwards;">`;
-        html += `📈 <strong>价值迭代次数:</strong> ${iterations.iterationCount} | `;
-        html += `📏 <strong>最大误差:</strong> ${iterations.maxDelta?.toFixed(5) || 'N/A'}`;
+        html += `<div class="animate-fade-in">`;
+        html += `<div class="flex items-center gap-2 flex-wrap">`;
+        html += `<span class="text-lg">📈</span>`;
+        html += `<span class="font-semibold text-foreground">价值迭代次数:</span>`;
+        html += `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">${iterations.iterationCount}</span>`;
+        html += `<span>|</span>`;
+        html += `<span class="font-semibold text-foreground">最大误差:</span>`;
+        html += `<span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm">${iterations.maxDelta?.toFixed(5) || 'N/A'}</span>`;
         if (iterations.isComplete) {
-          html += ` | ✅ <strong>价值已收敛!</strong>`;
+          html += `<span>|</span><span class="text-green-600 font-semibold">✅ 价值已收敛!</span>`;
         }
+        html += `</div>`;
         html += `</div>`;
       }
       
       resultsDiv.innerHTML = html;
     }
     
-    // 添加按钮点击反馈
-    function addButtonFeedback(buttonId) {
-      const button = document.getElementById(buttonId);
-      button.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        button.style.transform = '';
-      }, 150);
-    }
-    
     // 添加网格更新动画
     function animateGridUpdate(gridId) {
       const grid = document.getElementById(gridId);
-      grid.classList.add('updating');
+      grid.classList.add('animate-pulse-update');
       setTimeout(() => {
-        grid.classList.remove('updating');
+        grid.classList.remove('animate-pulse-update');
       }, 600);
     }
     
@@ -1153,7 +936,6 @@ permalink: /demos/cliff-walking/
     
     // 绑定按钮事件
     document.getElementById('policyIterationBtn').addEventListener('click', function() {
-      addButtonFeedback('policyIterationBtn');
       policyAgent = new PolicyIteration(env);
       const iterations = policyAgent.policyIteration();
       updateValueGrid(policyAgent, 'policyIterationValueGrid');
@@ -1164,7 +946,6 @@ permalink: /demos/cliff-walking/
     });
     
     document.getElementById('valueIterationBtn').addEventListener('click', function() {
-      addButtonFeedback('valueIterationBtn');
       valueAgent = new ValueIteration(env);
       const iterations = valueAgent.valueIteration();
       updateValueGrid(valueAgent, 'valueIterationValueGrid');
@@ -1179,7 +960,6 @@ permalink: /demos/cliff-walking/
     });
     
     document.getElementById('singleStepPolicyBtn').addEventListener('click', function() {
-      addButtonFeedback('singleStepPolicyBtn');
       // 如果没有实例，创建一个新的
       if (!policyAgent) {
         policyAgent = new PolicyIteration(env);
@@ -1197,7 +977,6 @@ permalink: /demos/cliff-walking/
     });
     
     document.getElementById('singleStepValueBtn').addEventListener('click', function() {
-      addButtonFeedback('singleStepValueBtn');
       // 如果没有实例，创建一个新的
       if (!valueAgent) {
         valueAgent = new ValueIteration(env);
@@ -1208,24 +987,19 @@ permalink: /demos/cliff-walking/
       
       // 更新视图
       updateValueGrid(valueAgent, 'valueIterationValueGrid');
-      
-      // 每次迭代后都更新策略网格，不再需要等到迭代完成
       updatePolicyGrid(valueAgent, 'valueIterationPolicyGrid');
-      
       animateGridUpdate('valueIterationValueGrid');
       animateGridUpdate('valueIterationPolicyGrid');
       showResults('价值迭代', valueAgent, iterations);
     });
     
     document.getElementById('resetPolicyIterationBtn').addEventListener('click', function() {
-      addButtonFeedback('resetPolicyIterationBtn');
       resetPolicyIteration();
       animateGridUpdate('policyIterationValueGrid');
       animateGridUpdate('policyIterationPolicyGrid');
     });
     
     document.getElementById('resetValueIterationBtn').addEventListener('click', function() {
-      addButtonFeedback('resetValueIterationBtn');
       resetValueIteration();
       animateGridUpdate('valueIterationValueGrid');
       animateGridUpdate('valueIterationPolicyGrid');
