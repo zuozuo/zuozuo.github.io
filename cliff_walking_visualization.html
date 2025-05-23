@@ -929,9 +929,11 @@ permalink: /cliff-walking/
       showInitialPolicies('policyIterationPolicyGrid');
       showInitialPolicies('valueIterationPolicyGrid');
       
-      // 清空结果区域
-      document.getElementById('policyIterationResults').innerHTML = '';
-      document.getElementById('valueIterationResults').innerHTML = '';
+      // 显示默认结果提示
+      document.getElementById('policyIterationResults').innerHTML = 
+        '<div style="opacity: 0.7; color: #64748b;">🎯 <strong>准备就绪</strong> | 点击运行按钮开始策略迭代算法</div>';
+      document.getElementById('valueIterationResults').innerHTML = 
+        '<div style="opacity: 0.7; color: #64748b;">🎯 <strong>准备就绪</strong> | 点击运行按钮开始价值迭代算法</div>';
     }
     
     // 显示初始状态值
@@ -1066,8 +1068,9 @@ permalink: /cliff-walking/
       showInitialValues('policyIterationValueGrid');
       showInitialPolicies('policyIterationPolicyGrid');
       
-      // 清空结果区域
-      document.getElementById('policyIterationResults').innerHTML = '';
+      // 显示默认结果提示
+      document.getElementById('policyIterationResults').innerHTML = 
+        '<div style="opacity: 0.7; color: #64748b;">🎯 <strong>准备就绪</strong> | 点击运行按钮开始策略迭代算法</div>';
     }
     
     // 重置价值迭代环境
@@ -1084,8 +1087,9 @@ permalink: /cliff-walking/
       showInitialValues('valueIterationValueGrid');
       showInitialPolicies('valueIterationPolicyGrid');
       
-      // 清空结果区域
-      document.getElementById('valueIterationResults').innerHTML = '';
+      // 显示默认结果提示
+      document.getElementById('valueIterationResults').innerHTML = 
+        '<div style="opacity: 0.7; color: #64748b;">🎯 <strong>准备就绪</strong> | 点击运行按钮开始价值迭代算法</div>';
     }
     
     // 显示结果
