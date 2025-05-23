@@ -56,6 +56,13 @@ bundle exec jekyll serve --livereload
 - **Chirpy 主题**：现代化的博客主题
 - **GitHub Pages**：免费托管服务
 - **HTML/CSS/JavaScript**：交互式演示工具
+- **ImageMagick**：图像处理和优化工具
+
+### 🎨 界面优化
+- **头像显示优化**：使用ImageMagick将矩形头像转换为正方形，确保圆形裁剪完美显示
+- **自定义CSS样式**：针对Chirpy主题的头像显示进行专门优化
+- **响应式设计**：支持不同屏幕尺寸的最佳显示效果
+- **深色模式适配**：在浅色和深色主题下都有良好的视觉效果
 
 ## 📖 关于作者
 
