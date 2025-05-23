@@ -692,8 +692,8 @@
                         <tr>
                             <th class="px-4 py-3">回合</th>
                             <th class="px-4 py-3">Sarsa</th>
-                            <th class="px-4 py-3">Q-learning</th>
                             <th class="px-4 py-3">改进Sarsa</th>
+                            <th class="px-4 py-3">Q-learning</th>
                             <th class="px-4 py-3">改进Q-learning</th>
                         </tr>
                     </thead>
@@ -2443,8 +2443,8 @@
                 html += `<tr>`;
                 html += `<td class="border px-2 py-1">${i + 1}</td>`;
                 html += `<td class="border px-2 py-1">${sarsa[i] !== undefined ? sarsa[i] : ''}</td>`;
-                html += `<td class="border px-2 py-1">${ql[i] !== undefined ? ql[i] : ''}</td>`;
                 html += `<td class="border px-2 py-1">${isarsa[i] !== undefined ? isarsa[i] : ''}</td>`;
+                html += `<td class="border px-2 py-1">${ql[i] !== undefined ? ql[i] : ''}</td>`;
                 html += `<td class="border px-2 py-1">${iql[i] !== undefined ? iql[i] : ''}</td>`;
                 html += `</tr>`;
             }
