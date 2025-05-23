@@ -5,6 +5,9 @@ categories: [terminal, Kitty, 终端, neovim]
 tags: [kitty, iterm2, 终端, neovim]
 ---
 
+![Kitty Terminal](/assets/img/posts/kitty-terminal-header.png)
+*现代化的GPU加速终端模拟器 - Kitty*
+
 ## 为什么选择 Kitty
 
 我是多年的 Iterm2 用户，但是最近我决定抛弃 Iterm2，拥抱 Kitty。 对我来说 Iterm2 有几个让我比较难受的问题：
