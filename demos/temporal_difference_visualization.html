@@ -2043,9 +2043,18 @@
                 <p>训练回合: ${agent.episode_count} | 最后回合奖励: ${lastReward} | 平均奖励: ${avgReward} | 最近100回合均值: ${recentAvg} | 最优策略: ${optimalPolicyText}</p>
             `;
             
-            paramsDiv.innerHTML = `
-                <p>当前参数: ε=${agent.epsilon.toFixed(4)} | α=${agent.alpha.toFixed(4)} | 衰减中...</p>
-            `;
+            // 显示参数衰减信息
+            if (agent.episode_count > 0) {
+                const epsilonReduction = ((agent.epsilon_start - agent.epsilon) / agent.epsilon_start * 100).toFixed(1);
+                const alphaReduction = ((agent.alpha_start - agent.alpha) / agent.alpha_start * 100).toFixed(1);
+                paramsDiv.innerHTML = `
+                    <p>当前参数: ε=${agent.epsilon.toFixed(4)} (衰减${epsilonReduction}%) | α=${agent.alpha.toFixed(4)} (衰减${alphaReduction}%) | 持续衰减中...</p>
+                `;
+            } else {
+                paramsDiv.innerHTML = `
+                    <p>初始参数: ε=${agent.epsilon_start.toFixed(4)} | α=${agent.alpha_start.toFixed(4)} | 等待开始训练...</p>
+                `;
+            }
         }
 
         // 更新迭代步数显示
@@ -2160,8 +2169,16 @@
         // 绑定事件监听器
         document.getElementById('trainBothBtn').addEventListener('click', async function() {
             const episodes = parseInt(document.getElementById('episodesInput').value);
-            // 读取最新 ε、α
-            syncParamsFromInput();
+            
+            // 只在第一次训练时同步参数（当所有算法都未开始训练时）
+            const isFirstTime = sarsaAgent.episode_count === 0 && 
+                               qlearningAgent.episode_count === 0 && 
+                               improvedSarsaAgent.episode_count === 0 && 
+                               improvedQlearningAgent.episode_count === 0;
+            
+            if (isFirstTime) {
+                syncParamsFromInput();
+            }
             
             // 禁用所有按钮和输入框
             setButtonsEnabled(false);
@@ -2190,8 +2207,16 @@
         });
 
         document.getElementById('stepBothBtn').addEventListener('click', function() {
-            // 同步参数并进行单步训练
-            syncParamsFromInput();
+            // 只在第一次训练时同步参数（当所有算法都未开始训练时）
+            const isFirstTime = sarsaAgent.episode_count === 0 && 
+                               qlearningAgent.episode_count === 0 && 
+                               improvedSarsaAgent.episode_count === 0 && 
+                               improvedQlearningAgent.episode_count === 0;
+            
+            if (isFirstTime) {
+                syncParamsFromInput();
+            }
+            
             trainAgent(sarsaAgent, 'Sarsa', 1);
             trainAgent(qlearningAgent, 'Q-learning', 1);
             trainAgent(improvedSarsaAgent, 'Improved Sarsa', 1);
@@ -2238,6 +2263,10 @@
             updateLast20RewardsTable();
             // 页面初始时设置按钮文字
             document.getElementById('trainBtnText').textContent = '开始训练';
+            
+            // 初始化改进算法的参数显示
+            showImprovedResults('Improved Sarsa', improvedSarsaAgent);
+            showImprovedResults('Improved Q-learning', improvedQlearningAgent);
         });
 
         // 异步训练函数，分批训练避免UI阻塞
@@ -2449,8 +2478,12 @@
 
         // 实时更新 ε、α 输入框显示为改进Sarsa当前值
         function updateParamInputs() {
-            document.getElementById('epsilonInput').value = improvedSarsaAgent.epsilon.toFixed(4);
-            document.getElementById('alphaInput').value = improvedSarsaAgent.alpha.toFixed(4);
+            // 如果改进算法已经开始训练，显示其当前参数值
+            if (improvedSarsaAgent.episode_count > 0) {
+                document.getElementById('epsilonInput').value = improvedSarsaAgent.epsilon.toFixed(4);
+                document.getElementById('alphaInput').value = improvedSarsaAgent.alpha.toFixed(4);
+            }
+            // 如果尚未开始训练，保持用户输入的值不变
         }
 
         // 更新最后20回合奖励表格
