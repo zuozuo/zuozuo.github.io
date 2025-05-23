@@ -347,13 +347,13 @@
                 </div>
             </div>
             <div class="mt-6 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                <h3 class="text-md font-semibold text-gray-700 px-4 py-3 border-b border-gray-200 text-center">最近10回合奖励概览</h3>
+                <h3 class="text-md font-semibold text-gray-700 px-4 py-3 border-b border-gray-200 text-center">最近20回合奖励概览</h3>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-slate-50">
                             <tr>
                                 <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">算法</th>
-                                <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">最近10回合奖励 (从新到旧)</th>
+                                <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">最近20回合奖励 (从新到旧)</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 text-sm">
@@ -1508,7 +1508,7 @@
             
             // 更新学习率分析图表
             updateAnalysisCharts();
-            updateLastTenRewardsTable(); // Add call to update the new table
+            updateLastTwentyRewardsTable(); // Add call to update the new table
         }
         
         // 更新学习率分析图表
@@ -1866,6 +1866,7 @@
             initializeGrids();
             updateCharts();
             updateStepsDisplay();
+            updateLastTwentyRewardsTable(); // Add call to update the new table
             
             // 重新启用按钮
             setButtonsEnabled(true);
@@ -1889,6 +1890,7 @@
             initializeCharts();
             initializeGrids();
             updateStepsDisplay();
+            updateLastTwentyRewardsTable(); // Add call to update the new table
         });
 
         // 异步训练函数，分批训练避免UI阻塞
@@ -2069,10 +2071,10 @@
             return sum / recent.length;
         }
 
-        // 新增：更新最近10回合奖励表格的函数
-        function updateLastTenRewardsTable() {
+        // 新增：更新最近20回合奖励表格的函数
+        function updateLastTwentyRewardsTable() {
             const agents = [
-                { agent: sarsaAgent, id: 'sarsaLastTenRewards' },
+                { agent: sarsaAgent, id: 'sarsaLastTenRewards' }, // IDs remain the same for now
                 { agent: qlearningAgent, id: 'qlearningLastTenRewards' },
                 { agent: improvedSarsaAgent, id: 'improvedSarsaLastTenRewards' },
                 { agent: improvedQlearningAgent, id: 'improvedQlearningLastTenRewards' }
@@ -2080,13 +2082,13 @@
 
             agents.forEach(item => {
                 const rewards = item.agent.episode_rewards;
-                const lastTen = rewards.slice(-10).reverse(); // 从新到旧排序
-                const displayString = lastTen.length > 0 ? lastTen.join(', ') : '无数据';
+                const lastTwenty = rewards.slice(-20).reverse(); // 从新到旧排序
+                const displayString = lastTwenty.length > 0 ? lastTwenty.join(', ') : '无数据';
                 const cell = document.getElementById(item.id);
                 if (cell) {
                     cell.textContent = displayString;
                 } else {
-                    console.warn(`Element with id ${item.id} not found for last ten rewards table.`);
+                    console.warn(`Element with id ${item.id} not found for last twenty rewards table.`);
                 }
             });
         }
