@@ -1804,9 +1804,6 @@
                     ? movingAverage(improvedQlearningAgent.episode_rewards, windowSize) 
                     : [];
 
-                // 实时更新参数输入显示
-                updateParamInputs();
-
                 // 更新综合图表
                 combinedChart.data.labels = labels;
                 
@@ -2488,11 +2485,12 @@
         // 实时更新 ε、α 输入框显示为改进Sarsa当前值
         function updateParamInputs() {
             // 如果改进算法已经开始训练，显示其当前参数值
-            if (improvedSarsaAgent.episode_count > 0) {
-                document.getElementById('epsilonInput').value = improvedSarsaAgent.epsilon.toFixed(5);
-                document.getElementById('alphaInput').value = improvedSarsaAgent.alpha.toFixed(5);
-            }
+            // if (improvedSarsaAgent.episode_count > 0) {
+            //     document.getElementById('epsilonInput').value = improvedSarsaAgent.epsilon.toFixed(5);
+            //     document.getElementById('alphaInput').value = improvedSarsaAgent.alpha.toFixed(5);
+            // }
             // 如果尚未开始训练，保持用户输入的值不变
+            // 移除自动更新逻辑，让输入框保持用户设定的原始值
         }
 
         // 更新最后20回合奖励表格
