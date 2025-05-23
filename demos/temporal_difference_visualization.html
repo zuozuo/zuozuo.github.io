@@ -163,7 +163,7 @@
                     重新检查最优策略
                 </button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="space-y-2">
                     <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">训练回合数</label>
                     <input type="number" id="episodesInput" value="500" min="1" max="1000" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
@@ -171,14 +171,6 @@
                 <div class="space-y-2">
                     <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">移动平均窗口</label>
                     <input type="number" id="smoothingWindow" value="20" min="5" max="100" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                </div>
-                <div class="space-y-2">
-                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">学习率 α</label>
-                    <input type="number" id="alphaInput" value="0.1" min="0.01" max="1.0" step="0.01" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                </div>
-                <div class="space-y-2">
-                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">探索率 ε</label>
-                    <input type="number" id="epsilonInput" value="0.1" min="0.01" max="1.0" step="0.01" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                 </div>
                 <div class="space-y-2">
                     <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">训练进度</label>
@@ -946,10 +938,10 @@
         const startPos = (env.nrow - 1) * env.ncol;
 
         // 算法实例
-        let sarsaAgent;
-        let qlearningAgent;
-        let improvedSarsaAgent;
-        let improvedQlearningAgent;
+        let sarsaAgent = new Sarsa(env.ncol, env.nrow);
+        let qlearningAgent = new QLearning(env.ncol, env.nrow);
+        let improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow);
+        let improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow);
 
         // 图表实例
         let combinedChart;
@@ -1834,13 +1826,13 @@
             // 重置时也禁用按钮，防止重复操作
             setButtonsEnabled(false);
             
-            const alpha = parseFloat(document.getElementById('alphaInput').value);
-            const epsilon = parseFloat(document.getElementById('epsilonInput').value);
-            
-            sarsaAgent = new Sarsa(env.ncol, env.nrow, epsilon, alpha);
-            qlearningAgent = new QLearning(env.ncol, env.nrow, epsilon, alpha);
-            improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, epsilon, 0.01, 0.995, alpha, 0.01, 0.995);
-            improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, epsilon, 0.01, 0.995, alpha, 0.01, 0.995);
+            const alphaVal = parseFloat(document.getElementById('alphaInput').value);
+            const epsilonVal = parseFloat(document.getElementById('epsilonInput').value);
+
+            sarsaAgent = new Sarsa(env.ncol, env.nrow, epsilonVal, alphaVal);
+            qlearningAgent = new QLearning(env.ncol, env.nrow, epsilonVal, alphaVal);
+            improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, epsilonVal, 0.01, 0.995, alphaVal, 0.01, 0.995);
+            improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, epsilonVal, 0.01, 0.995, alphaVal, 0.01, 0.995);
             initializeGrids();
             updateCharts();
             updateStepsDisplay();
@@ -1864,14 +1856,14 @@
 
         // 页面加载完成后初始化
         window.addEventListener('load', function() {
-            const initialAlpha = parseFloat(document.getElementById('alphaInput').value);
-            const initialEpsilon = parseFloat(document.getElementById('epsilonInput').value);
-            
-            sarsaAgent = new Sarsa(env.ncol, env.nrow, initialEpsilon, initialAlpha);
-            qlearningAgent = new QLearning(env.ncol, env.nrow, initialEpsilon, initialAlpha);
-            improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, initialEpsilon, 0.01, 0.995, initialAlpha, 0.01, 0.995);
-            improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, initialEpsilon, 0.01, 0.995, initialAlpha, 0.01, 0.995);
-            
+            const initAlpha = parseFloat(document.getElementById('alphaInput').value);
+            const initEpsilon = parseFloat(document.getElementById('epsilonInput').value);
+
+            sarsaAgent = new Sarsa(env.ncol, env.nrow, initEpsilon, initAlpha);
+            qlearningAgent = new QLearning(env.ncol, env.nrow, initEpsilon, initAlpha);
+            improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, initEpsilon, 0.01, 0.995, initAlpha, 0.01, 0.995);
+            improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, initEpsilon, 0.01, 0.995, initAlpha, 0.01, 0.995);
+
             initializeCharts();
             initializeGrids();
             updateStepsDisplay();
@@ -1963,7 +1955,6 @@
             
             // 同时禁用/启用输入框
             const inputs = ['episodesInput', 'smoothingWindow', 'alphaInput', 'epsilonInput'];
-            const inputs = ['episodesInput', 'smoothingWindow'];
             inputs.forEach(inputId => {
                 const input = document.getElementById(inputId);
                 input.disabled = !enabled;
