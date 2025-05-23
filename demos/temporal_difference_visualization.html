@@ -421,14 +421,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1"></path>
                     </svg>
                 </button>
-                <button id="stepBothBtn" class="btn-primary inline-flex items-center justify-center rounded-xl text-sm font-medium h-12 px-6 py-3 shadow-lg">
-                    同时单步训练
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
                 <button id="resetBothBtn" class="btn-danger inline-flex items-center justify-center rounded-xl text-sm font-medium h-12 px-6 py-3 shadow-lg">
-                    重置
+                    重置所有算法
                     <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                     </svg>
@@ -499,10 +493,18 @@
             <!-- Sarsa Algorithm -->
             <div class="modern-card">
                 <div class="p-8 border-b border-gray-200">
-                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-                        <span class="w-6 h-6 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg mr-3"></span>
-                        Sarsa算法 (在线策略)
-                    </h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                            <span class="w-6 h-6 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg mr-3"></span>
+                            Sarsa算法 (在线策略)
+                        </h2>
+                        <button id="stepSarsaBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
+                            单步训练
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
                     <div id="sarsaResults" class="mt-2 text-sm text-muted-foreground"></div>
                 </div>
                 <div class="p-8 space-y-8">
@@ -524,10 +526,18 @@
             <!-- Q-learning Algorithm -->
             <div class="modern-card">
                 <div class="p-8 border-b border-gray-200">
-                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-                        <span class="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg mr-3"></span>
-                        Q-learning算法 (离线策略)
-                    </h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                            <span class="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg mr-3"></span>
+                            Q-learning算法 (离线策略)
+                        </h2>
+                        <button id="stepQlearningBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
+                            单步训练
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
                     <div id="qlearningResults" class="mt-2 text-sm text-muted-foreground"></div>
                 </div>
                 <div class="p-8 space-y-8">
@@ -557,10 +567,18 @@
                 <!-- Improved Sarsa Algorithm -->
                 <div class="modern-card">
                     <div class="p-8 border-b border-gray-200">
-                        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-                            <span class="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg mr-3"></span>
-                            改进Sarsa算法 (参数衰减)
-                        </h2>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                                <span class="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg mr-3"></span>
+                                改进Sarsa算法 (参数衰减)
+                            </h2>
+                            <button id="stepImprovedSarsaBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
+                                单步训练
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
                         <div id="improvedSarsaResults" class="mt-2 text-sm text-muted-foreground"></div>
                         <div id="improvedSarsaParams" class="mt-2 text-xs text-muted-foreground"></div>
                     </div>
@@ -583,10 +601,18 @@
                 <!-- Improved Q-learning Algorithm -->
                 <div class="modern-card">
                     <div class="p-8 border-b border-gray-200">
-                        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-                            <span class="w-6 h-6 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg mr-3"></span>
-                            改进Q-learning算法 (参数衰减)
-                        </h2>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                                <span class="w-6 h-6 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg mr-3"></span>
+                                改进Q-learning算法 (参数衰减)
+                            </h2>
+                            <button id="stepImprovedQlearningBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
+                                单步训练
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
                         <div id="improvedQlearningResults" class="mt-2 text-sm text-muted-foreground"></div>
                         <div id="improvedQlearningParams" class="mt-2 text-xs text-muted-foreground"></div>
                     </div>
@@ -2203,23 +2229,6 @@
             }
         });
 
-        document.getElementById('stepBothBtn').addEventListener('click', function() {
-            // 只在第一次训练时同步参数（当所有算法都未开始训练时）
-            const isFirstTime = sarsaAgent.episode_count === 0 && 
-                               qlearningAgent.episode_count === 0 && 
-                               improvedSarsaAgent.episode_count === 0 && 
-                               improvedQlearningAgent.episode_count === 0;
-            
-            if (isFirstTime) {
-                syncParamsFromInput();
-            }
-            
-            trainAgent(sarsaAgent, 'Sarsa', 1);
-            trainAgent(qlearningAgent, 'Q-learning', 1);
-            trainAgent(improvedSarsaAgent, 'Improved Sarsa', 1);
-            trainAgent(improvedQlearningAgent, 'Improved Q-learning', 1);
-        });
-
         document.getElementById('resetBothBtn').addEventListener('click', function() {
             // 重置时也禁用按钮，防止重复操作
             setButtonsEnabled(false);
@@ -2245,6 +2254,39 @@
             setButtonsEnabled(true);
             // 重置训练按钮文字
             document.getElementById('trainBtnText').textContent = '开始训练';
+        });
+
+        // 单独的单步训练事件监听器
+        document.getElementById('stepSarsaBtn').addEventListener('click', function() {
+            // 只在第一次训练时同步参数
+            if (sarsaAgent.episode_count === 0) {
+                syncParamsFromInput();
+            }
+            trainAgent(sarsaAgent, 'Sarsa', 1);
+        });
+
+        document.getElementById('stepQlearningBtn').addEventListener('click', function() {
+            // 只在第一次训练时同步参数
+            if (qlearningAgent.episode_count === 0) {
+                syncParamsFromInput();
+            }
+            trainAgent(qlearningAgent, 'Q-learning', 1);
+        });
+
+        document.getElementById('stepImprovedSarsaBtn').addEventListener('click', function() {
+            // 只在第一次训练时同步参数
+            if (improvedSarsaAgent.episode_count === 0) {
+                syncParamsFromInput();
+            }
+            trainAgent(improvedSarsaAgent, 'Improved Sarsa', 1);
+        });
+
+        document.getElementById('stepImprovedQlearningBtn').addEventListener('click', function() {
+            // 只在第一次训练时同步参数
+            if (improvedQlearningAgent.episode_count === 0) {
+                syncParamsFromInput();
+            }
+            trainAgent(improvedQlearningAgent, 'Improved Q-learning', 1);
         });
 
         // 移动平均窗口变化时更新图表
@@ -2333,8 +2375,11 @@
         function setButtonsEnabled(enabled) {
             const buttons = [
                 'trainBothBtn',
-                'stepBothBtn', 
-                'resetBothBtn'
+                'resetBothBtn',
+                'stepSarsaBtn',
+                'stepQlearningBtn',
+                'stepImprovedSarsaBtn',
+                'stepImprovedQlearningBtn'
             ];
             
             buttons.forEach(buttonId => {
