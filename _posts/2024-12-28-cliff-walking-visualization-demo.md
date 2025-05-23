@@ -4,7 +4,7 @@ date: 2024-12-28 18:00:00 +0800
 categories: [强化学习, 可视化]
 tags: [强化学习, 马尔可夫决策过程, 策略迭代, 价值迭代, 演示, 机器学习, AI算法]
 description: "交互式悬崖漫步环境可视化工具，直观展示策略迭代与价值迭代算法的收敛过程。包含完整的强化学习算法实现、单步调试功能和性能对比分析，帮助理解马尔可夫决策过程的核心概念。"
-image: /assets/img/posts/cliff-walking-ocean-edge.jpg
+image: /assets/img/posts/cliff-walking-ocean-edge.png
 author: "Zorro Zuo"
 keywords: ["悬崖漫步", "策略迭代", "价值迭代", "强化学习可视化", "马尔可夫决策过程", "动态规划算法"]
 ---

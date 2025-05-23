@@ -3,7 +3,7 @@ title: 是时候抛弃 Iterm2，拥抱 Kitty 了
 date: 2024-12-28 12:00:00 +0800
 categories: [terminal, Kitty, 终端, neovim]
 tags: [kitty, iterm2, 终端, neovim]
-image: /assets/img/posts/terminal-coding-workspace.jpg
+image: /assets/img/posts/terminal-coding-workspace1.jpg
 ---
 
 ## 为什么选择 Kitty

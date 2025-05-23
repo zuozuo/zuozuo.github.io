@@ -147,8 +147,8 @@
         <div class="bg-card rounded-lg border shadow-sm p-6 mb-8">
             <h3 class="text-lg font-semibold mb-4">全局控制</h3>
             <div class="flex flex-wrap items-center gap-3 mb-4">
-                <button id="trainBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-                    同时训练两个算法
+                <button id="trainBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 text-white hover:bg-green-700 h-10 px-4 py-2">
+                    <span id="trainBtnText">开始训练</span>
                 </button>
                 <button id="stepBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
                     同时单步训练
@@ -156,14 +156,8 @@
                 <button id="resetBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
                     重置所有算法
                 </button>
-                <button id="clearChartsBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-                    清空图表
-                </button>
-                <button id="recheckPolicyBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-                    重新检查最优策略
-                </button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div class="space-y-2">
                     <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">训练回合数</label>
                     <input type="number" id="episodesInput" value="500" min="1" max="1000" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
@@ -171,6 +165,14 @@
                 <div class="space-y-2">
                     <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">移动平均窗口</label>
                     <input type="number" id="smoothingWindow" value="20" min="5" max="100" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">ε (探索率)</label>
+                    <input type="number" id="epsilonInput" value="0.1" min="0" max="1" step="0.01" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">α (学习率)</label>
+                    <input type="number" id="alphaInput" value="0.1" min="0" max="1" step="0.01" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                 </div>
                 <div class="space-y-2">
                     <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">训练进度</label>
@@ -187,7 +189,7 @@
             <!-- Sarsa Algorithm -->
             <div class="bg-card rounded-lg border shadow-sm">
                 <div class="p-6 border-b">
-                    <h2 class="text-xl font-semibold text-blue-700">Sarsa算法 (在线策略)</h2>
+                    <h2 class="text-xl font-semibold text-black">Sarsa算法 (在线策略)</h2>
                     <div id="sarsaResults" class="mt-2 text-sm text-muted-foreground"></div>
                 </div>
                 <div class="p-6 space-y-6">
@@ -209,7 +211,7 @@
             <!-- Q-learning Algorithm -->
             <div class="bg-card rounded-lg border shadow-sm">
                 <div class="p-6 border-b">
-                    <h2 class="text-xl font-semibold text-green-700">Q-learning算法 (离线策略)</h2>
+                    <h2 class="text-xl font-semibold text-black">Q-learning算法 (离线策略)</h2>
                     <div id="qlearningResults" class="mt-2 text-sm text-muted-foreground"></div>
                 </div>
                 <div class="p-6 space-y-6">
@@ -236,7 +238,7 @@
                 <!-- Improved Sarsa Algorithm -->
                 <div class="bg-card rounded-lg border shadow-sm">
                     <div class="p-6 border-b">
-                        <h2 class="text-xl font-semibold text-purple-700">改进Sarsa算法 (参数衰减)</h2>
+                        <h2 class="text-xl font-semibold text-black">改进Sarsa算法 (参数衰减)</h2>
                         <div id="improvedSarsaResults" class="mt-2 text-sm text-muted-foreground"></div>
                         <div id="improvedSarsaParams" class="mt-2 text-xs text-muted-foreground"></div>
                     </div>
@@ -259,7 +261,7 @@
                 <!-- Improved Q-learning Algorithm -->
                 <div class="bg-card rounded-lg border shadow-sm">
                     <div class="p-6 border-b">
-                        <h2 class="text-xl font-semibold text-orange-700">改进Q-learning算法 (参数衰减)</h2>
+                        <h2 class="text-xl font-semibold text-black">改进Q-learning算法 (参数衰减)</h2>
                         <div id="improvedQlearningResults" class="mt-2 text-sm text-muted-foreground"></div>
                         <div id="improvedQlearningParams" class="mt-2 text-xs text-muted-foreground"></div>
                     </div>
@@ -344,6 +346,27 @@
                         <canvas id="stabilityChart" class="w-full h-full"></canvas>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- 最后20回合奖励对比表格 -->
+        <div class="bg-card rounded-lg border shadow-sm p-6 mb-8 mt-8">
+            <h2 class="text-xl font-semibold mb-6">四算法最后20回合奖励对比</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-center border rounded-lg">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="px-3 py-2 border">回合</th>
+                            <th class="px-3 py-2 border">Sarsa</th>
+                            <th class="px-3 py-2 border">Q-learning</th>
+                            <th class="px-3 py-2 border">改进Sarsa</th>
+                            <th class="px-3 py-2 border">改进Q-learning</th>
+                        </tr>
+                    </thead>
+                    <tbody id="last20RewardsTable">
+                        <!-- JS填充 -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -938,10 +961,12 @@
         const startPos = (env.nrow - 1) * env.ncol;
 
         // 算法实例
-        let sarsaAgent = new Sarsa(env.ncol, env.nrow);
-        let qlearningAgent = new QLearning(env.ncol, env.nrow);
-        let improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow);
-        let improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow);
+        const defaultEpsilon = parseFloat(document.getElementById('epsilonInput').value);
+        const defaultAlpha = parseFloat(document.getElementById('alphaInput').value);
+        let sarsaAgent = new Sarsa(env.ncol, env.nrow, defaultEpsilon, defaultAlpha);
+        let qlearningAgent = new QLearning(env.ncol, env.nrow, defaultEpsilon, defaultAlpha);
+        let improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, defaultEpsilon, 0.01, 0.995, defaultAlpha, 0.01, 0.995);
+        let improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, defaultEpsilon, 0.01, 0.995, defaultAlpha, 0.01, 0.995);
 
         // 图表实例
         let combinedChart;
@@ -1476,6 +1501,7 @@
             
             // 更新学习率分析图表
             updateAnalysisCharts();
+            updateLast20RewardsTable();
         }
         
         // 更新学习率分析图表
@@ -1686,7 +1712,15 @@
 
         // 更新迭代步数显示
         function updateStepsDisplay() {
-            document.getElementById('trainingSteps').textContent = sarsaAgent.episode_count;
+            const stepsElem = document.getElementById('trainingSteps');
+            stepsElem.textContent = sarsaAgent.episode_count;
+            if (sarsaAgent.episode_count > 0) {
+                stepsElem.classList.remove('text-gray-700');
+                stepsElem.classList.add('text-green-600');
+            } else {
+                stepsElem.classList.remove('text-green-600');
+                stepsElem.classList.add('text-gray-700');
+            }
         }
 
         // 初始化所有网格
@@ -1788,14 +1822,17 @@
         // 绑定事件监听器
         document.getElementById('trainBothBtn').addEventListener('click', async function() {
             const episodes = parseInt(document.getElementById('episodesInput').value);
+            // 读取最新 ε、α
+            syncParamsFromInput();
             
             // 禁用所有按钮和输入框
             setButtonsEnabled(false);
             
             // 更新按钮文字显示训练状态
             const trainBtn = document.getElementById('trainBothBtn');
-            const originalText = trainBtn.textContent;
-            trainBtn.textContent = '训练中...';
+            const trainBtnText = document.getElementById('trainBtnText');
+            const originalText = trainBtnText.textContent;
+            trainBtnText.textContent = '训练中...';
             
             try {
                 // 使用异步训练，避免UI阻塞
@@ -1809,13 +1846,14 @@
                 console.error('训练过程中出现错误:', error);
             } finally {
                 // 恢复按钮状态
-                trainBtn.textContent = originalText;
+                trainBtnText.textContent = '继续训练';
                 setButtonsEnabled(true);
             }
         });
 
         document.getElementById('stepBothBtn').addEventListener('click', function() {
-            // 单步训练不需要异步处理
+            // 同步参数并进行单步训练
+            syncParamsFromInput();
             trainAgent(sarsaAgent, 'Sarsa', 1);
             trainAgent(qlearningAgent, 'Q-learning', 1);
             trainAgent(improvedSarsaAgent, 'Improved Sarsa', 1);
@@ -1826,27 +1864,21 @@
             // 重置时也禁用按钮，防止重复操作
             setButtonsEnabled(false);
             
-            const alphaVal = parseFloat(document.getElementById('alphaInput').value);
-            const epsilonVal = parseFloat(document.getElementById('epsilonInput').value);
-
-            sarsaAgent = new Sarsa(env.ncol, env.nrow, epsilonVal, alphaVal);
-            qlearningAgent = new QLearning(env.ncol, env.nrow, epsilonVal, alphaVal);
-            improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, epsilonVal, 0.01, 0.995, alphaVal, 0.01, 0.995);
-            improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, epsilonVal, 0.01, 0.995, alphaVal, 0.01, 0.995);
+            // 取最新输入的 ε、α 值重新实例化
+            const eps = parseFloat(document.getElementById('epsilonInput').value);
+            const alp = parseFloat(document.getElementById('alphaInput').value);
+            sarsaAgent = new Sarsa(env.ncol, env.nrow, eps, alp);
+            qlearningAgent = new QLearning(env.ncol, env.nrow, eps, alp);
+            improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, eps, 0.01, 0.995, alp, 0.01, 0.995);
+            improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, eps, 0.01, 0.995, alp, 0.01, 0.995);
             initializeGrids();
             updateCharts();
             updateStepsDisplay();
             
             // 重新启用按钮
             setButtonsEnabled(true);
-        });
-
-        document.getElementById('clearChartsBtn').addEventListener('click', function() {
-            clearCharts();
-        });
-
-        document.getElementById('recheckPolicyBtn').addEventListener('click', function() {
-            recheckOptimalPolicies();
+            // 重置训练按钮文字
+            document.getElementById('trainBtnText').textContent = '开始训练';
         });
 
         // 移动平均窗口变化时更新图表
@@ -1856,17 +1888,12 @@
 
         // 页面加载完成后初始化
         window.addEventListener('load', function() {
-            const initAlpha = parseFloat(document.getElementById('alphaInput').value);
-            const initEpsilon = parseFloat(document.getElementById('epsilonInput').value);
-
-            sarsaAgent = new Sarsa(env.ncol, env.nrow, initEpsilon, initAlpha);
-            qlearningAgent = new QLearning(env.ncol, env.nrow, initEpsilon, initAlpha);
-            improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, initEpsilon, 0.01, 0.995, initAlpha, 0.01, 0.995);
-            improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, initEpsilon, 0.01, 0.995, initAlpha, 0.01, 0.995);
-
             initializeCharts();
             initializeGrids();
             updateStepsDisplay();
+            updateLast20RewardsTable();
+            // 页面初始时设置按钮文字
+            document.getElementById('trainBtnText').textContent = '开始训练';
         });
 
         // 异步训练函数，分批训练避免UI阻塞
@@ -1928,9 +1955,7 @@
             const buttons = [
                 'trainBothBtn',
                 'stepBothBtn', 
-                'resetBothBtn',
-                'clearChartsBtn',
-                'recheckPolicyBtn'
+                'resetBothBtn'
             ];
             
             buttons.forEach(buttonId => {
@@ -1943,10 +1968,10 @@
                 } else {
                     button.classList.remove('opacity-50', 'cursor-not-allowed');
                     // 根据按钮类型恢复hover效果
-                    if (buttonId === 'trainBothBtn') {
-                        button.classList.add('hover:bg-primary/90');
-                    } else if (buttonId === 'resetBothBtn') {
+                    if (buttonId === 'resetBothBtn') {
                         button.classList.add('hover:bg-destructive/90');
+                    } else if (buttonId === 'trainBothBtn') { // Added this condition for green button
+                        button.classList.add('hover:bg-green-700');
                     } else {
                         button.classList.add('hover:bg-accent');
                     }
@@ -1954,7 +1979,7 @@
             });
             
             // 同时禁用/启用输入框
-            const inputs = ['episodesInput', 'smoothingWindow', 'alphaInput', 'epsilonInput'];
+            const inputs = ['episodesInput', 'smoothingWindow', 'epsilonInput', 'alphaInput'];
             inputs.forEach(inputId => {
                 const input = document.getElementById(inputId);
                 input.disabled = !enabled;
@@ -2045,6 +2070,51 @@
             const recent = agent.episode_rewards.slice(-N);
             const sum = recent.reduce((a, b) => a + b, 0);
             return sum / recent.length;
+        }
+
+        // 根据输入框同步当前 ε、α 到各算法
+        function syncParamsFromInput() {
+            const eps = parseFloat(document.getElementById('epsilonInput').value);
+            const alp = parseFloat(document.getElementById('alphaInput').value);
+
+            // 原始算法
+            sarsaAgent.epsilon = eps;
+            sarsaAgent.alpha = alp;
+            qlearningAgent.epsilon = eps;
+            qlearningAgent.alpha = alp;
+
+            // 改进算法（更新当前值及起始值，便于重新衰减）
+            improvedSarsaAgent.epsilon = eps;
+            improvedSarsaAgent.epsilon_start = eps;
+            improvedSarsaAgent.alpha = alp;
+            improvedSarsaAgent.alpha_start = alp;
+
+            improvedQlearningAgent.epsilon = eps;
+            improvedQlearningAgent.epsilon_start = eps;
+            improvedQlearningAgent.alpha = alp;
+            improvedQlearningAgent.alpha_start = alp;
+        }
+
+        // 更新最后20回合奖励表格
+        function updateLast20RewardsTable() {
+            const N = 20;
+            const sarsa = sarsaAgent.episode_rewards;
+            const ql = qlearningAgent.episode_rewards;
+            const isarsa = improvedSarsaAgent.episode_rewards;
+            const iql = improvedQlearningAgent.episode_rewards;
+            const maxLen = Math.max(sarsa.length, ql.length, isarsa.length, iql.length);
+            const start = Math.max(0, maxLen - N);
+            let html = '';
+            for (let i = start; i < maxLen; i++) {
+                html += `<tr>`;
+                html += `<td class="border px-2 py-1">${i + 1}</td>`;
+                html += `<td class="border px-2 py-1">${sarsa[i] !== undefined ? sarsa[i] : ''}</td>`;
+                html += `<td class="border px-2 py-1">${ql[i] !== undefined ? ql[i] : ''}</td>`;
+                html += `<td class="border px-2 py-1">${isarsa[i] !== undefined ? isarsa[i] : ''}</td>`;
+                html += `<td class="border px-2 py-1">${iql[i] !== undefined ? iql[i] : ''}</td>`;
+                html += `</tr>`;
+            }
+            document.getElementById('last20RewardsTable').innerHTML = html;
         }
     </script>
 </body>
