@@ -4,7 +4,7 @@ date: 2024-12-28 20:00:00 +0800
 categories: [强化学习, 算法分析]
 tags: [时序差分, Sarsa, Q-learning, 悬崖漫步, 参数衰减, 收敛性分析, 强化学习可视化]
 description: "深入分析时序差分算法在悬崖漫步环境中的表现，对比Sarsa与Q-learning的策略差异，探讨参数衰减对算法稳定性的重要影响。通过交互式可视化工具展示四种算法的完整学习过程。"
-image: /assets/img/posts/temporal-difference-analysis.jpg
+image: /assets/img/posts/cliff-walking-ocean-edge.jpg
 author: "Zorro Zuo"
 keywords: ["时序差分算法", "Sarsa算法", "Q-learning算法", "参数衰减", "策略稳定性", "悬崖漫步", "强化学习"]
 ---

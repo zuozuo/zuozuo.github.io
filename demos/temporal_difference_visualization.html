@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时序差分算法可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(214.3 31.8% 91.4%)",
+                        input: "hsl(214.3 31.8% 91.4%)",
+                        ring: "hsl(222.2 84% 4.9%)",
+                        background: "hsl(0 0% 100%)",
+                        foreground: "hsl(222.2 84% 4.9%)",
+                        primary: {
+                            DEFAULT: "hsl(222.2 47.4% 11.2%)",
+                            foreground: "hsl(210 40% 98%)",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(210 40% 96%)",
+                            foreground: "hsl(222.2 84% 4.9%)",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(0 84.2% 60.2%)",
+                            foreground: "hsl(210 40% 98%)",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(210 40% 96%)",
+                            foreground: "hsl(215.4 16.3% 46.9%)",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(210 40% 96%)",
+                            foreground: "hsl(222.2 84% 4.9%)",
+                        },
+                        card: {
+                            DEFAULT: "hsl(0 0% 100%)",
+                            foreground: "hsl(222.2 84% 4.9%)",
+                        },
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --radius: 0.5rem;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(12, 35px);
+            grid-template-rows: repeat(4, 35px);
+            gap: 1px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid hsl(214.3 31.8% 91.4%);
+        }
+        .cell {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 10px;
+            background-color: white;
+            border-right: 1px solid hsl(214.3 31.8% 91.4%);
+            border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
+        }
+        .cell:nth-child(12n) {
+            border-right: none;
+        }
+        .cell:nth-last-child(-n+12) {
+            border-bottom: none;
+        }
+        .start {
+            background-color: hsl(142.1 76.2% 36.3%);
+            color: white;
+        }
+        .goal {
+            background-color: hsl(47.9 95.8% 53.1%);
+            color: hsl(222.2 84% 4.9%);
+        }
+        .cliff {
+            background-color: hsl(0 84.2% 60.2%);
+            color: white;
+        }
+        .value-text {
+            font-weight: 400;
+            font-size: 8px;
+            color: hsl(215.4 16.3% 46.9%);
+            margin-top: 2px;
+        }
+        
+        /* 禁用状态样式 */
+        button:disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        
+        input:disabled {
+            pointer-events: none;
+            opacity: 0.5;
+            background-color: hsl(210 40% 96%);
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50">
+    <div class="container mx-auto px-6 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold tracking-tight text-gray-900 mb-4">
+                时序差分算法可视化与学习曲线分析
+            </h1>
+            <p class="text-lg text-muted-foreground">
+                通过交互式可视化深入理解 Sarsa 和 Q-learning 算法的学习过程
+            </p>
+        </div>
+        
+        <!-- Legend -->
+        <div class="flex justify-center items-center gap-6 mb-8 p-4 bg-card rounded-lg border shadow-sm">
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-green-600"></div>
+                <span class="text-sm font-medium">起点</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-yellow-400"></div>
+                <span class="text-sm font-medium">终点</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-red-500"></div>
+                <span class="text-sm font-medium">悬崖</span>
+            </div>
+        </div>
+
+        <!-- Global Controls -->
+        <div class="bg-card rounded-lg border shadow-sm p-6 mb-8">
+            <h3 class="text-lg font-semibold mb-4">全局控制</h3>
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+                <button id="trainBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                    同时训练两个算法
+                </button>
+                <button id="stepBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    同时单步训练
+                </button>
+                <button id="resetBothBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 py-2">
+                    重置所有算法
+                </button>
+                <button id="clearChartsBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    清空图表
+                </button>
+                <button id="recheckPolicyBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                    重新检查最优策略
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">训练回合数</label>
+                    <input type="number" id="episodesInput" value="500" min="1" max="1000" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">移动平均窗口</label>
+                    <input type="number" id="smoothingWindow" value="20" min="5" max="100" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">训练进度</label>
+                    <div class="flex h-10 w-full rounded-md border border-input bg-slate-50 px-3 py-2 items-center justify-center">
+                        <span class="text-lg font-bold text-gray-700" id="trainingSteps">0</span>
+                        <span class="text-sm text-muted-foreground ml-2">回合</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Algorithms Comparison -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Sarsa Algorithm -->
+            <div class="bg-card rounded-lg border shadow-sm">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-semibold text-blue-700">Sarsa算法 (在线策略)</h2>
+                    <div id="sarsaResults" class="mt-2 text-sm text-muted-foreground"></div>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="text-center">
+                        <h3 class="text-lg font-medium mb-4">策略</h3>
+                        <div class="flex justify-center">
+                            <div class="grid-container" id="sarsaPolicyGrid"></div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-lg font-medium mb-4">状态价值</h3>
+                        <div class="flex justify-center">
+                            <div class="grid-container" id="sarsaValueGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Q-learning Algorithm -->
+            <div class="bg-card rounded-lg border shadow-sm">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-semibold text-green-700">Q-learning算法 (离线策略)</h2>
+                    <div id="qlearningResults" class="mt-2 text-sm text-muted-foreground"></div>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="text-center">
+                        <h3 class="text-lg font-medium mb-4">策略</h3>
+                        <div class="flex justify-center">
+                            <div class="grid-container" id="qlearningPolicyGrid"></div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-lg font-medium mb-4">状态价值</h3>
+                        <div class="flex justify-center">
+                            <div class="grid-container" id="qlearningValueGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Improved Algorithms Comparison -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-semibold text-center mb-8 text-gray-900">改进算法对比 (带参数衰减)</h2>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <!-- Improved Sarsa Algorithm -->
+                <div class="bg-card rounded-lg border shadow-sm">
+                    <div class="p-6 border-b">
+                        <h2 class="text-xl font-semibold text-purple-700">改进Sarsa算法 (参数衰减)</h2>
+                        <div id="improvedSarsaResults" class="mt-2 text-sm text-muted-foreground"></div>
+                        <div id="improvedSarsaParams" class="mt-2 text-xs text-muted-foreground"></div>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="text-center">
+                            <h3 class="text-lg font-medium mb-4">策略</h3>
+                            <div class="flex justify-center">
+                                <div class="grid-container" id="improvedSarsaPolicyGrid"></div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-medium mb-4">状态价值</h3>
+                            <div class="flex justify-center">
+                                <div class="grid-container" id="improvedSarsaValueGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Improved Q-learning Algorithm -->
+                <div class="bg-card rounded-lg border shadow-sm">
+                    <div class="p-6 border-b">
+                        <h2 class="text-xl font-semibold text-orange-700">改进Q-learning算法 (参数衰减)</h2>
+                        <div id="improvedQlearningResults" class="mt-2 text-sm text-muted-foreground"></div>
+                        <div id="improvedQlearningParams" class="mt-2 text-xs text-muted-foreground"></div>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="text-center">
+                            <h3 class="text-lg font-medium mb-4">策略</h3>
+                            <div class="flex justify-center">
+                                <div class="grid-container" id="improvedQlearningPolicyGrid"></div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-medium mb-4">状态价值</h3>
+                            <div class="flex justify-center">
+                                <div class="grid-container" id="improvedQlearningValueGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="bg-card rounded-lg border shadow-sm p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-6">学习曲线分析</h2>
+            <div class="bg-background rounded-lg border p-4">
+                <h3 class="text-lg font-medium text-center mb-4">四算法综合学习曲线对比：原始 vs 改进版本</h3>
+                <div class="relative h-96">
+                    <canvas id="combinedChart" class="w-full h-full"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Rate Analysis Section -->
+        <div class="bg-card rounded-lg border shadow-sm p-6 mb-8 mt-8">
+            <h2 class="text-xl font-semibold mb-6">学习率与收敛性深度分析</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Q值收敛过程对比 -->
+                <div class="bg-background rounded-lg border p-4">
+                    <h3 class="text-lg font-medium text-center mb-4">Q值收敛过程对比</h3>
+                    <div class="relative h-64">
+                        <canvas id="qValueChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 后期收敛细节 -->
+                <div class="bg-background rounded-lg border p-4">
+                    <h3 class="text-lg font-medium text-center mb-4">后期收敛细节 (最后100回合)</h3>
+                    <div class="relative h-64">
+                        <canvas id="lateStageChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 学习率衰减过程 -->
+                <div class="bg-background rounded-lg border p-4">
+                    <h3 class="text-lg font-medium text-center mb-4">学习率衰减过程</h3>
+                    <div class="relative h-64">
+                        <canvas id="learningRateChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 收敛稳定性指标 -->
+                <div class="bg-background rounded-lg border p-4">
+                    <h3 class="text-lg font-medium text-center mb-4">收敛稳定性指标</h3>
+                    <div class="relative h-64">
+                        <canvas id="stabilityChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        /**
+         * 悬崖漫步环境
+         */
+        class CliffWalkingEnv {
+            constructor(ncol = 12, nrow = 4) {
+                this.ncol = ncol;
+                this.nrow = nrow;
+                this.P = this.createP();
+                this.reset();
+            }
+
+            createP() {
+                const P = {};
+                for (let s = 0; s < this.nrow * this.ncol; s++) {
+                    P[s] = {};
+                    for (let a = 0; a < 4; a++) {
+                        P[s][a] = [];
+                    }
+                }
+
+                const change = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+
+                for (let i = 0; i < this.nrow; i++) {
+                    for (let j = 0; j < this.ncol; j++) {
+                        for (let a = 0; a < 4; a++) {
+                            const state = i * this.ncol + j;
+                            
+                            if (state === this.nrow * this.ncol - 1) {
+                                P[state][a].push({p: 1.0, next_state: state, reward: 0, done: true});
+                                continue;
+                            }
+                            
+                            if (i === this.nrow - 1 && j > 0 && j < this.ncol - 1) {
+                                P[state][a].push({p: 1.0, next_state: (this.nrow - 1) * this.ncol, reward: -100, done: true});
+                                continue;
+                            }
+                            
+                            let next_i = i + change[a][1];
+                            let next_j = j + change[a][0];
+                            let reward = -1.0;
+                            let done = false;
+                            
+                            if (next_i < 0 || next_i >= this.nrow || next_j < 0 || next_j >= this.ncol) {
+                                next_i = i;
+                                next_j = j;
+                            }
+                            
+                            let next_state = next_i * this.ncol + next_j;
+                            
+                            if (next_i === this.nrow - 1 && next_j > 0 && next_j < this.ncol - 1) {
+                                next_state = (this.nrow - 1) * this.ncol;
+                                reward = -100;
+                                done = true;
+                            }
+                            
+                            if (next_state === this.nrow * this.ncol - 1) {
+                                done = true;
+                            }
+                            
+                            P[state][a].push({p: 1.0, next_state: next_state, reward: reward, done: done});
+                        }
+                    }
+                }
+                
+                return P;
+            }
+
+            reset() {
+                this.state = (this.nrow - 1) * this.ncol;
+                return this.state;
+            }
+
+            step(action) {
+                const {p, next_state, reward, done} = this.P[this.state][action][0];
+                this.state = next_state;
+                return {next_state, reward, done};
+            }
+        }
+
+        /**
+         * Sarsa算法
+         */
+        class Sarsa {
+            constructor(ncol, nrow, epsilon = 0.1, alpha = 0.1, gamma = 0.9) {
+                this.Q_table = Array(nrow * ncol).fill().map(() => Array(4).fill(0));
+                this.n_actions = 4;
+                this.alpha = alpha;
+                this.gamma = gamma;
+                this.epsilon = epsilon;
+                this.episode_count = 0;
+                this.total_reward = 0;
+                this.episode_rewards = [];
+                
+                // 新增详细统计数据
+                this.q_value_history = []; // 记录特定状态的Q值变化
+                this.update_magnitudes = []; // 记录每次更新的幅度
+                this.td_errors = []; // 记录TD误差
+                this.target_state = 36; // 监控起始状态的Q值变化
+                
+                // 最优策略追踪
+                this.optimal_policy_found = false;
+                this.optimal_policy_episode = -1;
+                this.recent_rewards = []; // 记录最近的奖励用于判断是否达到最优
+                this.stable_episodes_needed = 10; // 需要连续稳定的回合数
+                this.sarsa_optimal_reward = -18; // Sarsa的最优奖励阈值（考虑探索干扰）
+            }
+
+            takeAction(state) {
+                if (Math.random() < this.epsilon) {
+                    return Math.floor(Math.random() * this.n_actions);
+                } else {
+                    return this.bestAction(state);
+                }
+            }
+
+            bestAction(state) {
+                return this.Q_table[state].indexOf(Math.max(...this.Q_table[state]));
+            }
+
+            update(s0, a0, r, s1, a1) {
+                const old_q_value = this.Q_table[s0][a0];
+                const td_error = r + this.gamma * this.Q_table[s1][a1] - this.Q_table[s0][a0];
+                this.Q_table[s0][a0] += this.alpha * td_error;
+                
+                // 记录统计数据
+                const update_magnitude = Math.abs(this.Q_table[s0][a0] - old_q_value);
+                this.update_magnitudes.push(update_magnitude);
+                this.td_errors.push(Math.abs(td_error));
+                
+                // 记录目标状态的Q值变化
+                if (s0 === this.target_state) {
+                    this.q_value_history.push(Math.max(...this.Q_table[s0]));
+                }
+            }
+
+            trainEpisode(env) {
+                let episode_return = 0;
+                env.reset();
+                let state = env.state;
+                let action = this.takeAction(state);
+                let done = false;
+
+                while (!done) {
+                    const {next_state, reward, done: is_done} = env.step(action);
+                    const next_action = this.takeAction(next_state);
+                    this.update(state, action, reward, next_state, next_action);
+                    state = next_state;
+                    action = next_action;
+                    episode_return += reward;
+                    done = is_done;
+                }
+
+                this.episode_count++;
+                this.total_reward += episode_return;
+                this.episode_rewards.push(episode_return);
+                
+                // 检查是否达到最优策略
+                this.checkOptimalPolicy(episode_return);
+                
+                // 每回合结束时记录当前Q值
+                if (this.q_value_history.length === 0 || this.q_value_history.length < this.episode_count) {
+                    this.q_value_history.push(Math.max(...this.Q_table[this.target_state]));
+                }
+                
+                return episode_return;
+            }
+            
+            checkOptimalPolicy(episode_return) {
+                if (this.optimal_policy_found) return;
+                
+                this.recent_rewards.push(episode_return);
+                
+                // 保持最近的奖励记录不超过需要的稳定回合数
+                if (this.recent_rewards.length > this.stable_episodes_needed) {
+                    this.recent_rewards.shift();
+                }
+                
+                // 如果有足够的记录，检查是否所有最近的奖励都达到最优
+                if (this.recent_rewards.length === this.stable_episodes_needed) {
+                    const all_optimal = this.recent_rewards.every(reward => reward >= this.sarsa_optimal_reward);
+                    if (all_optimal) {
+                        this.optimal_policy_found = true;
+                        this.optimal_policy_episode = this.episode_count - this.stable_episodes_needed + 1;
+                    }
+                }
+            }
+
+            getStateValues() {
+                return this.Q_table.map(q_values => Math.max(...q_values));
+            }
+        }
+
+        /**
+         * Q-learning算法
+         */
+        class QLearning {
+            constructor(ncol, nrow, epsilon = 0.1, alpha = 0.1, gamma = 0.9) {
+                this.Q_table = Array(nrow * ncol).fill().map(() => Array(4).fill(0));
+                this.n_actions = 4;
+                this.alpha = alpha;
+                this.gamma = gamma;
+                this.epsilon = epsilon;
+                this.episode_count = 0;
+                this.total_reward = 0;
+                this.episode_rewards = [];
+                
+                // 新增详细统计数据
+                this.q_value_history = [];
+                this.update_magnitudes = [];
+                this.td_errors = [];
+                this.target_state = 36;
+                
+                // 最优策略追踪
+                this.optimal_policy_found = false;
+                this.optimal_policy_episode = -1;
+                this.recent_rewards = [];
+                this.stable_episodes_needed = 10;
+                this.qlearning_optimal_reward = -16; // Q-learning的最优奖励阈值（考虑探索干扰）
+            }
+
+            takeAction(state) {
+                if (Math.random() < this.epsilon) {
+                    return Math.floor(Math.random() * this.n_actions);
+                } else {
+                    return this.bestAction(state);
+                }
+            }
+
+            bestAction(state) {
+                return this.Q_table[state].indexOf(Math.max(...this.Q_table[state]));
+            }
+
+            update(s0, a0, r, s1) {
+                const old_q_value = this.Q_table[s0][a0];
+                const td_error = r + this.gamma * Math.max(...this.Q_table[s1]) - this.Q_table[s0][a0];
+                this.Q_table[s0][a0] += this.alpha * td_error;
+                
+                // 记录统计数据
+                const update_magnitude = Math.abs(this.Q_table[s0][a0] - old_q_value);
+                this.update_magnitudes.push(update_magnitude);
+                this.td_errors.push(Math.abs(td_error));
+                
+                // 记录目标状态的Q值变化
+                if (s0 === this.target_state) {
+                    this.q_value_history.push(Math.max(...this.Q_table[s0]));
+                }
+            }
+
+            trainEpisode(env) {
+                let episode_return = 0;
+                env.reset();
+                let state = env.state;
+                let done = false;
+
+                while (!done) {
+                    const action = this.takeAction(state);
+                    const {next_state, reward, done: is_done} = env.step(action);
+                    this.update(state, action, reward, next_state);
+                    state = next_state;
+                    episode_return += reward;
+                    done = is_done;
+                }
+
+                this.episode_count++;
+                this.total_reward += episode_return;
+                this.episode_rewards.push(episode_return);
+                
+                // 检查是否达到最优策略
+                this.checkOptimalPolicy(episode_return);
+                
+                // 每回合结束时记录当前Q值
+                if (this.q_value_history.length === 0 || this.q_value_history.length < this.episode_count) {
+                    this.q_value_history.push(Math.max(...this.Q_table[this.target_state]));
+                }
+                
+                return episode_return;
+            }
+            
+            checkOptimalPolicy(episode_return) {
+                if (this.optimal_policy_found) return;
+                
+                this.recent_rewards.push(episode_return);
+                
+                if (this.recent_rewards.length > this.stable_episodes_needed) {
+                    this.recent_rewards.shift();
+                }
+                
+                if (this.recent_rewards.length === this.stable_episodes_needed) {
+                    const all_optimal = this.recent_rewards.every(reward => reward >= this.qlearning_optimal_reward);
+                    if (all_optimal) {
+                        this.optimal_policy_found = true;
+                        this.optimal_policy_episode = this.episode_count - this.stable_episodes_needed + 1;
+                    }
+                }
+            }
+
+            getStateValues() {
+                return this.Q_table.map(q_values => Math.max(...q_values));
+            }
+        }
+
+        /**
+         * 改进的Sarsa算法（带epsilon和学习率衰减）
+         */
+        class ImprovedSarsa {
+            constructor(ncol, nrow, epsilon_start = 0.1, epsilon_end = 0.01, epsilon_decay = 0.995, 
+                       alpha_start = 0.1, alpha_end = 0.01, alpha_decay = 0.995, gamma = 0.9) {
+                this.Q_table = Array(nrow * ncol).fill().map(() => Array(4).fill(0));
+                this.n_actions = 4;
+                
+                // 衰减参数
+                this.epsilon = epsilon_start;
+                this.epsilon_start = epsilon_start;
+                this.epsilon_end = epsilon_end;
+                this.epsilon_decay = epsilon_decay;
+                
+                this.alpha = alpha_start;
+                this.alpha_start = alpha_start;
+                this.alpha_end = alpha_end;
+                this.alpha_decay = alpha_decay;
+                
+                this.gamma = gamma;
+                
+                // 统计信息
+                this.episode_count = 0;
+                this.total_reward = 0;
+                this.episode_rewards = [];
+                this.epsilon_history = [];
+                this.alpha_history = [];
+                
+                // 新增详细统计数据
+                this.q_value_history = [];
+                this.update_magnitudes = [];
+                this.td_errors = [];
+                this.target_state = 36;
+                
+                // 最优策略追踪
+                this.optimal_policy_found = false;
+                this.optimal_policy_episode = -1;
+                this.recent_rewards = [];
+                this.stable_episodes_needed = 10;
+                this.sarsa_optimal_reward = -18;
+            }
+
+            takeAction(state) {
+                if (Math.random() < this.epsilon) {
+                    return Math.floor(Math.random() * this.n_actions);
+                } else {
+                    return this.bestAction(state);
+                }
+            }
+
+            bestAction(state) {
+                return this.Q_table[state].indexOf(Math.max(...this.Q_table[state]));
+            }
+
+            update(s0, a0, r, s1, a1) {
+                const old_q_value = this.Q_table[s0][a0];
+                const td_error = r + this.gamma * this.Q_table[s1][a1] - this.Q_table[s0][a0];
+                this.Q_table[s0][a0] += this.alpha * td_error;
+                
+                // 记录统计数据
+                const update_magnitude = Math.abs(this.Q_table[s0][a0] - old_q_value);
+                this.update_magnitudes.push(update_magnitude);
+                this.td_errors.push(Math.abs(td_error));
+                
+                // 记录目标状态的Q值变化
+                if (s0 === this.target_state) {
+                    this.q_value_history.push(Math.max(...this.Q_table[s0]));
+                }
+            }
+
+            decayParameters() {
+                // epsilon衰减
+                this.epsilon = Math.max(this.epsilon_end, this.epsilon * this.epsilon_decay);
+                
+                // 学习率衰减
+                this.alpha = Math.max(this.alpha_end, this.alpha * this.alpha_decay);
+                
+                // 记录历史
+                this.epsilon_history.push(this.epsilon);
+                this.alpha_history.push(this.alpha);
+            }
+
+            trainEpisode(env) {
+                let episode_return = 0;
+                env.reset();
+                let state = env.state;
+                let action = this.takeAction(state);
+                let done = false;
+
+                while (!done) {
+                    const {next_state, reward, done: is_done} = env.step(action);
+                    const next_action = this.takeAction(next_state);
+                    this.update(state, action, reward, next_state, next_action);
+                    state = next_state;
+                    action = next_action;
+                    episode_return += reward;
+                    done = is_done;
+                }
+
+                // 回合结束后衰减参数
+                this.decayParameters();
+                this.episode_count++;
+                this.total_reward += episode_return;
+                this.episode_rewards.push(episode_return);
+                
+                // 检查是否达到最优策略
+                this.checkOptimalPolicy(episode_return);
+                
+                // 每回合结束时记录当前Q值
+                if (this.q_value_history.length === 0 || this.q_value_history.length < this.episode_count) {
+                    this.q_value_history.push(Math.max(...this.Q_table[this.target_state]));
+                }
+                
+                return episode_return;
+            }
+            
+            checkOptimalPolicy(episode_return) {
+                if (this.optimal_policy_found) return;
+                
+                this.recent_rewards.push(episode_return);
+                
+                if (this.recent_rewards.length > this.stable_episodes_needed) {
+                    this.recent_rewards.shift();
+                }
+                
+                if (this.recent_rewards.length === this.stable_episodes_needed) {
+                    const all_optimal = this.recent_rewards.every(reward => reward >= this.sarsa_optimal_reward);
+                    if (all_optimal) {
+                        this.optimal_policy_found = true;
+                        this.optimal_policy_episode = this.episode_count - this.stable_episodes_needed + 1;
+                    }
+                }
+            }
+
+            getStateValues() {
+                return this.Q_table.map(q_values => Math.max(...q_values));
+            }
+        }
+
+        /**
+         * 改进的Q-learning算法（带epsilon和学习率衰减）
+         */
+        class ImprovedQLearning {
+            constructor(ncol, nrow, epsilon_start = 0.1, epsilon_end = 0.01, epsilon_decay = 0.995,
+                       alpha_start = 0.1, alpha_end = 0.01, alpha_decay = 0.995, gamma = 0.9) {
+                this.Q_table = Array(nrow * ncol).fill().map(() => Array(4).fill(0));
+                this.n_actions = 4;
+                
+                // 衰减参数
+                this.epsilon = epsilon_start;
+                this.epsilon_start = epsilon_start;
+                this.epsilon_end = epsilon_end;
+                this.epsilon_decay = epsilon_decay;
+                
+                this.alpha = alpha_start;
+                this.alpha_start = alpha_start;
+                this.alpha_end = alpha_end;
+                this.alpha_decay = alpha_decay;
+                
+                this.gamma = gamma;
+                
+                // 统计信息
+                this.episode_count = 0;
+                this.total_reward = 0;
+                this.episode_rewards = [];
+                this.epsilon_history = [];
+                this.alpha_history = [];
+                
+                // 新增详细统计数据
+                this.q_value_history = [];
+                this.update_magnitudes = [];
+                this.td_errors = [];
+                this.target_state = 36;
+                
+                // 最优策略追踪
+                this.optimal_policy_found = false;
+                this.optimal_policy_episode = -1;
+                this.recent_rewards = [];
+                this.stable_episodes_needed = 10;
+                this.qlearning_optimal_reward = -16; // Q-learning的最优奖励阈值（考虑探索干扰）
+            }
+
+            takeAction(state) {
+                if (Math.random() < this.epsilon) {
+                    return Math.floor(Math.random() * this.n_actions);
+                } else {
+                    return this.bestAction(state);
+                }
+            }
+
+            bestAction(state) {
+                return this.Q_table[state].indexOf(Math.max(...this.Q_table[state]));
+            }
+
+            update(s0, a0, r, s1) {
+                const old_q_value = this.Q_table[s0][a0];
+                const td_error = r + this.gamma * Math.max(...this.Q_table[s1]) - this.Q_table[s0][a0];
+                this.Q_table[s0][a0] += this.alpha * td_error;
+                
+                // 记录统计数据
+                const update_magnitude = Math.abs(this.Q_table[s0][a0] - old_q_value);
+                this.update_magnitudes.push(update_magnitude);
+                this.td_errors.push(Math.abs(td_error));
+                
+                // 记录目标状态的Q值变化
+                if (s0 === this.target_state) {
+                    this.q_value_history.push(Math.max(...this.Q_table[s0]));
+                }
+            }
+
+            decayParameters() {
+                // epsilon衰减
+                this.epsilon = Math.max(this.epsilon_end, this.epsilon * this.epsilon_decay);
+                
+                // 学习率衰减
+                this.alpha = Math.max(this.alpha_end, this.alpha * this.alpha_decay);
+                
+                // 记录历史
+                this.epsilon_history.push(this.epsilon);
+                this.alpha_history.push(this.alpha);
+            }
+
+            trainEpisode(env) {
+                let episode_return = 0;
+                env.reset();
+                let state = env.state;
+                let done = false;
+
+                while (!done) {
+                    const action = this.takeAction(state);
+                    const {next_state, reward, done: is_done} = env.step(action);
+                    this.update(state, action, reward, next_state);
+                    state = next_state;
+                    episode_return += reward;
+                    done = is_done;
+                }
+
+                // 回合结束后衰减参数
+                this.decayParameters();
+                this.episode_count++;
+                this.total_reward += episode_return;
+                this.episode_rewards.push(episode_return);
+                
+                // 检查是否达到最优策略
+                this.checkOptimalPolicy(episode_return);
+                
+                // 每回合结束时记录当前Q值
+                if (this.q_value_history.length === 0 || this.q_value_history.length < this.episode_count) {
+                    this.q_value_history.push(Math.max(...this.Q_table[this.target_state]));
+                }
+                
+                return episode_return;
+            }
+            
+            checkOptimalPolicy(episode_return) {
+                if (this.optimal_policy_found) return;
+                
+                this.recent_rewards.push(episode_return);
+                
+                if (this.recent_rewards.length > this.stable_episodes_needed) {
+                    this.recent_rewards.shift();
+                }
+                
+                if (this.recent_rewards.length === this.stable_episodes_needed) {
+                    const all_optimal = this.recent_rewards.every(reward => reward >= this.qlearning_optimal_reward);
+                    if (all_optimal) {
+                        this.optimal_policy_found = true;
+                        this.optimal_policy_episode = this.episode_count - this.stable_episodes_needed + 1;
+                    }
+                }
+            }
+
+            getStateValues() {
+                return this.Q_table.map(q_values => Math.max(...q_values));
+            }
+        }
+
+        // 初始化环境和算法
+        const env = new CliffWalkingEnv();
+        const actionMeaning = ['↑', '↓', '←', '→'];
+        
+        // 悬崖位置和目标位置
+        const cliffPos = Array.from({length: 10}, (_, i) => (env.nrow - 1) * env.ncol + i + 1);
+        const goalPos = [env.nrow * env.ncol - 1];
+        const startPos = (env.nrow - 1) * env.ncol;
+
+        // 算法实例
+        let sarsaAgent = new Sarsa(env.ncol, env.nrow);
+        let qlearningAgent = new QLearning(env.ncol, env.nrow);
+        let improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow);
+        let improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow);
+
+        // 图表实例
+        let combinedChart;
+        let qValueChart;
+        let lateStageChart;
+        let learningRateChart;
+        let stabilityChart;
+
+        // 移动平均计算函数
+        function movingAverage(data, windowSize) {
+            const result = [];
+            for (let i = 0; i < data.length; i++) {
+                const start = Math.max(0, i - windowSize + 1);
+                const window = data.slice(start, i + 1);
+                const avg = window.reduce((a, b) => a + b, 0) / window.length;
+                result.push(avg);
+            }
+            return result;
+        }
+        
+        // 计算标准差（用于稳定性分析）
+        function calculateStandardDeviation(data) {
+            if (data.length === 0) return 0;
+            const mean = data.reduce((a, b) => a + b, 0) / data.length;
+            const variance = data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / data.length;
+            return Math.sqrt(variance);
+        }
+        
+        // 计算滑动窗口标准差
+        function movingStandardDeviation(data, windowSize) {
+            const result = [];
+            for (let i = 0; i < data.length; i++) {
+                const start = Math.max(0, i - windowSize + 1);
+                const window = data.slice(start, i + 1);
+                result.push(calculateStandardDeviation(window));
+            }
+            return result;
+        }
+        
+        // 计算滑动窗口内的平均值（用于平滑更新幅度数据）
+        function movingAverageOfMagnitudes(magnitudes, windowSize) {
+            const result = [];
+            let currentSum = 0;
+            let currentCount = 0;
+            
+            for (let i = 0; i < magnitudes.length; i++) {
+                currentSum += magnitudes[i];
+                currentCount++;
+                
+                if (currentCount >= windowSize) {
+                    result.push(currentSum / currentCount);
+                    currentSum = 0;
+                    currentCount = 0;
+                }
+            }
+            
+            // 处理最后不足窗口大小的数据
+            if (currentCount > 0) {
+                result.push(currentSum / currentCount);
+            }
+            
+            return result;
+        }
+
+        // 初始化图表
+        function initializeCharts() {
+            // 综合图表
+            const combinedCtx = document.getElementById('combinedChart').getContext('2d');
+            combinedChart = new Chart(combinedCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Sarsa Episode Reward',
+                        data: [],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Sarsa Moving Average',
+                        data: [],
+                        borderColor: 'rgb(29, 78, 216)',
+                        backgroundColor: 'rgba(29, 78, 216, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Q-learning Episode Reward',
+                        data: [],
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Q-learning Moving Average',
+                        data: [],
+                        borderColor: 'rgb(21, 128, 61)',
+                        backgroundColor: 'rgba(21, 128, 61, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Sarsa Episode Reward',
+                        data: [],
+                        borderColor: 'rgb(147, 51, 234)',
+                        backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Sarsa Moving Average',
+                        data: [],
+                        borderColor: 'rgb(109, 40, 217)',
+                        backgroundColor: 'rgba(109, 40, 217, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Q-learning Episode Reward',
+                        data: [],
+                        borderColor: 'rgb(251, 146, 60)',
+                        backgroundColor: 'rgba(251, 146, 60, 0.1)',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Q-learning Moving Average',
+                        data: [],
+                        borderColor: 'rgb(234, 88, 12)',
+                        backgroundColor: 'rgba(234, 88, 12, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Return',
+                                font: {
+                                    size: 14,
+                                    family: 'Inter, ui-sans-serif, system-ui'
+                                },
+                                color: 'hsl(215.4 16.3% 46.9%)'
+                            },
+                            grid: {
+                                color: 'hsl(214.3 31.8% 91.4%)',
+                                borderColor: 'hsl(214.3 31.8% 91.4%)'
+                            },
+                            ticks: {
+                                color: 'hsl(215.4 16.3% 46.9%)',
+                                font: {
+                                    family: 'Inter, ui-sans-serif, system-ui'
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Episodes',
+                                font: {
+                                    size: 14,
+                                    family: 'Inter, ui-sans-serif, system-ui'
+                                },
+                                color: 'hsl(215.4 16.3% 46.9%)'
+                            },
+                            grid: {
+                                color: 'hsl(214.3 31.8% 91.4%)',
+                                borderColor: 'hsl(214.3 31.8% 91.4%)'
+                            },
+                            ticks: {
+                                color: 'hsl(215.4 16.3% 46.9%)',
+                                font: {
+                                    family: 'Inter, ui-sans-serif, system-ui'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 12,
+                                    family: 'Inter, ui-sans-serif, system-ui'
+                                },
+                                color: 'hsl(222.2 84% 4.9%)'
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'hsl(222.2 47.4% 11.2%)',
+                            titleColor: 'hsl(210 40% 98%)',
+                            bodyColor: 'hsl(210 40% 98%)',
+                            borderColor: 'hsl(214.3 31.8% 91.4%)',
+                            borderWidth: 1,
+                            titleFont: {
+                                family: 'Inter, ui-sans-serif, system-ui'
+                            },
+                            bodyFont: {
+                                family: 'Inter, ui-sans-serif, system-ui'
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
+                    animation: {
+                        duration: 200
+                    }
+                }
+            });
+            
+            // Q值收敛图表
+            const qValueCtx = document.getElementById('qValueChart').getContext('2d');
+            qValueChart = new Chart(qValueCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Sarsa (固定LR)',
+                        data: [],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Q-learning (固定LR)',
+                        data: [],
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Sarsa (衰减LR)',
+                        data: [],
+                        borderColor: 'rgb(147, 51, 234)',
+                        backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Q-learning (衰减LR)',
+                        data: [],
+                        borderColor: 'rgb(251, 146, 60)',
+                        backgroundColor: 'rgba(251, 146, 60, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: getDefaultChartOptions('Episodes', 'Q Value')
+            });
+            
+            // 后期收敛图表
+            const lateStageCtx = document.getElementById('lateStageChart').getContext('2d');
+            lateStageChart = new Chart(lateStageCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Sarsa (固定LR)',
+                        data: [],
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Q-learning (固定LR)',
+                        data: [],
+                        borderColor: 'rgb(34, 197, 94)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Sarsa (衰减LR)',
+                        data: [],
+                        borderColor: 'rgb(147, 51, 234)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Q-learning (衰减LR)',
+                        data: [],
+                        borderColor: 'rgb(251, 146, 60)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: getDefaultChartOptions('Episodes', 'Q Value')
+            });
+            
+            // 学习率图表
+            const learningRateCtx = document.getElementById('learningRateChart').getContext('2d');
+            learningRateChart = new Chart(learningRateCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Sarsa & Q-learning (固定LR)',
+                        data: [],
+                        borderColor: 'rgb(239, 68, 68)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false,
+                        borderDash: [5, 5]
+                    }, {
+                        label: 'Improved Sarsa (衰减LR)',
+                        data: [],
+                        borderColor: 'rgb(147, 51, 234)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Q-learning (衰减LR)',
+                        data: [],
+                        borderColor: 'rgb(251, 146, 60)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: getDefaultChartOptions('Episodes', 'Learning Rate')
+            });
+            
+            // 稳定性图表
+            const stabilityCtx = document.getElementById('stabilityChart').getContext('2d');
+            stabilityChart = new Chart(stabilityCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Sarsa 更新幅度',
+                        data: [],
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Q-learning 更新幅度',
+                        data: [],
+                        borderColor: 'rgb(34, 197, 94)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Sarsa 更新幅度',
+                        data: [],
+                        borderColor: 'rgb(147, 51, 234)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        label: 'Improved Q-learning 更新幅度',
+                        data: [],
+                        borderColor: 'rgb(251, 146, 60)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: getDefaultChartOptions('Episodes', 'Update Magnitude')
+            });
+        }
+        
+        // 获取默认图表配置
+        function getDefaultChartOptions(xLabel, yLabel) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: yLabel,
+                            font: {
+                                size: 12,
+                                family: 'Inter, ui-sans-serif, system-ui'
+                            },
+                            color: 'hsl(215.4 16.3% 46.9%)'
+                        },
+                        grid: {
+                            color: 'hsl(214.3 31.8% 91.4%)',
+                            borderColor: 'hsl(214.3 31.8% 91.4%)'
+                        },
+                        ticks: {
+                            color: 'hsl(215.4 16.3% 46.9%)',
+                            font: {
+                                family: 'Inter, ui-sans-serif, system-ui'
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: xLabel,
+                            font: {
+                                size: 12,
+                                family: 'Inter, ui-sans-serif, system-ui'
+                            },
+                            color: 'hsl(215.4 16.3% 46.9%)'
+                        },
+                        grid: {
+                            color: 'hsl(214.3 31.8% 91.4%)',
+                            borderColor: 'hsl(214.3 31.8% 91.4%)'
+                        },
+                        ticks: {
+                            color: 'hsl(215.4 16.3% 46.9%)',
+                            font: {
+                                family: 'Inter, ui-sans-serif, system-ui'
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 10,
+                            font: {
+                                size: 10,
+                                family: 'Inter, ui-sans-serif, system-ui'
+                            },
+                            color: 'hsl(222.2 84% 4.9%)'
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'hsl(222.2 47.4% 11.2%)',
+                        titleColor: 'hsl(210 40% 98%)',
+                        bodyColor: 'hsl(210 40% 98%)',
+                        borderColor: 'hsl(214.3 31.8% 91.4%)',
+                        borderWidth: 1,
+                        titleFont: {
+                            family: 'Inter, ui-sans-serif, system-ui'
+                        },
+                        bodyFont: {
+                            family: 'Inter, ui-sans-serif, system-ui'
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                },
+                animation: {
+                    duration: 200
+                }
+            };
+        }
+
+        // 更新图表
+        function updateCharts() {
+            const windowSize = parseInt(document.getElementById('smoothingWindow').value);
+            
+            // 确定最大回合数
+            const maxEpisodes = Math.max(
+                sarsaAgent.episode_rewards.length, 
+                qlearningAgent.episode_rewards.length,
+                improvedSarsaAgent.episode_rewards.length,
+                improvedQlearningAgent.episode_rewards.length
+            );
+            
+            if (maxEpisodes > 0) {
+                const labels = Array.from({length: maxEpisodes}, (_, i) => i + 1);
+                
+                // 计算移动平均
+                const sarsaMovingAvg = sarsaAgent.episode_rewards.length > 0 
+                    ? movingAverage(sarsaAgent.episode_rewards, windowSize) 
+                    : [];
+                const qlearningMovingAvg = qlearningAgent.episode_rewards.length > 0 
+                    ? movingAverage(qlearningAgent.episode_rewards, windowSize) 
+                    : [];
+                const improvedSarsaMovingAvg = improvedSarsaAgent.episode_rewards.length > 0 
+                    ? movingAverage(improvedSarsaAgent.episode_rewards, windowSize) 
+                    : [];
+                const improvedQlearningMovingAvg = improvedQlearningAgent.episode_rewards.length > 0 
+                    ? movingAverage(improvedQlearningAgent.episode_rewards, windowSize) 
+                    : [];
+
+                // 更新综合图表
+                combinedChart.data.labels = labels;
+                
+                // 原始Sarsa数据
+                combinedChart.data.datasets[0].data = sarsaAgent.episode_rewards.length > 0 
+                    ? sarsaAgent.episode_rewards 
+                    : [];
+                combinedChart.data.datasets[1].data = sarsaMovingAvg;
+                
+                // 原始Q-learning数据
+                combinedChart.data.datasets[2].data = qlearningAgent.episode_rewards.length > 0 
+                    ? qlearningAgent.episode_rewards 
+                    : [];
+                combinedChart.data.datasets[3].data = qlearningMovingAvg;
+                
+                // 改进Sarsa数据
+                combinedChart.data.datasets[4].data = improvedSarsaAgent.episode_rewards.length > 0 
+                    ? improvedSarsaAgent.episode_rewards 
+                    : [];
+                combinedChart.data.datasets[5].data = improvedSarsaMovingAvg;
+                
+                // 改进Q-learning数据
+                combinedChart.data.datasets[6].data = improvedQlearningAgent.episode_rewards.length > 0 
+                    ? improvedQlearningAgent.episode_rewards 
+                    : [];
+                combinedChart.data.datasets[7].data = improvedQlearningMovingAvg;
+                
+                combinedChart.update();
+            }
+            
+            // 更新学习率分析图表
+            updateAnalysisCharts();
+        }
+        
+        // 更新学习率分析图表
+        function updateAnalysisCharts() {
+            const episodes = Array.from({length: Math.max(
+                sarsaAgent.episode_count,
+                qlearningAgent.episode_count,
+                improvedSarsaAgent.episode_count,
+                improvedQlearningAgent.episode_count
+            )}, (_, i) => i + 1);
+            
+            // 更新Q值收敛图表
+            if (qValueChart) {
+                qValueChart.data.labels = episodes;
+                qValueChart.data.datasets[0].data = sarsaAgent.q_value_history;
+                qValueChart.data.datasets[1].data = qlearningAgent.q_value_history;
+                qValueChart.data.datasets[2].data = improvedSarsaAgent.q_value_history;
+                qValueChart.data.datasets[3].data = improvedQlearningAgent.q_value_history;
+                qValueChart.update();
+            }
+            
+            // 更新后期收敛图表（最后100回合）
+            if (lateStageChart) {
+                const maxEpisodes = Math.max(episodes.length, 100);
+                const startEpisode = Math.max(0, maxEpisodes - 100);
+                const lateEpisodes = episodes.slice(startEpisode);
+                
+                lateStageChart.data.labels = lateEpisodes;
+                lateStageChart.data.datasets[0].data = sarsaAgent.q_value_history.slice(startEpisode);
+                lateStageChart.data.datasets[1].data = qlearningAgent.q_value_history.slice(startEpisode);
+                lateStageChart.data.datasets[2].data = improvedSarsaAgent.q_value_history.slice(startEpisode);
+                lateStageChart.data.datasets[3].data = improvedQlearningAgent.q_value_history.slice(startEpisode);
+                lateStageChart.update();
+            }
+            
+            // 更新学习率图表
+            if (learningRateChart) {
+                learningRateChart.data.labels = episodes;
+                
+                // 固定学习率（sarsa和q-learning）
+                const fixedLR = Array(episodes.length).fill(0.1);
+                learningRateChart.data.datasets[0].data = fixedLR;
+                
+                // 衰减学习率
+                learningRateChart.data.datasets[1].data = improvedSarsaAgent.alpha_history;
+                learningRateChart.data.datasets[2].data = improvedQlearningAgent.alpha_history;
+                learningRateChart.update();
+            }
+            
+            // 更新稳定性图表（更新幅度的移动平均）
+            if (stabilityChart) {
+                const windowSize = 100; // 用于平滑更新幅度数据的窗口大小
+                
+                const sarsaMagnitudes = movingAverageOfMagnitudes(sarsaAgent.update_magnitudes, windowSize);
+                const qlearningMagnitudes = movingAverageOfMagnitudes(qlearningAgent.update_magnitudes, windowSize);
+                const improvedSarsaMagnitudes = movingAverageOfMagnitudes(improvedSarsaAgent.update_magnitudes, windowSize);
+                const improvedQlearningMagnitudes = movingAverageOfMagnitudes(improvedQlearningAgent.update_magnitudes, windowSize);
+                
+                const maxMagnitudesLength = Math.max(
+                    sarsaMagnitudes.length,
+                    qlearningMagnitudes.length,
+                    improvedSarsaMagnitudes.length,
+                    improvedQlearningMagnitudes.length
+                );
+                
+                const magnitudeLabels = Array.from({length: maxMagnitudesLength}, (_, i) => (i + 1) * windowSize);
+                
+                stabilityChart.data.labels = magnitudeLabels;
+                stabilityChart.data.datasets[0].data = sarsaMagnitudes;
+                stabilityChart.data.datasets[1].data = qlearningMagnitudes;
+                stabilityChart.data.datasets[2].data = improvedSarsaMagnitudes;
+                stabilityChart.data.datasets[3].data = improvedQlearningMagnitudes;
+                stabilityChart.update();
+            }
+        }
+
+        // 清空图表
+        function clearCharts() {
+            combinedChart.data.labels = [];
+            combinedChart.data.datasets[0].data = [];
+            combinedChart.data.datasets[1].data = [];
+            combinedChart.data.datasets[2].data = [];
+            combinedChart.data.datasets[3].data = [];
+            combinedChart.data.datasets[4].data = [];
+            combinedChart.data.datasets[5].data = [];
+            combinedChart.data.datasets[6].data = [];
+            combinedChart.data.datasets[7].data = [];
+            combinedChart.update();
+        }
+
+        // 创建网格
+        function createGrid(gridId) {
+            const gridContainer = document.getElementById(gridId);
+            gridContainer.innerHTML = '';
+            
+            for (let i = 0; i < env.nrow; i++) {
+                for (let j = 0; j < env.ncol; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    
+                    const state = i * env.ncol + j;
+                    
+                    if (state === startPos) {
+                        cell.classList.add('start');
+                        cell.innerHTML = 'S';
+                    } else if (state === goalPos[0]) {
+                        cell.classList.add('goal');
+                        cell.innerHTML = 'G';
+                    } else if (cliffPos.includes(state)) {
+                        cell.classList.add('cliff');
+                        cell.innerHTML = 'C';
+                    }
+                    
+                    gridContainer.appendChild(cell);
+                }
+            }
+        }
+
+        // 更新策略网格
+        function updatePolicyGrid(agent, gridId) {
+            const cells = document.querySelectorAll(`#${gridId} .cell`);
+            
+            for (let i = 0; i < env.nrow; i++) {
+                for (let j = 0; j < env.ncol; j++) {
+                    const state = i * env.ncol + j;
+                    const cell = cells[state];
+                    
+                    if (state === startPos) {
+                        cell.innerHTML = 'S';
+                    } else if (state === goalPos[0]) {
+                        cell.innerHTML = 'G';
+                    } else if (cliffPos.includes(state)) {
+                        cell.innerHTML = 'C';
+                    } else {
+                        const best_a = agent.bestAction(state);
+                        const arrow = actionMeaning[best_a];
+                        cell.innerHTML = arrow;
+                    }
+                }
+            }
+        }
+
+        // 更新状态价值网格
+        function updateValueGrid(agent, gridId) {
+            const cells = document.querySelectorAll(`#${gridId} .cell`);
+            const stateValues = agent.getStateValues();
+            
+            for (let i = 0; i < env.nrow; i++) {
+                for (let j = 0; j < env.ncol; j++) {
+                    const state = i * env.ncol + j;
+                    const cell = cells[state];
+                    const stateValue = stateValues[state].toFixed(2);
+                    
+                    if (state === startPos) {
+                        cell.innerHTML = `S<br><span class="value-text">${stateValue}</span>`;
+                    } else if (state === goalPos[0]) {
+                        cell.innerHTML = `G<br><span class="value-text">${stateValue}</span>`;
+                    } else if (cliffPos.includes(state)) {
+                        cell.innerHTML = `C<br><span class="value-text">${stateValue}</span>`;
+                    } else {
+                        cell.innerHTML = `<span class="value-text">${stateValue}</span>`;
+                    }
+                }
+            }
+        }
+
+        // 显示结果
+        function showResults(algorithmName, agent) {
+            const resultsId = algorithmName === 'Sarsa' ? 'sarsaResults' : 'qlearningResults';
+            const resultsDiv = document.getElementById(resultsId);
+            
+            const avgReward = agent.episode_count > 0 ? (agent.total_reward / agent.episode_count).toFixed(2) : '0.00';
+            const lastReward = agent.episode_rewards.length > 0 ? agent.episode_rewards[agent.episode_rewards.length - 1] : 0;
+            
+            const optimalPolicyText = agent.optimal_policy_found 
+                ? `第${agent.optimal_policy_episode}回合` 
+                : '未达到';
+            
+            resultsDiv.innerHTML = `
+                <p>训练回合: ${agent.episode_count} | 最后回合奖励: ${lastReward} | 平均奖励: ${avgReward} | 最优策略: ${optimalPolicyText}</p>
+            `;
+        }
+
+        // 显示改进算法结果
+        function showImprovedResults(algorithmName, agent) {
+            const resultsId = algorithmName === 'Improved Sarsa' ? 'improvedSarsaResults' : 'improvedQlearningResults';
+            const paramsId = algorithmName === 'Improved Sarsa' ? 'improvedSarsaParams' : 'improvedQlearningParams';
+            const resultsDiv = document.getElementById(resultsId);
+            const paramsDiv = document.getElementById(paramsId);
+            
+            const avgReward = agent.episode_count > 0 ? (agent.total_reward / agent.episode_count).toFixed(2) : '0.00';
+            const lastReward = agent.episode_rewards.length > 0 ? agent.episode_rewards[agent.episode_rewards.length - 1] : 0;
+            
+            const optimalPolicyText = agent.optimal_policy_found 
+                ? `第${agent.optimal_policy_episode}回合` 
+                : '未达到';
+            
+            resultsDiv.innerHTML = `
+                <p>训练回合: ${agent.episode_count} | 最后回合奖励: ${lastReward} | 平均奖励: ${avgReward} | 最优策略: ${optimalPolicyText}</p>
+            `;
+            
+            paramsDiv.innerHTML = `
+                <p>当前参数: ε=${agent.epsilon.toFixed(4)} | α=${agent.alpha.toFixed(4)} | 衰减中...</p>
+            `;
+        }
+
+        // 更新迭代步数显示
+        function updateStepsDisplay() {
+            document.getElementById('trainingSteps').textContent = sarsaAgent.episode_count;
+        }
+
+        // 初始化所有网格
+        function initializeGrids() {
+            createGrid('sarsaPolicyGrid');
+            createGrid('sarsaValueGrid');
+            createGrid('qlearningPolicyGrid');
+            createGrid('qlearningValueGrid');
+            createGrid('improvedSarsaPolicyGrid');
+            createGrid('improvedSarsaValueGrid');
+            createGrid('improvedQlearningPolicyGrid');
+            createGrid('improvedQlearningValueGrid');
+            
+            // 显示初始状态
+            updatePolicyGrid(sarsaAgent, 'sarsaPolicyGrid');
+            updateValueGrid(sarsaAgent, 'sarsaValueGrid');
+            updatePolicyGrid(qlearningAgent, 'qlearningPolicyGrid');
+            updateValueGrid(qlearningAgent, 'qlearningValueGrid');
+            updatePolicyGrid(improvedSarsaAgent, 'improvedSarsaPolicyGrid');
+            updateValueGrid(improvedSarsaAgent, 'improvedSarsaValueGrid');
+            updatePolicyGrid(improvedQlearningAgent, 'improvedQlearningPolicyGrid');
+            updateValueGrid(improvedQlearningAgent, 'improvedQlearningValueGrid');
+            
+            showResults('Sarsa', sarsaAgent);
+            showResults('Q-learning', qlearningAgent);
+            showImprovedResults('Improved Sarsa', improvedSarsaAgent);
+            showImprovedResults('Improved Q-learning', improvedQlearningAgent);
+            updateStepsDisplay();
+        }
+
+        // 训练函数
+        function trainAgent(agent, algorithmName, episodes = 1) {
+            for (let i = 0; i < episodes; i++) {
+                const env_copy = new CliffWalkingEnv();
+                agent.trainEpisode(env_copy);
+            }
+            
+            updateAgentDisplay(agent, algorithmName);
+            updateCharts();
+            updateStepsDisplay();
+        }
+
+        // 重置算法
+        function resetAgent(agent, algorithmName) {
+            agent.Q_table = Array(env.nrow * env.ncol).fill().map(() => Array(4).fill(0));
+            agent.episode_count = 0;
+            agent.total_reward = 0;
+            agent.episode_rewards = [];
+            
+            // 重置最优策略追踪
+            agent.optimal_policy_found = false;
+            agent.optimal_policy_episode = -1;
+            agent.recent_rewards = [];
+            
+            // 重置详细统计数据
+            agent.q_value_history = [];
+            agent.update_magnitudes = [];
+            agent.td_errors = [];
+            
+            // 如果是改进算法，还需要重置参数历史
+            if (algorithmName.includes('Improved')) {
+                agent.epsilon = agent.epsilon_start;
+                agent.alpha = agent.alpha_start;
+                agent.epsilon_history = [];
+                agent.alpha_history = [];
+            }
+            
+            // 确定网格ID
+            let policyGridId, valueGridId;
+            if (algorithmName === 'Sarsa') {
+                policyGridId = 'sarsaPolicyGrid';
+                valueGridId = 'sarsaValueGrid';
+            } else if (algorithmName === 'Q-learning') {
+                policyGridId = 'qlearningPolicyGrid';
+                valueGridId = 'qlearningValueGrid';
+            } else if (algorithmName === 'Improved Sarsa') {
+                policyGridId = 'improvedSarsaPolicyGrid';
+                valueGridId = 'improvedSarsaValueGrid';
+            } else if (algorithmName === 'Improved Q-learning') {
+                policyGridId = 'improvedQlearningPolicyGrid';
+                valueGridId = 'improvedQlearningValueGrid';
+            }
+            
+            updatePolicyGrid(agent, policyGridId);
+            updateValueGrid(agent, valueGridId);
+            
+            // 显示结果
+            if (algorithmName.includes('Improved')) {
+                showImprovedResults(algorithmName, agent);
+            } else {
+                showResults(algorithmName, agent);
+            }
+            
+            // 更新图表
+            updateCharts();
+            updateStepsDisplay();
+        }
+
+        // 绑定事件监听器
+        document.getElementById('trainBothBtn').addEventListener('click', async function() {
+            const episodes = parseInt(document.getElementById('episodesInput').value);
+            
+            // 禁用所有按钮和输入框
+            setButtonsEnabled(false);
+            
+            // 更新按钮文字显示训练状态
+            const trainBtn = document.getElementById('trainBothBtn');
+            const originalText = trainBtn.textContent;
+            trainBtn.textContent = '训练中...';
+            
+            try {
+                // 使用异步训练，避免UI阻塞
+                await Promise.all([
+                    trainAgentAsync(sarsaAgent, 'Sarsa', episodes),
+                    trainAgentAsync(qlearningAgent, 'Q-learning', episodes),
+                    trainAgentAsync(improvedSarsaAgent, 'Improved Sarsa', episodes),
+                    trainAgentAsync(improvedQlearningAgent, 'Improved Q-learning', episodes)
+                ]);
+            } catch (error) {
+                console.error('训练过程中出现错误:', error);
+            } finally {
+                // 恢复按钮状态
+                trainBtn.textContent = originalText;
+                setButtonsEnabled(true);
+            }
+        });
+
+        document.getElementById('stepBothBtn').addEventListener('click', function() {
+            // 单步训练不需要异步处理
+            trainAgent(sarsaAgent, 'Sarsa', 1);
+            trainAgent(qlearningAgent, 'Q-learning', 1);
+            trainAgent(improvedSarsaAgent, 'Improved Sarsa', 1);
+            trainAgent(improvedQlearningAgent, 'Improved Q-learning', 1);
+        });
+
+        document.getElementById('resetBothBtn').addEventListener('click', function() {
+            // 重置时也禁用按钮，防止重复操作
+            setButtonsEnabled(false);
+            
+            sarsaAgent = new Sarsa(env.ncol, env.nrow);
+            qlearningAgent = new QLearning(env.ncol, env.nrow);
+            improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow);
+            improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow);
+            initializeGrids();
+            updateCharts();
+            updateStepsDisplay();
+            
+            // 重新启用按钮
+            setButtonsEnabled(true);
+        });
+
+        document.getElementById('clearChartsBtn').addEventListener('click', function() {
+            clearCharts();
+        });
+
+        document.getElementById('recheckPolicyBtn').addEventListener('click', function() {
+            recheckOptimalPolicies();
+        });
+
+        // 移动平均窗口变化时更新图表
+        document.getElementById('smoothingWindow').addEventListener('change', function() {
+            updateCharts();
+        });
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            initializeCharts();
+            initializeGrids();
+            updateStepsDisplay();
+        });
+
+        // 异步训练函数，分批训练避免UI阻塞
+        async function trainAgentAsync(agent, algorithmName, episodes = 1, batchSize = 50) {
+            const batches = Math.ceil(episodes / batchSize);
+            
+            for (let batch = 0; batch < batches; batch++) {
+                const currentBatchSize = Math.min(batchSize, episodes - batch * batchSize);
+                
+                // 训练当前批次
+                for (let i = 0; i < currentBatchSize; i++) {
+                    const env_copy = new CliffWalkingEnv();
+                    agent.trainEpisode(env_copy);
+                }
+                
+                // 更新显示
+                updateAgentDisplay(agent, algorithmName);
+                updateCharts();
+                updateStepsDisplay();
+                
+                // 每批次后让出控制权，允许UI更新
+                if (batch < batches - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                }
+            }
+        }
+
+        // 更新单个算法的显示
+        function updateAgentDisplay(agent, algorithmName) {
+            // 确定网格ID
+            let policyGridId, valueGridId;
+            if (algorithmName === 'Sarsa') {
+                policyGridId = 'sarsaPolicyGrid';
+                valueGridId = 'sarsaValueGrid';
+            } else if (algorithmName === 'Q-learning') {
+                policyGridId = 'qlearningPolicyGrid';
+                valueGridId = 'qlearningValueGrid';
+            } else if (algorithmName === 'Improved Sarsa') {
+                policyGridId = 'improvedSarsaPolicyGrid';
+                valueGridId = 'improvedSarsaValueGrid';
+            } else if (algorithmName === 'Improved Q-learning') {
+                policyGridId = 'improvedQlearningPolicyGrid';
+                valueGridId = 'improvedQlearningValueGrid';
+            }
+            
+            updatePolicyGrid(agent, policyGridId);
+            updateValueGrid(agent, valueGridId);
+            
+            // 显示结果
+            if (algorithmName.includes('Improved')) {
+                showImprovedResults(algorithmName, agent);
+            } else {
+                showResults(algorithmName, agent);
+            }
+        }
+
+        // 设置按钮状态
+        function setButtonsEnabled(enabled) {
+            const buttons = [
+                'trainBothBtn',
+                'stepBothBtn', 
+                'resetBothBtn',
+                'clearChartsBtn',
+                'recheckPolicyBtn'
+            ];
+            
+            buttons.forEach(buttonId => {
+                const button = document.getElementById(buttonId);
+                button.disabled = !enabled;
+                
+                if (!enabled) {
+                    button.classList.add('opacity-50', 'cursor-not-allowed');
+                    button.classList.remove('hover:bg-primary/90', 'hover:bg-accent', 'hover:bg-destructive/90');
+                } else {
+                    button.classList.remove('opacity-50', 'cursor-not-allowed');
+                    // 根据按钮类型恢复hover效果
+                    if (buttonId === 'trainBothBtn') {
+                        button.classList.add('hover:bg-primary/90');
+                    } else if (buttonId === 'resetBothBtn') {
+                        button.classList.add('hover:bg-destructive/90');
+                    } else {
+                        button.classList.add('hover:bg-accent');
+                    }
+                }
+            });
+            
+            // 同时禁用/启用输入框
+            const inputs = ['episodesInput', 'smoothingWindow'];
+            inputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                input.disabled = !enabled;
+                
+                if (!enabled) {
+                    input.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    input.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            });
+        }
+
+        // 重新检查最优策略状态（用于已训练的算法）
+        function recheckOptimalPolicies() {
+            const agents = [
+                {agent: sarsaAgent, name: 'Sarsa'},
+                {agent: qlearningAgent, name: 'Q-learning'},
+                {agent: improvedSarsaAgent, name: 'Improved Sarsa'},
+                {agent: improvedQlearningAgent, name: 'Improved Q-learning'}
+            ];
+            
+            agents.forEach(({agent, name}) => {
+                if (agent.episode_rewards.length >= agent.stable_episodes_needed) {
+                    // 检查最近的回合是否达到最优策略
+                    const recentRewards = agent.episode_rewards.slice(-agent.stable_episodes_needed);
+                    const optimalThreshold = name.includes('Sarsa') ? agent.sarsa_optimal_reward : agent.qlearning_optimal_reward;
+                    
+                    const all_optimal = recentRewards.every(reward => reward >= optimalThreshold);
+                    if (all_optimal && !agent.optimal_policy_found) {
+                        agent.optimal_policy_found = true;
+                        agent.optimal_policy_episode = agent.episode_count - agent.stable_episodes_needed + 1;
+                    }
+                }
+                
+                // 更新显示
+                if (name.includes('Improved')) {
+                    showImprovedResults(name, agent);
+                } else {
+                    showResults(name, agent);
+                }
+            });
+        }
+    </script>
+</body>
+</html> 
