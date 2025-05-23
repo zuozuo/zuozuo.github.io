@@ -2418,16 +2418,20 @@
             qlearningAgent.epsilon = eps;
             qlearningAgent.alpha = alp;
 
-            // 改进算法（更新当前值及起始值，便于重新衰减）
-            improvedSarsaAgent.epsilon = eps;
-            improvedSarsaAgent.epsilon_start = eps;
-            improvedSarsaAgent.alpha = alp;
-            improvedSarsaAgent.alpha_start = alp;
+            // 改进算法：仅在尚未开始训练时设置起始 ε、α
+            if (improvedSarsaAgent.episode_count === 0) {
+                improvedSarsaAgent.epsilon = eps;
+                improvedSarsaAgent.epsilon_start = eps;
+                improvedSarsaAgent.alpha = alp;
+                improvedSarsaAgent.alpha_start = alp;
+            }
 
-            improvedQlearningAgent.epsilon = eps;
-            improvedQlearningAgent.epsilon_start = eps;
-            improvedQlearningAgent.alpha = alp;
-            improvedQlearningAgent.alpha_start = alp;
+            if (improvedQlearningAgent.episode_count === 0) {
+                improvedQlearningAgent.epsilon = eps;
+                improvedQlearningAgent.epsilon_start = eps;
+                improvedQlearningAgent.alpha = alp;
+                improvedQlearningAgent.alpha_start = alp;
+            }
         }
 
         // 更新最后20回合奖励表格
