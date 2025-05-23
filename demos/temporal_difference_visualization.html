@@ -498,12 +498,19 @@
                             <span class="w-6 h-6 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg mr-3"></span>
                             Sarsa算法 (在线策略)
                         </h2>
-                        <button id="stepSarsaBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
-                            单步训练
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </button>
+                        <div class="flex items-center gap-3">
+                            <div class="flex flex-col">
+                                <label class="text-xs font-medium text-gray-600 mb-1">训练步数</label>
+                                <input type="number" id="sarsaStepsInput" value="10" min="1" max="100" 
+                                       class="modern-input h-8 w-16 px-2 text-xs font-medium text-center">
+                            </div>
+                            <button id="stepSarsaBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
+                                单独训练
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div id="sarsaResults" class="mt-2 text-sm text-muted-foreground"></div>
                 </div>
@@ -531,12 +538,19 @@
                             <span class="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg mr-3"></span>
                             Q-learning算法 (离线策略)
                         </h2>
-                        <button id="stepQlearningBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
-                            单步训练
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </button>
+                        <div class="flex items-center gap-3">
+                            <div class="flex flex-col">
+                                <label class="text-xs font-medium text-gray-600 mb-1">训练步数</label>
+                                <input type="number" id="qlearningStepsInput" value="10" min="1" max="100" 
+                                       class="modern-input h-8 w-16 px-2 text-xs font-medium text-center">
+                            </div>
+                            <button id="stepQlearningBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
+                                单独训练
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div id="qlearningResults" class="mt-2 text-sm text-muted-foreground"></div>
                 </div>
@@ -572,12 +586,19 @@
                                 <span class="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg mr-3"></span>
                                 改进Sarsa算法 (参数衰减)
                             </h2>
-                            <button id="stepImprovedSarsaBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
-                                单步训练
-                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </button>
+                            <div class="flex items-center gap-3">
+                                <div class="flex flex-col">
+                                    <label class="text-xs font-medium text-gray-600 mb-1">训练步数</label>
+                                    <input type="number" id="improvedSarsaStepsInput" value="10" min="1" max="100" 
+                                           class="modern-input h-8 w-16 px-2 text-xs font-medium text-center">
+                                </div>
+                                <button id="stepImprovedSarsaBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
+                                    单独训练
+                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                         <div id="improvedSarsaResults" class="mt-2 text-sm text-muted-foreground"></div>
                         <div id="improvedSarsaParams" class="mt-2 text-xs text-muted-foreground"></div>
@@ -606,12 +627,19 @@
                                 <span class="w-6 h-6 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg mr-3"></span>
                                 改进Q-learning算法 (参数衰减)
                             </h2>
-                            <button id="stepImprovedQlearningBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
-                                单步训练
-                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </button>
+                            <div class="flex items-center gap-3">
+                                <div class="flex flex-col">
+                                    <label class="text-xs font-medium text-gray-600 mb-1">训练步数</label>
+                                    <input type="number" id="improvedQlearningStepsInput" value="10" min="1" max="100" 
+                                           class="modern-input h-8 w-16 px-2 text-xs font-medium text-center">
+                                </div>
+                                <button id="stepImprovedQlearningBtn" class="btn-primary inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-md">
+                                    单独训练
+                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                         <div id="improvedQlearningResults" class="mt-2 text-sm text-muted-foreground"></div>
                         <div id="improvedQlearningParams" class="mt-2 text-xs text-muted-foreground"></div>
@@ -2262,7 +2290,8 @@
             if (sarsaAgent.episode_count === 0) {
                 syncParamsFromInput();
             }
-            trainAgent(sarsaAgent, 'Sarsa', 1);
+            const steps = parseInt(document.getElementById('sarsaStepsInput').value) || 10;
+            trainAgent(sarsaAgent, 'Sarsa', steps);
         });
 
         document.getElementById('stepQlearningBtn').addEventListener('click', function() {
@@ -2270,7 +2299,8 @@
             if (qlearningAgent.episode_count === 0) {
                 syncParamsFromInput();
             }
-            trainAgent(qlearningAgent, 'Q-learning', 1);
+            const steps = parseInt(document.getElementById('qlearningStepsInput').value) || 10;
+            trainAgent(qlearningAgent, 'Q-learning', steps);
         });
 
         document.getElementById('stepImprovedSarsaBtn').addEventListener('click', function() {
@@ -2278,7 +2308,8 @@
             if (improvedSarsaAgent.episode_count === 0) {
                 syncParamsFromInput();
             }
-            trainAgent(improvedSarsaAgent, 'Improved Sarsa', 1);
+            const steps = parseInt(document.getElementById('improvedSarsaStepsInput').value) || 10;
+            trainAgent(improvedSarsaAgent, 'Improved Sarsa', steps);
         });
 
         document.getElementById('stepImprovedQlearningBtn').addEventListener('click', function() {
@@ -2286,7 +2317,8 @@
             if (improvedQlearningAgent.episode_count === 0) {
                 syncParamsFromInput();
             }
-            trainAgent(improvedQlearningAgent, 'Improved Q-learning', 1);
+            const steps = parseInt(document.getElementById('improvedQlearningStepsInput').value) || 10;
+            trainAgent(improvedQlearningAgent, 'Improved Q-learning', steps);
         });
 
         // 移动平均窗口变化时更新图表
@@ -2403,7 +2435,8 @@
             });
             
             // 同时禁用/启用输入框
-            const inputs = ['episodesInput', 'smoothingWindow', 'epsilonInput', 'alphaInput'];
+            const inputs = ['episodesInput', 'smoothingWindow', 'epsilonInput', 'alphaInput', 
+                          'sarsaStepsInput', 'qlearningStepsInput', 'improvedSarsaStepsInput', 'improvedQlearningStepsInput'];
             inputs.forEach(inputId => {
                 const input = document.getElementById(inputId);
                 input.disabled = !enabled;
