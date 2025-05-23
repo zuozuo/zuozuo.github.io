@@ -1644,13 +1644,14 @@
             
             const avgReward = agent.episode_count > 0 ? (agent.total_reward / agent.episode_count).toFixed(2) : '0.00';
             const lastReward = agent.episode_rewards.length > 0 ? agent.episode_rewards[agent.episode_rewards.length - 1] : 0;
+            const recentAvg = getRecentAvg(agent).toFixed(2);
             
             const optimalPolicyText = agent.optimal_policy_found 
                 ? `第${agent.optimal_policy_episode}回合` 
                 : '未达到';
             
             resultsDiv.innerHTML = `
-                <p>训练回合: ${agent.episode_count} | 最后回合奖励: ${lastReward} | 平均奖励: ${avgReward} | 最优策略: ${optimalPolicyText}</p>
+                <p>训练回合: ${agent.episode_count} | 最后回合奖励: ${lastReward} | 平均奖励: ${avgReward} | 最近100回合均值: ${recentAvg} | 最优策略: ${optimalPolicyText}</p>
             `;
         }
 
@@ -1663,13 +1664,14 @@
             
             const avgReward = agent.episode_count > 0 ? (agent.total_reward / agent.episode_count).toFixed(2) : '0.00';
             const lastReward = agent.episode_rewards.length > 0 ? agent.episode_rewards[agent.episode_rewards.length - 1] : 0;
+            const recentAvg = getRecentAvg(agent).toFixed(2);
             
             const optimalPolicyText = agent.optimal_policy_found 
                 ? `第${agent.optimal_policy_episode}回合` 
                 : '未达到';
             
             resultsDiv.innerHTML = `
-                <p>训练回合: ${agent.episode_count} | 最后回合奖励: ${lastReward} | 平均奖励: ${avgReward} | 最优策略: ${optimalPolicyText}</p>
+                <p>训练回合: ${agent.episode_count} | 最后回合奖励: ${lastReward} | 平均奖励: ${avgReward} | 最近100回合均值: ${recentAvg} | 最优策略: ${optimalPolicyText}</p>
             `;
             
             paramsDiv.innerHTML = `
@@ -2019,6 +2021,15 @@
                 combinedChart.update();
             };
         });
+
+        // 更新单个算法的显示
+        function getRecentAvg(agent, N = 100) {
+            const len = agent.episode_rewards.length;
+            if (len === 0) return 0;
+            const recent = agent.episode_rewards.slice(-N);
+            const sum = recent.reduce((a, b) => a + b, 0);
+            return sum / recent.length;
+        }
     </script>
 </body>
 </html> 
