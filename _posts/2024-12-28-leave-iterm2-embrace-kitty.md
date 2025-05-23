@@ -2,9 +2,12 @@
 title: 是时候抛弃 Iterm2，拥抱 Kitty 了
 date: 2024-12-28 12:00:00 +0800
 categories: [terminal, Kitty, 终端, neovim]
-image: /assets/img/posts/kitty-terminal-modern-interface.png
 tags: [kitty, iterm2, 终端, neovim]
+image: /assets/img/posts/kitty-terminal-header.png
 ---
+
+![现代化的终端开发环境](/assets/img/posts/terminal-coding-workspace.jpg)
+*现代化的终端开发环境 - 体验 Kitty 带来的GPU加速性能和丰富功能*
 
 ## 为什么选择 Kitty
 
