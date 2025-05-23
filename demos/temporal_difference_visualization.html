@@ -1300,8 +1300,8 @@
         const defaultAlpha = parseFloat(document.getElementById('alphaInput').value);
         let sarsaAgent = new Sarsa(env.ncol, env.nrow, defaultEpsilon, defaultAlpha);
         let qlearningAgent = new QLearning(env.ncol, env.nrow, defaultEpsilon, defaultAlpha);
-        let improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, defaultEpsilon, 0.01, 0.995, defaultAlpha, 0.01, 0.995);
-        let improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, defaultEpsilon, 0.01, 0.995, defaultAlpha, 0.01, 0.995);
+        let improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, defaultEpsilon, 0.001, 0.998, defaultAlpha, 0.001, 0.998);
+        let improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, defaultEpsilon, 0.001, 0.998, defaultAlpha, 0.001, 0.998);
 
         // 图表实例
         let combinedChart;
@@ -2048,11 +2048,11 @@
                 const epsilonReduction = ((agent.epsilon_start - agent.epsilon) / agent.epsilon_start * 100).toFixed(1);
                 const alphaReduction = ((agent.alpha_start - agent.alpha) / agent.alpha_start * 100).toFixed(1);
                 paramsDiv.innerHTML = `
-                    <p>当前参数: ε=${agent.epsilon.toFixed(4)} (衰减${epsilonReduction}%) | α=${agent.alpha.toFixed(4)} (衰减${alphaReduction}%) | 持续衰减中...</p>
+                    <p>当前参数: ε=${agent.epsilon.toFixed(5)} (衰减${epsilonReduction}%) | α=${agent.alpha.toFixed(5)} (衰减${alphaReduction}%) | 持续衰减中...</p>
                 `;
             } else {
                 paramsDiv.innerHTML = `
-                    <p>初始参数: ε=${agent.epsilon_start.toFixed(4)} | α=${agent.alpha_start.toFixed(4)} | 等待开始训练...</p>
+                    <p>初始参数: ε=${agent.epsilon_start.toFixed(5)} | α=${agent.alpha_start.toFixed(5)} | 等待开始训练...</p>
                 `;
             }
         }
@@ -2236,8 +2236,8 @@
             const alp = parseFloat(document.getElementById('alphaInput').value);
             sarsaAgent = new Sarsa(env.ncol, env.nrow, eps, alp);
             qlearningAgent = new QLearning(env.ncol, env.nrow, eps, alp);
-            improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, eps, 0.01, 0.995, alp, 0.01, 0.995);
-            improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, eps, 0.01, 0.995, alp, 0.01, 0.995);
+            improvedSarsaAgent = new ImprovedSarsa(env.ncol, env.nrow, eps, 0.001, 0.998, alp, 0.001, 0.998);
+            improvedQlearningAgent = new ImprovedQLearning(env.ncol, env.nrow, eps, 0.001, 0.998, alp, 0.001, 0.998);
             initializeGrids();
             clearCharts();
             document.getElementById('last20RewardsTable').innerHTML = '';
@@ -2276,10 +2276,19 @@
             for (let batch = 0; batch < batches; batch++) {
                 const currentBatchSize = Math.min(batchSize, episodes - batch * batchSize);
                 
+                // 记录批次开始前的参数值（用于调试）
+                const beforeEpsilon = algorithmName.includes('Improved') ? agent.epsilon : null;
+                const beforeAlpha = algorithmName.includes('Improved') ? agent.alpha : null;
+                
                 // 训练当前批次
                 for (let i = 0; i < currentBatchSize; i++) {
                     const env_copy = new CliffWalkingEnv();
                     agent.trainEpisode(env_copy);
+                }
+                
+                // 记录批次结束后的参数值（用于调试）
+                if (algorithmName.includes('Improved') && beforeEpsilon !== null) {
+                    console.log(`${algorithmName} Batch ${batch + 1}: ε ${beforeEpsilon.toFixed(5)} -> ${agent.epsilon.toFixed(5)}, α ${beforeAlpha.toFixed(5)} -> ${agent.alpha.toFixed(5)}`);
                 }
                 
                 // 更新显示
@@ -2480,8 +2489,8 @@
         function updateParamInputs() {
             // 如果改进算法已经开始训练，显示其当前参数值
             if (improvedSarsaAgent.episode_count > 0) {
-                document.getElementById('epsilonInput').value = improvedSarsaAgent.epsilon.toFixed(4);
-                document.getElementById('alphaInput').value = improvedSarsaAgent.alpha.toFixed(4);
+                document.getElementById('epsilonInput').value = improvedSarsaAgent.epsilon.toFixed(5);
+                document.getElementById('alphaInput').value = improvedSarsaAgent.alpha.toFixed(5);
             }
             // 如果尚未开始训练，保持用户输入的值不变
         }
