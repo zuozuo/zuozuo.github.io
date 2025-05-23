@@ -1,41 +1,73 @@
-# Chirpy Starter
+# Zorro Zuo's Tech Blog
 
 [![Gem Version](https://img.shields.io/gem/v/jekyll-theme-chirpy)][gem]&nbsp;
 [![GitHub license](https://img.shields.io/github/license/cotes2020/chirpy-starter.svg?color=blue)][mit]
 
-When installing the [**Chirpy**][chirpy] theme through [RubyGems.org][gem], Jekyll can only read files in the folders
-`_data`, `_layouts`, `_includes`, `_sass` and `assets`, as well as a small part of options of the `_config.yml` file
-from the theme's gem. If you have ever installed this theme gem, you can use the command
-`bundle info --path jekyll-theme-chirpy` to locate these files.
+这是 Zorro Zuo 的个人技术博客，基于 [**Chirpy**][chirpy] 主题构建，专注于分享机器学习、深度学习和人工智能领域的前沿技术与见解。
 
-The Jekyll team claims that this is to leave the ball in the user’s court, but this also results in users not being
-able to enjoy the out-of-the-box experience when using feature-rich themes.
+## 📝 博客内容
 
-To fully use all the features of **Chirpy**, you need to copy the other critical files from the theme's gem to your
-Jekyll site. The following is a list of targets:
+### 技术领域
+- **机器学习**：算法原理、实现技巧和应用案例
+- **深度学习**：神经网络架构、训练方法和优化策略
+- **强化学习**：理论基础、算法实现和可视化演示
+- **人工智能**：前沿技术、行业趋势和研究进展
 
-```shell
-.
-├── _config.yml
-├── _plugins
-├── _tabs
-└── index.html
+### 特色功能
+- **交互式演示**：通过可视化工具帮助理解复杂算法
+- **实用教程**：从理论到实践的完整学习路径
+- **代码实例**：可运行的示例代码和项目
+
+## 🎮 演示与可视化
+
+### [悬崖漫步环境可视化](/demos/cliff-walking/)
+一个交互式的强化学习算法演示工具，展示策略迭代与价值迭代算法：
+- **算法对比**：实时观察两种算法的收敛过程
+- **单步调试**：逐步执行每个迭代步骤，深入理解算法原理
+- **可视化界面**：直观的网格显示状态价值和最优策略
+
+> **参考资源**：详细的算法理论和代码实现可参考 [《动手学强化学习》动态规划算法](https://hrl.boyuai.com/chapter/1/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%AE%97%E6%B3%95)
+
+## 🚀 快速开始
+
+### 本地运行
+```bash
+# 安装依赖
+bundle install
+
+# 启动本地服务器
+bundle exec jekyll serve --livereload
 ```
 
-To save you time, and also in case you lose some files while copying, we extract those files/configurations of the
-latest version of the **Chirpy** theme and the [CD][CD] workflow to here, so that you can start writing in minutes.
+### 项目结构
+```shell
+.
+├── _config.yml          # Jekyll 配置文件
+├── _posts/              # 博客文章
+├── _tabs/               # 导航页面
+├── demos/               # 演示与可视化工具
+│   └── cliff_walking_visualization.html
+└── assets/              # 静态资源
+```
 
-## Usage
+## 🛠 技术栈
 
-Check out the [theme's docs](https://github.com/cotes2020/jekyll-theme-chirpy/wiki).
+- **Jekyll**：静态网站生成器
+- **Chirpy 主题**：现代化的博客主题
+- **GitHub Pages**：免费托管服务
+- **HTML/CSS/JavaScript**：交互式演示工具
 
-## Contributing
+## 📖 关于作者
 
-This repository is automatically updated with new releases from the theme repository. If you encounter any issues or want to contribute to its improvement, please visit the [theme repository][chirpy] to provide feedback.
+**Zorro Zuo** - AI 技术探索者，专注于机器学习和深度学习技术的研究与应用。通过博客分享技术见解，希望为AI技术的普及和发展贡献力量。
 
-## License
+## 🤝 贡献
 
-This work is published under [MIT][mit] License.
+欢迎通过 Issues 或 Pull Requests 参与讨论和改进。如果您发现任何问题或有改进建议，请随时联系。
+
+## 📄 许可证
+
+本项目采用 [MIT][mit] 许可证开源。
 
 [gem]: https://rubygems.org/gems/jekyll-theme-chirpy
 [chirpy]: https://github.com/cotes2020/jekyll-theme-chirpy/
