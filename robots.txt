@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# 允许所有搜索引擎抓取
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# 不允许抓取的目录
+Disallow: /_site/
+Disallow: /assets/js/
+Disallow: /tools/
+Disallow: /.git/
+Disallow: /.jekyll-cache/
+
+# 站点地图位置
+Sitemap: https://zuozuo.github.io/sitemap.xml
+
+# 爬取延迟（毫秒）
+Crawl-delay: 1 

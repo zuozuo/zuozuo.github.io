@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+每次生成新的blog或者更新blog的时候，自动帮我进行相应的seo优化

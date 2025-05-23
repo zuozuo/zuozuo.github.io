@@ -1,0 +1,85 @@
+<!-- 结构化数据 - 个人博客/网站 -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "{{ site.title }}",
+  "description": "{{ site.description }}",
+  "url": "{{ site.url }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ site.social.name }}",
+    "email": "{{ site.social.email }}",
+    "url": "{{ site.url }}",
+    "jobTitle": "AI技术专家",
+    "knowsAbout": ["机器学习", "深度学习", "强化学习", "人工智能", "数据科学"],
+    "sameAs": [
+      {% for link in site.social.links %}
+      "{{ link }}"{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "{{ site.social.name }}",
+    "url": "{{ site.url }}"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ site.url }}"
+  },
+  "keywords": {{ site.keywords | jsonify }},
+  "inLanguage": "{{ site.lang }}",
+  "copyrightYear": "{{ site.time | date: '%Y' }}",
+  "copyrightHolder": {
+    "@type": "Person",
+    "name": "{{ site.social.name }}"
+  }
+}
+</script>
+
+{% if page.layout == 'post' %}
+<!-- 结构化数据 - 博客文章 -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ page.title }}",
+  "description": "{{ page.description | default: page.excerpt | strip_html | truncate: 160 }}",
+  "image": "{{ page.image | default: site.social_preview_image | absolute_url }}",
+  "url": "{{ page.url | absolute_url }}",
+  "datePublished": "{{ page.date | date_to_xmlschema }}",
+  "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ page.author | default: site.social.name }}",
+    "url": "{{ site.url }}"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "{{ site.social.name }}",
+    "url": "{{ site.url }}"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ page.url | absolute_url }}"
+  },
+  "keywords": [
+    {% for tag in page.tags %}
+    "{{ tag }}"{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ],
+  "articleSection": [
+    {% for category in page.categories %}
+    "{{ category }}"{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ],
+  "inLanguage": "{{ site.lang }}",
+  "copyrightYear": "{{ page.date | date: '%Y' }}",
+  "copyrightHolder": {
+    "@type": "Person", 
+    "name": "{{ site.social.name }}"
+  }
+}
+</script>
+{% endif %} 
