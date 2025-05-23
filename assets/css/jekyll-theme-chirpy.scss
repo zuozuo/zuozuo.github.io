@@ -1,0 +1,67 @@
+@import 'main';
+
+/* 优化头像显示 - 使用正方形头像，完美圆形显示 */
+.sidebar .site-title .avatar,
+.profile-wrapper .avatar,
+.site-avatar,
+#avatar {
+  width: 6.5rem !important;
+  height: 6.5rem !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  margin: 0 auto 1rem !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+  border: 3px solid rgba(255, 255, 255, 0.15) !important;
+  transition: all 0.3s ease !important;
+  background: #f8f9fa !important;
+  
+  img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: 50% !important;
+    display: block !important;
+  }
+  
+  &:hover {
+    transform: scale(1.03) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18) !important;
+  }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .sidebar .site-title .avatar,
+  .profile-wrapper .avatar,
+  .site-avatar,
+  #avatar {
+    width: 5.5rem !important;
+    height: 5.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar .site-title .avatar,
+  .profile-wrapper .avatar,
+  .site-avatar,
+  #avatar {
+    width: 5rem !important;
+    height: 5rem !important;
+  }
+}
+
+/* 深色模式优化 */
+[data-bs-theme="dark"] {
+  .sidebar .site-title .avatar,
+  .profile-wrapper .avatar,
+  .site-avatar,
+  #avatar {
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+    
+    &:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+} 
