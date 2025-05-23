@@ -1,0 +1,26 @@
+<!-- 搜索引擎验证标签 -->
+<!-- Google Search Console 验证 -->
+<!-- 请将下载的Google验证文件放在网站根目录，或者使用meta标签验证 -->
+{% if site.webmaster_verifications.google %}
+<meta name="google-site-verification" content="{{ site.webmaster_verifications.google }}" />
+{% endif %}
+
+<!-- 百度站长平台验证 -->
+{% if site.webmaster_verifications.baidu %}
+<meta name="baidu-site-verification" content="{{ site.webmaster_verifications.baidu }}" />
+{% endif %}
+
+<!-- Bing网站管理员工具验证 -->
+{% if site.webmaster_verifications.bing %}
+<meta name="msvalidate.01" content="{{ site.webmaster_verifications.bing }}" />
+{% endif %}
+
+<!-- 360搜索验证 -->
+{% if site.webmaster_verifications.so %}
+<meta name="360-site-verification" content="{{ site.webmaster_verifications.so }}" />
+{% endif %}
+
+<!-- 搜狗验证 -->
+{% if site.webmaster_verifications.sogou %}
+<meta name="sogou_site_verification" content="{{ site.webmaster_verifications.sogou }}" />
+{% endif %} 
