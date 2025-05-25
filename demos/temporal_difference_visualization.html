@@ -105,12 +105,12 @@
             box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
-        
+
         .grid-container:hover {
             transform: translateY(-2px);
             box-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.15), 0 8px 16px -4px rgba(0, 0, 0, 0.1);
         }
-        
+
         .cell {
             width: 35px;
             height: 35px;
@@ -128,7 +128,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .cell::before {
             content: '';
             position: absolute;
@@ -139,58 +139,58 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
             transition: left 0.5s ease;
         }
-        
+
         .cell:hover::before {
             left: 100%;
         }
-        
+
         .cell:hover {
             transform: scale(1.05);
             z-index: 10;
         }
-        
+
         .cell:nth-child(12n) {
             border-right: none;
         }
-        
+
         .cell:nth-last-child(-n+12) {
             border-bottom: none;
         }
-        
+
         .start {
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             font-weight: 700;
             box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.4);
         }
-        
+
         .goal {
             background: linear-gradient(135deg, #f59e0b, #d97706);
             color: white;
             font-weight: 700;
             box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.4);
         }
-        
+
         .cliff {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
             font-weight: 700;
             box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.4);
         }
-        
+
         .value-text {
             font-weight: 600;
             font-size: 9px;
             margin-top: 2px;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
-        
+
         /* 普通单元格的状态值文字 */
         .cell:not(.start):not(.goal):not(.cliff) .value-text {
             color: #334155;
             font-weight: 700;
         }
-        
+
         /* 特殊单元格的状态值文字 */
         .start .value-text,
         .goal .value-text,
@@ -199,7 +199,7 @@
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             font-weight: 600;
         }
-        
+
         /* 现代化按钮样式 */
         .btn-primary {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
@@ -210,7 +210,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .btn-primary::before {
             content: '';
             position: absolute;
@@ -221,16 +221,16 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transition: left 0.5s ease;
         }
-        
+
         .btn-primary:hover::before {
             left: 100%;
         }
-        
+
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px -3px rgba(139, 92, 246, 0.4);
         }
-        
+
         .btn-success {
             background: linear-gradient(135deg, #10b981, #059669);
             border: none;
@@ -240,7 +240,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .btn-success::before {
             content: '';
             position: absolute;
@@ -251,16 +251,16 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transition: left 0.5s ease;
         }
-        
+
         .btn-success:hover::before {
             left: 100%;
         }
-        
+
         .btn-success:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px -3px rgba(16, 185, 129, 0.4);
         }
-        
+
         .btn-danger {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             border: none;
@@ -270,7 +270,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .btn-danger::before {
             content: '';
             position: absolute;
@@ -281,16 +281,16 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transition: left 0.5s ease;
         }
-        
+
         .btn-danger:hover::before {
             left: 100%;
         }
-        
+
         .btn-danger:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px -3px rgba(239, 68, 68, 0.4);
         }
-        
+
         /* 现代化卡片样式 */
         .modern-card {
             background: rgba(255, 255, 255, 0.95);
@@ -300,30 +300,30 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
-        
+
         .modern-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
-        
+
         /* 渐变背景 */
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
-        
+
         /* 图例现代化样式 */
         .legend-item {
             transition: all 0.3s ease;
             padding: 8px 12px;
             border-radius: 8px;
         }
-        
+
         .legend-item:hover {
             background: rgba(139, 92, 246, 0.1);
             transform: scale(1.05);
         }
-        
+
         /* 输入框现代化样式 */
         .modern-input {
             background: rgba(255, 255, 255, 0.9);
@@ -331,54 +331,54 @@
             border-radius: 12px;
             transition: all 0.3s ease;
         }
-        
+
         .modern-input:focus {
             border-color: #8b5cf6;
             box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
             background: white;
         }
-        
+
         /* 表格现代化样式 */
         .modern-table {
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
-        
+
         .modern-table th {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
             color: white;
             font-weight: 600;
             padding: 12px;
         }
-        
+
         .modern-table td {
             padding: 10px 12px;
             transition: background-color 0.2s ease;
         }
-        
+
         .modern-table tr:hover td {
             background-color: rgba(139, 92, 246, 0.05);
         }
-        
+
         /* 图表切换按钮 */
         .chart-toggle-btn {
             transition: all 0.3s ease;
             border-radius: 20px;
             font-weight: 500;
         }
-        
+
         .chart-toggle-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-        
+
         .chart-toggle-btn.active {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
             color: white !important;
             border-color: #8b5cf6 !important;
         }
-        
+
         /* 禁用状态样式 */
         button:disabled {
             pointer-events: none;
@@ -386,7 +386,7 @@
             transform: none !important;
             box-shadow: none !important;
         }
-        
+
         input:disabled {
             pointer-events: none;
             opacity: 0.6;
@@ -407,7 +407,7 @@
             </p>
             <div class="mt-8 w-24 h-1 bg-gradient-to-r from-purple-400 to-pink-400 mx-auto rounded-full animate-float"></div>
         </div>
-        
+
         <!-- Global Controls -->
         <div class="modern-card p-8 mb-10 animate-slide-up">
             <h3 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
@@ -502,7 +502,7 @@
                             <button id="stepSarsaBtn" class="bg-blue-100 hover:bg-blue-200 text-blue-700 inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-sm border border-blue-200">
                                 训练
                             </button>
-                            <input type="number" id="sarsaStepsInput" value="10" min="1" max="100" 
+                            <input type="number" id="sarsaStepsInput" value="10" min="1" max="100"
                                    class="modern-input h-10 w-16 px-2 text-sm font-medium text-center">
                             <span class="text-sm font-medium text-gray-600">回合</span>
                         </div>
@@ -537,7 +537,7 @@
                             <button id="stepQlearningBtn" class="bg-green-100 hover:bg-green-200 text-green-700 inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-sm border border-green-200">
                                 训练
                             </button>
-                            <input type="number" id="qlearningStepsInput" value="10" min="1" max="100" 
+                            <input type="number" id="qlearningStepsInput" value="10" min="1" max="100"
                                    class="modern-input h-10 w-16 px-2 text-sm font-medium text-center">
                             <span class="text-sm font-medium text-gray-600">回合</span>
                         </div>
@@ -560,7 +560,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Improved Algorithms Comparison -->
         <div class="mt-16">
             <div class="text-center mb-12">
@@ -580,7 +580,7 @@
                                 <button id="stepImprovedSarsaBtn" class="bg-purple-100 hover:bg-purple-200 text-purple-700 inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-sm border border-purple-200">
                                     训练
                                 </button>
-                                <input type="number" id="improvedSarsaStepsInput" value="10" min="1" max="100" 
+                                <input type="number" id="improvedSarsaStepsInput" value="10" min="1" max="100"
                                        class="modern-input h-10 w-16 px-2 text-sm font-medium text-center">
                                 <span class="text-sm font-medium text-gray-600">回合</span>
                             </div>
@@ -610,13 +610,13 @@
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-2xl font-bold text-gray-800 flex items-center">
                                 <span class="w-6 h-6 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg mr-3"></span>
-                                改进Q-learning算法 (参数衰减)
+                                改进Q-learning(参数衰减)
                             </h2>
                             <div class="flex items-center gap-2">
                                 <button id="stepImprovedQlearningBtn" class="bg-orange-100 hover:bg-orange-200 text-orange-700 inline-flex items-center justify-center rounded-lg text-sm font-medium h-10 px-4 py-2 shadow-sm border border-orange-200">
                                     训练
                                 </button>
-                                <input type="number" id="improvedQlearningStepsInput" value="10" min="1" max="100" 
+                                <input type="number" id="improvedQlearningStepsInput" value="10" min="1" max="100"
                                        class="modern-input h-10 w-16 px-2 text-sm font-medium text-center">
                                 <span class="text-sm font-medium text-gray-600">回合</span>
                             </div>
@@ -688,7 +688,7 @@
                         <canvas id="qValueChart" class="w-full h-full"></canvas>
                     </div>
                 </div>
-                
+
                 <!-- 后期收敛细节 -->
                 <div class="bg-white rounded-xl border-2 border-gray-200 p-6 shadow-inner">
                     <h3 class="text-lg font-semibold text-center mb-6 text-gray-700">后期收敛细节 (最后100回合)</h3>
@@ -696,7 +696,7 @@
                         <canvas id="lateStageChart" class="w-full h-full"></canvas>
                     </div>
                 </div>
-                
+
                 <!-- 学习率衰减过程 -->
                 <div class="bg-white rounded-xl border-2 border-gray-200 p-6 shadow-inner">
                     <h3 class="text-lg font-semibold text-center mb-6 text-gray-700">学习率衰减过程</h3>
@@ -704,7 +704,7 @@
                         <canvas id="learningRateChart" class="w-full h-full"></canvas>
                     </div>
                 </div>
-                
+
                 <!-- 收敛稳定性指标 -->
                 <div class="bg-white rounded-xl border-2 border-gray-200 p-6 shadow-inner">
                     <h3 class="text-lg font-semibold text-center mb-6 text-gray-700">收敛稳定性指标</h3>
@@ -739,7 +739,7 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         /**
          * 悬崖漫步环境
@@ -767,44 +767,44 @@
                     for (let j = 0; j < this.ncol; j++) {
                         for (let a = 0; a < 4; a++) {
                             const state = i * this.ncol + j;
-                            
+
                             if (state === this.nrow * this.ncol - 1) {
                                 P[state][a].push({p: 1.0, next_state: state, reward: 0, done: true});
                                 continue;
                             }
-                            
+
                             if (i === this.nrow - 1 && j > 0 && j < this.ncol - 1) {
                                 P[state][a].push({p: 1.0, next_state: (this.nrow - 1) * this.ncol, reward: -100, done: true});
                                 continue;
                             }
-                            
+
                             let next_i = i + change[a][1];
                             let next_j = j + change[a][0];
                             let reward = -1.0;
                             let done = false;
-                            
+
                             if (next_i < 0 || next_i >= this.nrow || next_j < 0 || next_j >= this.ncol) {
                                 next_i = i;
                                 next_j = j;
                             }
-                            
+
                             let next_state = next_i * this.ncol + next_j;
-                            
+
                             if (next_i === this.nrow - 1 && next_j > 0 && next_j < this.ncol - 1) {
                                 next_state = (this.nrow - 1) * this.ncol;
                                 reward = -100;
                                 done = true;
                             }
-                            
+
                             if (next_state === this.nrow * this.ncol - 1) {
                                 done = true;
                             }
-                            
+
                             P[state][a].push({p: 1.0, next_state: next_state, reward: reward, done: done});
                         }
                     }
                 }
-                
+
                 return P;
             }
 
@@ -833,13 +833,13 @@
                 this.episode_count = 0;
                 this.total_reward = 0;
                 this.episode_rewards = [];
-                
+
                 // 新增详细统计数据
                 this.q_value_history = []; // 记录特定状态的Q值变化
                 this.update_magnitudes = []; // 记录每次更新的幅度
                 this.td_errors = []; // 记录TD误差
                 this.target_state = 36; // 监控起始状态的Q值变化
-                
+
                 // 最优策略追踪
                 this.optimal_policy_found = false;
                 this.optimal_policy_episode = -1;
@@ -864,12 +864,12 @@
                 const old_q_value = this.Q_table[s0][a0];
                 const td_error = r + this.gamma * this.Q_table[s1][a1] - this.Q_table[s0][a0];
                 this.Q_table[s0][a0] += this.alpha * td_error;
-                
+
                 // 记录统计数据
                 const update_magnitude = Math.abs(this.Q_table[s0][a0] - old_q_value);
                 this.update_magnitudes.push(update_magnitude);
                 this.td_errors.push(Math.abs(td_error));
-                
+
                 // 记录目标状态的Q值变化
                 if (s0 === this.target_state) {
                     this.q_value_history.push(Math.max(...this.Q_table[s0]));
@@ -896,28 +896,28 @@
                 this.episode_count++;
                 this.total_reward += episode_return;
                 this.episode_rewards.push(episode_return);
-                
+
                 // 检查是否达到最优策略
                 this.checkOptimalPolicy(episode_return);
-                
+
                 // 每回合结束时记录当前Q值
                 if (this.q_value_history.length === 0 || this.q_value_history.length < this.episode_count) {
                     this.q_value_history.push(Math.max(...this.Q_table[this.target_state]));
                 }
-                
+
                 return episode_return;
             }
-            
+
             checkOptimalPolicy(episode_return) {
                 if (this.optimal_policy_found) return;
-                
+
                 this.recent_rewards.push(episode_return);
-                
+
                 // 保持最近的奖励记录不超过需要的稳定回合数
                 if (this.recent_rewards.length > this.stable_episodes_needed) {
                     this.recent_rewards.shift();
                 }
-                
+
                 // 如果有足够的记录，检查是否所有最近的奖励都达到最优
                 if (this.recent_rewards.length === this.stable_episodes_needed) {
                     const all_optimal = this.recent_rewards.every(reward => reward >= this.sarsa_optimal_reward);
@@ -946,13 +946,13 @@
                 this.episode_count = 0;
                 this.total_reward = 0;
                 this.episode_rewards = [];
-                
+
                 // 新增详细统计数据
                 this.q_value_history = [];
                 this.update_magnitudes = [];
                 this.td_errors = [];
                 this.target_state = 36;
-                
+
                 // 最优策略追踪
                 this.optimal_policy_found = false;
                 this.optimal_policy_episode = -1;
@@ -977,12 +977,12 @@
                 const old_q_value = this.Q_table[s0][a0];
                 const td_error = r + this.gamma * Math.max(...this.Q_table[s1]) - this.Q_table[s0][a0];
                 this.Q_table[s0][a0] += this.alpha * td_error;
-                
+
                 // 记录统计数据
                 const update_magnitude = Math.abs(this.Q_table[s0][a0] - old_q_value);
                 this.update_magnitudes.push(update_magnitude);
                 this.td_errors.push(Math.abs(td_error));
-                
+
                 // 记录目标状态的Q值变化
                 if (s0 === this.target_state) {
                     this.q_value_history.push(Math.max(...this.Q_table[s0]));
@@ -1007,27 +1007,27 @@
                 this.episode_count++;
                 this.total_reward += episode_return;
                 this.episode_rewards.push(episode_return);
-                
+
                 // 检查是否达到最优策略
                 this.checkOptimalPolicy(episode_return);
-                
+
                 // 每回合结束时记录当前Q值
                 if (this.q_value_history.length === 0 || this.q_value_history.length < this.episode_count) {
                     this.q_value_history.push(Math.max(...this.Q_table[this.target_state]));
                 }
-                
+
                 return episode_return;
             }
-            
+
             checkOptimalPolicy(episode_return) {
                 if (this.optimal_policy_found) return;
-                
+
                 this.recent_rewards.push(episode_return);
-                
+
                 if (this.recent_rewards.length > this.stable_episodes_needed) {
                     this.recent_rewards.shift();
                 }
-                
+
                 if (this.recent_rewards.length === this.stable_episodes_needed) {
                     const all_optimal = this.recent_rewards.every(reward => reward >= this.qlearning_optimal_reward);
                     if (all_optimal) {
@@ -1046,37 +1046,37 @@
          * 改进的Sarsa算法（带epsilon和学习率衰减）
          */
         class ImprovedSarsa {
-            constructor(ncol, nrow, epsilon_start = 0.1, epsilon_end = 0.01, epsilon_decay = 0.995, 
+            constructor(ncol, nrow, epsilon_start = 0.1, epsilon_end = 0.01, epsilon_decay = 0.995,
                        alpha_start = 0.1, alpha_end = 0.01, alpha_decay = 0.995, gamma = 0.9) {
                 this.Q_table = Array(nrow * ncol).fill().map(() => Array(4).fill(0));
                 this.n_actions = 4;
-                
+
                 // 衰减参数
                 this.epsilon = epsilon_start;
                 this.epsilon_start = epsilon_start;
                 this.epsilon_end = epsilon_end;
                 this.epsilon_decay = epsilon_decay;
-                
+
                 this.alpha = alpha_start;
                 this.alpha_start = alpha_start;
                 this.alpha_end = alpha_end;
                 this.alpha_decay = alpha_decay;
-                
+
                 this.gamma = gamma;
-                
+
                 // 统计信息
                 this.episode_count = 0;
                 this.total_reward = 0;
                 this.episode_rewards = [];
                 this.epsilon_history = [];
                 this.alpha_history = [];
-                
+
                 // 新增详细统计数据
                 this.q_value_history = [];
                 this.update_magnitudes = [];
                 this.td_errors = [];
                 this.target_state = 36;
-                
+
                 // 最优策略追踪
                 this.optimal_policy_found = false;
                 this.optimal_policy_episode = -1;
@@ -1101,12 +1101,12 @@
                 const old_q_value = this.Q_table[s0][a0];
                 const td_error = r + this.gamma * this.Q_table[s1][a1] - this.Q_table[s0][a0];
                 this.Q_table[s0][a0] += this.alpha * td_error;
-                
+
                 // 记录统计数据
                 const update_magnitude = Math.abs(this.Q_table[s0][a0] - old_q_value);
                 this.update_magnitudes.push(update_magnitude);
                 this.td_errors.push(Math.abs(td_error));
-                
+
                 // 记录目标状态的Q值变化
                 if (s0 === this.target_state) {
                     this.q_value_history.push(Math.max(...this.Q_table[s0]));
@@ -1116,10 +1116,10 @@
             decayParameters() {
                 // epsilon衰减
                 this.epsilon = Math.max(this.epsilon_end, this.epsilon * this.epsilon_decay);
-                
+
                 // 学习率衰减
                 this.alpha = Math.max(this.alpha_end, this.alpha * this.alpha_decay);
-                
+
                 // 记录历史
                 this.epsilon_history.push(this.epsilon);
                 this.alpha_history.push(this.alpha);
@@ -1147,27 +1147,27 @@
                 this.episode_count++;
                 this.total_reward += episode_return;
                 this.episode_rewards.push(episode_return);
-                
+
                 // 检查是否达到最优策略
                 this.checkOptimalPolicy(episode_return);
-                
+
                 // 每回合结束时记录当前Q值
                 if (this.q_value_history.length === 0 || this.q_value_history.length < this.episode_count) {
                     this.q_value_history.push(Math.max(...this.Q_table[this.target_state]));
                 }
-                
+
                 return episode_return;
             }
-            
+
             checkOptimalPolicy(episode_return) {
                 if (this.optimal_policy_found) return;
-                
+
                 this.recent_rewards.push(episode_return);
-                
+
                 if (this.recent_rewards.length > this.stable_episodes_needed) {
                     this.recent_rewards.shift();
                 }
-                
+
                 if (this.recent_rewards.length === this.stable_episodes_needed) {
                     const all_optimal = this.recent_rewards.every(reward => reward >= this.sarsa_optimal_reward);
                     if (all_optimal) {
@@ -1190,33 +1190,33 @@
                        alpha_start = 0.1, alpha_end = 0.01, alpha_decay = 0.995, gamma = 0.9) {
                 this.Q_table = Array(nrow * ncol).fill().map(() => Array(4).fill(0));
                 this.n_actions = 4;
-                
+
                 // 衰减参数
                 this.epsilon = epsilon_start;
                 this.epsilon_start = epsilon_start;
                 this.epsilon_end = epsilon_end;
                 this.epsilon_decay = epsilon_decay;
-                
+
                 this.alpha = alpha_start;
                 this.alpha_start = alpha_start;
                 this.alpha_end = alpha_end;
                 this.alpha_decay = alpha_decay;
-                
+
                 this.gamma = gamma;
-                
+
                 // 统计信息
                 this.episode_count = 0;
                 this.total_reward = 0;
                 this.episode_rewards = [];
                 this.epsilon_history = [];
                 this.alpha_history = [];
-                
+
                 // 新增详细统计数据
                 this.q_value_history = [];
                 this.update_magnitudes = [];
                 this.td_errors = [];
                 this.target_state = 36;
-                
+
                 // 最优策略追踪
                 this.optimal_policy_found = false;
                 this.optimal_policy_episode = -1;
@@ -1241,12 +1241,12 @@
                 const old_q_value = this.Q_table[s0][a0];
                 const td_error = r + this.gamma * Math.max(...this.Q_table[s1]) - this.Q_table[s0][a0];
                 this.Q_table[s0][a0] += this.alpha * td_error;
-                
+
                 // 记录统计数据
                 const update_magnitude = Math.abs(this.Q_table[s0][a0] - old_q_value);
                 this.update_magnitudes.push(update_magnitude);
                 this.td_errors.push(Math.abs(td_error));
-                
+
                 // 记录目标状态的Q值变化
                 if (s0 === this.target_state) {
                     this.q_value_history.push(Math.max(...this.Q_table[s0]));
@@ -1256,10 +1256,10 @@
             decayParameters() {
                 // epsilon衰减
                 this.epsilon = Math.max(this.epsilon_end, this.epsilon * this.epsilon_decay);
-                
+
                 // 学习率衰减
                 this.alpha = Math.max(this.alpha_end, this.alpha * this.alpha_decay);
-                
+
                 // 记录历史
                 this.epsilon_history.push(this.epsilon);
                 this.alpha_history.push(this.alpha);
@@ -1285,27 +1285,27 @@
                 this.episode_count++;
                 this.total_reward += episode_return;
                 this.episode_rewards.push(episode_return);
-                
+
                 // 检查是否达到最优策略
                 this.checkOptimalPolicy(episode_return);
-                
+
                 // 每回合结束时记录当前Q值
                 if (this.q_value_history.length === 0 || this.q_value_history.length < this.episode_count) {
                     this.q_value_history.push(Math.max(...this.Q_table[this.target_state]));
                 }
-                
+
                 return episode_return;
             }
-            
+
             checkOptimalPolicy(episode_return) {
                 if (this.optimal_policy_found) return;
-                
+
                 this.recent_rewards.push(episode_return);
-                
+
                 if (this.recent_rewards.length > this.stable_episodes_needed) {
                     this.recent_rewards.shift();
                 }
-                
+
                 if (this.recent_rewards.length === this.stable_episodes_needed) {
                     const all_optimal = this.recent_rewards.every(reward => reward >= this.qlearning_optimal_reward);
                     if (all_optimal) {
@@ -1323,7 +1323,7 @@
         // 初始化环境和算法
         const env = new CliffWalkingEnv();
         const actionMeaning = ['↑', '↓', '←', '→'];
-        
+
         // 悬崖位置和目标位置
         const cliffPos = Array.from({length: 10}, (_, i) => (env.nrow - 1) * env.ncol + i + 1);
         const goalPos = [env.nrow * env.ncol - 1];
@@ -1355,7 +1355,7 @@
             }
             return result;
         }
-        
+
         // 计算标准差（用于稳定性分析）
         function calculateStandardDeviation(data) {
             if (data.length === 0) return 0;
@@ -1363,7 +1363,7 @@
             const variance = data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / data.length;
             return Math.sqrt(variance);
         }
-        
+
         // 计算滑动窗口标准差
         function movingStandardDeviation(data, windowSize) {
             const result = [];
@@ -1374,29 +1374,29 @@
             }
             return result;
         }
-        
+
         // 计算滑动窗口内的平均值（用于平滑更新幅度数据）
         function movingAverageOfMagnitudes(magnitudes, windowSize) {
             const result = [];
             let currentSum = 0;
             let currentCount = 0;
-            
+
             for (let i = 0; i < magnitudes.length; i++) {
                 currentSum += magnitudes[i];
                 currentCount++;
-                
+
                 if (currentCount >= windowSize) {
                     result.push(currentSum / currentCount);
                     currentSum = 0;
                     currentCount = 0;
                 }
             }
-            
+
             // 处理最后不足窗口大小的数据
             if (currentCount > 0) {
                 result.push(currentSum / currentCount);
             }
-            
+
             return result;
         }
 
@@ -1562,7 +1562,7 @@
                     }
                 }
             });
-            
+
             // Q值收敛图表
             const qValueCtx = document.getElementById('qValueChart').getContext('2d');
             qValueChart = new Chart(qValueCtx, {
@@ -1605,7 +1605,7 @@
                 },
                 options: getDefaultChartOptions('Episodes', 'Q Value')
             });
-            
+
             // 后期收敛图表
             const lateStageCtx = document.getElementById('lateStageChart').getContext('2d');
             lateStageChart = new Chart(lateStageCtx, {
@@ -1644,7 +1644,7 @@
                 },
                 options: getDefaultChartOptions('Episodes', 'Q Value')
             });
-            
+
             // 学习率图表
             const learningRateCtx = document.getElementById('learningRateChart').getContext('2d');
             learningRateChart = new Chart(learningRateCtx, {
@@ -1677,7 +1677,7 @@
                 },
                 options: getDefaultChartOptions('Episodes', 'Learning Rate')
             });
-            
+
             // 稳定性图表
             const stabilityCtx = document.getElementById('stabilityChart').getContext('2d');
             stabilityChart = new Chart(stabilityCtx, {
@@ -1717,7 +1717,7 @@
                 options: getDefaultChartOptions('Episodes', 'Update Magnitude')
             });
         }
-        
+
         // 获取默认图表配置
         function getDefaultChartOptions(xLabel, yLabel) {
             return {
@@ -1812,67 +1812,67 @@
         // 更新图表
         function updateCharts() {
             const windowSize = parseInt(document.getElementById('smoothingWindow').value);
-            
+
             // 确定最大回合数
             const maxEpisodes = Math.max(
-                sarsaAgent.episode_rewards.length, 
+                sarsaAgent.episode_rewards.length,
                 qlearningAgent.episode_rewards.length,
                 improvedSarsaAgent.episode_rewards.length,
                 improvedQlearningAgent.episode_rewards.length
             );
-            
+
             if (maxEpisodes > 0) {
                 const labels = Array.from({length: maxEpisodes}, (_, i) => i + 1);
-                
+
                 // 计算移动平均
-                const sarsaMovingAvg = sarsaAgent.episode_rewards.length > 0 
-                    ? movingAverage(sarsaAgent.episode_rewards, windowSize) 
+                const sarsaMovingAvg = sarsaAgent.episode_rewards.length > 0
+                    ? movingAverage(sarsaAgent.episode_rewards, windowSize)
                     : [];
-                const qlearningMovingAvg = qlearningAgent.episode_rewards.length > 0 
-                    ? movingAverage(qlearningAgent.episode_rewards, windowSize) 
+                const qlearningMovingAvg = qlearningAgent.episode_rewards.length > 0
+                    ? movingAverage(qlearningAgent.episode_rewards, windowSize)
                     : [];
-                const improvedSarsaMovingAvg = improvedSarsaAgent.episode_rewards.length > 0 
-                    ? movingAverage(improvedSarsaAgent.episode_rewards, windowSize) 
+                const improvedSarsaMovingAvg = improvedSarsaAgent.episode_rewards.length > 0
+                    ? movingAverage(improvedSarsaAgent.episode_rewards, windowSize)
                     : [];
-                const improvedQlearningMovingAvg = improvedQlearningAgent.episode_rewards.length > 0 
-                    ? movingAverage(improvedQlearningAgent.episode_rewards, windowSize) 
+                const improvedQlearningMovingAvg = improvedQlearningAgent.episode_rewards.length > 0
+                    ? movingAverage(improvedQlearningAgent.episode_rewards, windowSize)
                     : [];
 
                 // 更新综合图表
                 combinedChart.data.labels = labels;
-                
+
                 // 原始Sarsa数据
-                combinedChart.data.datasets[0].data = sarsaAgent.episode_rewards.length > 0 
-                    ? sarsaAgent.episode_rewards 
+                combinedChart.data.datasets[0].data = sarsaAgent.episode_rewards.length > 0
+                    ? sarsaAgent.episode_rewards
                     : [];
                 combinedChart.data.datasets[1].data = sarsaMovingAvg;
-                
+
                 // 原始Q-learning数据
-                combinedChart.data.datasets[2].data = qlearningAgent.episode_rewards.length > 0 
-                    ? qlearningAgent.episode_rewards 
+                combinedChart.data.datasets[2].data = qlearningAgent.episode_rewards.length > 0
+                    ? qlearningAgent.episode_rewards
                     : [];
                 combinedChart.data.datasets[3].data = qlearningMovingAvg;
-                
+
                 // 改进Sarsa数据
-                combinedChart.data.datasets[4].data = improvedSarsaAgent.episode_rewards.length > 0 
-                    ? improvedSarsaAgent.episode_rewards 
+                combinedChart.data.datasets[4].data = improvedSarsaAgent.episode_rewards.length > 0
+                    ? improvedSarsaAgent.episode_rewards
                     : [];
                 combinedChart.data.datasets[5].data = improvedSarsaMovingAvg;
-                
+
                 // 改进Q-learning数据
-                combinedChart.data.datasets[6].data = improvedQlearningAgent.episode_rewards.length > 0 
-                    ? improvedQlearningAgent.episode_rewards 
+                combinedChart.data.datasets[6].data = improvedQlearningAgent.episode_rewards.length > 0
+                    ? improvedQlearningAgent.episode_rewards
                     : [];
                 combinedChart.data.datasets[7].data = improvedQlearningMovingAvg;
-                
+
                 combinedChart.update();
             }
-            
+
             // 更新学习率分析图表
             updateAnalysisCharts();
             updateLast20RewardsTable();
         }
-        
+
         // 更新学习率分析图表
         function updateAnalysisCharts() {
             const episodes = Array.from({length: Math.max(
@@ -1881,7 +1881,7 @@
                 improvedSarsaAgent.episode_count,
                 improvedQlearningAgent.episode_count
             )}, (_, i) => i + 1);
-            
+
             // 更新Q值收敛图表
             if (qValueChart) {
                 qValueChart.data.labels = episodes;
@@ -1891,13 +1891,13 @@
                 qValueChart.data.datasets[3].data = improvedQlearningAgent.q_value_history;
                 qValueChart.update();
             }
-            
+
             // 更新后期收敛图表（最后100回合）
             if (lateStageChart) {
                 const maxEpisodes = Math.max(episodes.length, 100);
                 const startEpisode = Math.max(0, maxEpisodes - 100);
                 const lateEpisodes = episodes.slice(startEpisode);
-                
+
                 lateStageChart.data.labels = lateEpisodes;
                 lateStageChart.data.datasets[0].data = sarsaAgent.q_value_history.slice(startEpisode);
                 lateStageChart.data.datasets[1].data = qlearningAgent.q_value_history.slice(startEpisode);
@@ -1905,39 +1905,39 @@
                 lateStageChart.data.datasets[3].data = improvedQlearningAgent.q_value_history.slice(startEpisode);
                 lateStageChart.update();
             }
-            
+
             // 更新学习率图表
             if (learningRateChart) {
                 learningRateChart.data.labels = episodes;
-                
+
                 // 固定学习率（sarsa和q-learning）
                 const fixedLR = Array(episodes.length).fill(0.1);
                 learningRateChart.data.datasets[0].data = fixedLR;
-                
+
                 // 衰减学习率
                 learningRateChart.data.datasets[1].data = improvedSarsaAgent.alpha_history;
                 learningRateChart.data.datasets[2].data = improvedQlearningAgent.alpha_history;
                 learningRateChart.update();
             }
-            
+
             // 更新稳定性图表（更新幅度的移动平均）
             if (stabilityChart) {
                 const windowSize = 100; // 用于平滑更新幅度数据的窗口大小
-                
+
                 const sarsaMagnitudes = movingAverageOfMagnitudes(sarsaAgent.update_magnitudes, windowSize);
                 const qlearningMagnitudes = movingAverageOfMagnitudes(qlearningAgent.update_magnitudes, windowSize);
                 const improvedSarsaMagnitudes = movingAverageOfMagnitudes(improvedSarsaAgent.update_magnitudes, windowSize);
                 const improvedQlearningMagnitudes = movingAverageOfMagnitudes(improvedQlearningAgent.update_magnitudes, windowSize);
-                
+
                 const maxMagnitudesLength = Math.max(
                     sarsaMagnitudes.length,
                     qlearningMagnitudes.length,
                     improvedSarsaMagnitudes.length,
                     improvedQlearningMagnitudes.length
                 );
-                
+
                 const magnitudeLabels = Array.from({length: maxMagnitudesLength}, (_, i) => (i + 1) * windowSize);
-                
+
                 stabilityChart.data.labels = magnitudeLabels;
                 stabilityChart.data.datasets[0].data = sarsaMagnitudes;
                 stabilityChart.data.datasets[1].data = qlearningMagnitudes;
@@ -1965,14 +1965,14 @@
         function createGrid(gridId) {
             const gridContainer = document.getElementById(gridId);
             gridContainer.innerHTML = '';
-            
+
             for (let i = 0; i < env.nrow; i++) {
                 for (let j = 0; j < env.ncol; j++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    
+
                     const state = i * env.ncol + j;
-                    
+
                     if (state === startPos) {
                         cell.classList.add('start');
                         cell.innerHTML = 'S';
@@ -1983,7 +1983,7 @@
                         cell.classList.add('cliff');
                         cell.innerHTML = 'C';
                     }
-                    
+
                     gridContainer.appendChild(cell);
                 }
             }
@@ -1992,12 +1992,12 @@
         // 更新策略网格
         function updatePolicyGrid(agent, gridId) {
             const cells = document.querySelectorAll(`#${gridId} .cell`);
-            
+
             for (let i = 0; i < env.nrow; i++) {
                 for (let j = 0; j < env.ncol; j++) {
                     const state = i * env.ncol + j;
                     const cell = cells[state];
-                    
+
                     if (state === startPos) {
                         cell.innerHTML = 'S';
                     } else if (state === goalPos[0]) {
@@ -2017,13 +2017,13 @@
         function updateValueGrid(agent, gridId) {
             const cells = document.querySelectorAll(`#${gridId} .cell`);
             const stateValues = agent.getStateValues();
-            
+
             for (let i = 0; i < env.nrow; i++) {
                 for (let j = 0; j < env.ncol; j++) {
                     const state = i * env.ncol + j;
                     const cell = cells[state];
                     const stateValue = stateValues[state].toFixed(2);
-                    
+
                     if (state === startPos) {
                         cell.innerHTML = `S<br><span class="value-text">${stateValue}</span>`;
                     } else if (state === goalPos[0]) {
@@ -2041,15 +2041,15 @@
         function showResults(algorithmName, agent) {
             const resultsId = algorithmName === 'Sarsa' ? 'sarsaResults' : 'qlearningResults';
             const resultsDiv = document.getElementById(resultsId);
-            
+
             const avgReward = agent.episode_count > 0 ? (agent.total_reward / agent.episode_count).toFixed(2) : '0.00';
             const lastReward = agent.episode_rewards.length > 0 ? agent.episode_rewards[agent.episode_rewards.length - 1] : 0;
             const recentAvg = getRecentAvg(agent).toFixed(2);
-            
-            const optimalPolicyText = agent.optimal_policy_found 
-                ? `第${agent.optimal_policy_episode}回合` 
+
+            const optimalPolicyText = agent.optimal_policy_found
+                ? `第${agent.optimal_policy_episode}回合`
                 : '未达到';
-            
+
             resultsDiv.innerHTML = `
                 <p>训练回合: ${agent.episode_count} | 最后回合奖励: ${lastReward} | 平均奖励: ${avgReward} | 最近100回合均值: ${recentAvg} | 最优策略: ${optimalPolicyText}</p>
             `;
@@ -2061,19 +2061,19 @@
             const paramsId = algorithmName === 'Improved Sarsa' ? 'improvedSarsaParams' : 'improvedQlearningParams';
             const resultsDiv = document.getElementById(resultsId);
             const paramsDiv = document.getElementById(paramsId);
-            
+
             const avgReward = agent.episode_count > 0 ? (agent.total_reward / agent.episode_count).toFixed(2) : '0.00';
             const lastReward = agent.episode_rewards.length > 0 ? agent.episode_rewards[agent.episode_rewards.length - 1] : 0;
             const recentAvg = getRecentAvg(agent).toFixed(2);
-            
-            const optimalPolicyText = agent.optimal_policy_found 
-                ? `第${agent.optimal_policy_episode}回合` 
+
+            const optimalPolicyText = agent.optimal_policy_found
+                ? `第${agent.optimal_policy_episode}回合`
                 : '未达到';
-            
+
             resultsDiv.innerHTML = `
                 <p>训练回合: ${agent.episode_count} | 最后回合奖励: ${lastReward} | 平均奖励: ${avgReward} | 最近100回合均值: ${recentAvg} | 最优策略: ${optimalPolicyText}</p>
             `;
-            
+
             // 显示参数衰减信息
             if (agent.episode_count > 0) {
                 const epsilonReduction = ((agent.epsilon_start - agent.epsilon) / agent.epsilon_start * 100).toFixed(1);
@@ -2111,7 +2111,7 @@
             createGrid('improvedSarsaValueGrid');
             createGrid('improvedQlearningPolicyGrid');
             createGrid('improvedQlearningValueGrid');
-            
+
             // 显示初始状态
             updatePolicyGrid(sarsaAgent, 'sarsaPolicyGrid');
             updateValueGrid(sarsaAgent, 'sarsaValueGrid');
@@ -2121,7 +2121,7 @@
             updateValueGrid(improvedSarsaAgent, 'improvedSarsaValueGrid');
             updatePolicyGrid(improvedQlearningAgent, 'improvedQlearningPolicyGrid');
             updateValueGrid(improvedQlearningAgent, 'improvedQlearningValueGrid');
-            
+
             showResults('Sarsa', sarsaAgent);
             showResults('Q-learning', qlearningAgent);
             showImprovedResults('Improved Sarsa', improvedSarsaAgent);
@@ -2135,7 +2135,7 @@
                 const env_copy = new CliffWalkingEnv();
                 agent.trainEpisode(env_copy);
             }
-            
+
             updateAgentDisplay(agent, algorithmName);
             updateCharts();
             updateStepsDisplay();
@@ -2147,17 +2147,17 @@
             agent.episode_count = 0;
             agent.total_reward = 0;
             agent.episode_rewards = [];
-            
+
             // 重置最优策略追踪
             agent.optimal_policy_found = false;
             agent.optimal_policy_episode = -1;
             agent.recent_rewards = [];
-            
+
             // 重置详细统计数据
             agent.q_value_history = [];
             agent.update_magnitudes = [];
             agent.td_errors = [];
-            
+
             // 如果是改进算法，还需要重置参数历史
             if (algorithmName.includes('Improved')) {
                 agent.epsilon = agent.epsilon_start;
@@ -2165,7 +2165,7 @@
                 agent.epsilon_history = [];
                 agent.alpha_history = [];
             }
-            
+
             // 确定网格ID
             let policyGridId, valueGridId;
             if (algorithmName === 'Sarsa') {
@@ -2181,17 +2181,17 @@
                 policyGridId = 'improvedQlearningPolicyGrid';
                 valueGridId = 'improvedQlearningValueGrid';
             }
-            
+
             updatePolicyGrid(agent, policyGridId);
             updateValueGrid(agent, valueGridId);
-            
+
             // 显示结果
             if (algorithmName.includes('Improved')) {
                 showImprovedResults(algorithmName, agent);
             } else {
                 showResults(algorithmName, agent);
             }
-            
+
             // 更新图表
             updateCharts();
             updateStepsDisplay();
@@ -2200,26 +2200,26 @@
         // 绑定事件监听器
         document.getElementById('trainBothBtn').addEventListener('click', async function() {
             const episodes = parseInt(document.getElementById('episodesInput').value);
-            
+
             // 只在第一次训练时同步参数（当所有算法都未开始训练时）
-            const isFirstTime = sarsaAgent.episode_count === 0 && 
-                               qlearningAgent.episode_count === 0 && 
-                               improvedSarsaAgent.episode_count === 0 && 
+            const isFirstTime = sarsaAgent.episode_count === 0 &&
+                               qlearningAgent.episode_count === 0 &&
+                               improvedSarsaAgent.episode_count === 0 &&
                                improvedQlearningAgent.episode_count === 0;
-            
+
             if (isFirstTime) {
                 syncParamsFromInput();
             }
-            
+
             // 禁用所有按钮和输入框
             setButtonsEnabled(false);
-            
+
             // 更新按钮文字显示训练状态
             const trainBtn = document.getElementById('trainBothBtn');
             const trainBtnText = document.getElementById('trainBtnText');
             const originalText = trainBtnText.textContent;
             trainBtnText.textContent = '训练中...';
-            
+
             try {
                 // 使用异步训练，避免UI阻塞
                 await Promise.all([
@@ -2240,11 +2240,11 @@
         document.getElementById('resetBothBtn').addEventListener('click', function() {
             // 重置时也禁用按钮，防止重复操作
             setButtonsEnabled(false);
-            
+
             // 将 ε、α 重置为 0.1 并更新输入框
             document.getElementById('epsilonInput').value = 0.1;
             document.getElementById('alphaInput').value = 0.1;
-            
+
             // 取最新输入的 ε、α 值重新实例化
             const eps = parseFloat(document.getElementById('epsilonInput').value);
             const alp = parseFloat(document.getElementById('alphaInput').value);
@@ -2257,7 +2257,7 @@
             document.getElementById('last20RewardsTable').innerHTML = '';
             updateCharts();
             updateStepsDisplay();
-            
+
             // 重新启用按钮
             setButtonsEnabled(true);
             // 重置训练按钮文字
@@ -2314,7 +2314,7 @@
             updateLast20RewardsTable();
             // 页面初始时设置按钮文字
             document.getElementById('trainBtnText').textContent = '开始训练';
-            
+
             // 初始化改进算法的参数显示
             showImprovedResults('Improved Sarsa', improvedSarsaAgent);
             showImprovedResults('Improved Q-learning', improvedQlearningAgent);
@@ -2323,30 +2323,30 @@
         // 异步训练函数，分批训练避免UI阻塞
         async function trainAgentAsync(agent, algorithmName, episodes = 1, batchSize = 50) {
             const batches = Math.ceil(episodes / batchSize);
-            
+
             for (let batch = 0; batch < batches; batch++) {
                 const currentBatchSize = Math.min(batchSize, episodes - batch * batchSize);
-                
+
                 // 记录批次开始前的参数值（用于调试）
                 const beforeEpsilon = algorithmName.includes('Improved') ? agent.epsilon : null;
                 const beforeAlpha = algorithmName.includes('Improved') ? agent.alpha : null;
-                
+
                 // 训练当前批次
                 for (let i = 0; i < currentBatchSize; i++) {
                     const env_copy = new CliffWalkingEnv();
                     agent.trainEpisode(env_copy);
                 }
-                
+
                 // 记录批次结束后的参数值（用于调试）
                 if (algorithmName.includes('Improved') && beforeEpsilon !== null) {
                     console.log(`${algorithmName} Batch ${batch + 1}: ε ${beforeEpsilon.toFixed(5)} -> ${agent.epsilon.toFixed(5)}, α ${beforeAlpha.toFixed(5)} -> ${agent.alpha.toFixed(5)}`);
                 }
-                
+
                 // 更新显示
                 updateAgentDisplay(agent, algorithmName);
                 updateCharts();
                 updateStepsDisplay();
-                
+
                 // 每批次后让出控制权，允许UI更新
                 if (batch < batches - 1) {
                     await new Promise(resolve => setTimeout(resolve, 10));
@@ -2371,10 +2371,10 @@
                 policyGridId = 'improvedQlearningPolicyGrid';
                 valueGridId = 'improvedQlearningValueGrid';
             }
-            
+
             updatePolicyGrid(agent, policyGridId);
             updateValueGrid(agent, valueGridId);
-            
+
             // 显示结果
             if (algorithmName.includes('Improved')) {
                 showImprovedResults(algorithmName, agent);
@@ -2393,11 +2393,11 @@
                 'stepImprovedSarsaBtn',
                 'stepImprovedQlearningBtn'
             ];
-            
+
             buttons.forEach(buttonId => {
                 const button = document.getElementById(buttonId);
                 button.disabled = !enabled;
-                
+
                 if (!enabled) {
                     button.classList.add('opacity-50', 'cursor-not-allowed');
                     button.classList.remove('hover:bg-primary/90', 'hover:bg-accent', 'hover:bg-destructive/90');
@@ -2413,14 +2413,14 @@
                     }
                 }
             });
-            
+
             // 同时禁用/启用输入框
-            const inputs = ['episodesInput', 'smoothingWindow', 'epsilonInput', 'alphaInput', 
+            const inputs = ['episodesInput', 'smoothingWindow', 'epsilonInput', 'alphaInput',
                           'sarsaStepsInput', 'qlearningStepsInput', 'improvedSarsaStepsInput', 'improvedQlearningStepsInput'];
             inputs.forEach(inputId => {
                 const input = document.getElementById(inputId);
                 input.disabled = !enabled;
-                
+
                 if (!enabled) {
                     input.classList.add('opacity-50', 'cursor-not-allowed');
                 } else {
@@ -2437,20 +2437,20 @@
                 {agent: improvedSarsaAgent, name: 'Improved Sarsa'},
                 {agent: improvedQlearningAgent, name: 'Improved Q-learning'}
             ];
-            
+
             agents.forEach(({agent, name}) => {
                 if (agent.episode_rewards.length >= agent.stable_episodes_needed) {
                     // 检查最近的回合是否达到最优策略
                     const recentRewards = agent.episode_rewards.slice(-agent.stable_episodes_needed);
                     const optimalThreshold = name.includes('Sarsa') ? agent.sarsa_optimal_reward : agent.qlearning_optimal_reward;
-                    
+
                     const all_optimal = recentRewards.every(reward => reward >= optimalThreshold);
                     if (all_optimal && !agent.optimal_policy_found) {
                         agent.optimal_policy_found = true;
                         agent.optimal_policy_episode = agent.episode_count - agent.stable_episodes_needed + 1;
                     }
                 }
-                
+
                 // 更新显示
                 if (name.includes('Improved')) {
                     showImprovedResults(name, agent);
@@ -2574,4 +2574,4 @@
         }
     </script>
 </body>
-</html> 
+</html>
