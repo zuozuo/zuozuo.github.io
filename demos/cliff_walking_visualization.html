@@ -65,14 +65,14 @@
   .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 3rem;
     position: relative;
   }
 
   /* 标题区域 */
   .header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
     position: relative;
   }
 
@@ -111,8 +111,8 @@
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
     box-shadow: var(--shadow-card);
     transition: all 0.3s ease;
     position: relative;
@@ -140,8 +140,8 @@
   .guide-header {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
+    gap: 1rem;
+    margin-bottom: 2rem;
   }
 
   .guide-icon {
@@ -158,14 +158,14 @@
   .guide-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
   .guide-item {
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
-    padding: 1rem;
+    gap: 1.5rem;
+    padding: 1.5rem;
     background: var(--bg-secondary);
     border-radius: 12px;
     border: 1px solid var(--border-color);
@@ -200,6 +200,7 @@
     box-shadow: var(--shadow-card);
     transition: all 0.3s ease;
     position: relative;
+    margin-bottom: 3rem;
   }
 
   .algorithm-card:hover {
@@ -208,7 +209,7 @@
   }
 
   .algorithm-header {
-    padding: 2rem;
+    padding: 2.5rem;
     background: var(--bg-hover);
     border-bottom: 1px solid var(--border-color);
     position: relative;
@@ -234,7 +235,7 @@
   }
 
   .algorithm-content {
-    padding: 2rem;
+    padding: 2.5rem;
   }
 
   /* 结果显示 */
@@ -242,8 +243,8 @@
     background: var(--bg-hover);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.9rem;
     position: relative;
@@ -263,7 +264,7 @@
   .result-content {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
     flex-wrap: wrap;
     padding-left: 1rem;
   }
@@ -314,15 +315,15 @@
   .grids-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
+    gap: 3rem;
+    margin-bottom: 3rem;
   }
 
   .grid-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
   .grid-title {
@@ -350,9 +351,9 @@
     display: grid;
     grid-template-columns: repeat(12, 40px);
     grid-template-rows: repeat(4, 40px);
-    gap: 2px;
+    gap: 3px;
     background: var(--bg-hover);
-    padding: 1.5rem;
+    padding: 2rem;
     border-radius: 16px;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-card);
@@ -430,7 +431,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
   .btn {
@@ -444,9 +445,9 @@
     transition: all 0.3s ease;
     cursor: pointer;
     border: 1px solid;
-    height: 3rem;
-    padding: 0 1.5rem;
-    min-width: 140px;
+    height: 3.5rem;
+    padding: 0 2rem;
+    min-width: 160px;
     font-family: 'JetBrains Mono', monospace;
     position: relative;
     overflow: hidden;
@@ -567,18 +568,44 @@
   /* 响应式设计 */
   @media (max-width: 768px) {
     .container {
-      padding: 1rem;
+      padding: 1.5rem;
     }
     
     .title {
       font-size: 2.5rem;
     }
     
+    .header {
+      margin-bottom: 3rem;
+    }
+    
+    .card {
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    
+    .algorithm-card {
+      margin-bottom: 2.5rem;
+    }
+    
+    .algorithm-header {
+      padding: 2rem;
+    }
+
+    .algorithm-content {
+      padding: 2rem;
+    }
+    
+    .results-display {
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
     .grid-container {
       grid-template-columns: repeat(12, 32px);
       grid-template-rows: repeat(4, 32px);
-      gap: 1px;
-      padding: 1rem;
+      gap: 2px;
+      padding: 1.5rem;
     }
     
     .grid-cell {
@@ -589,26 +616,50 @@
     
     .grids-container {
       grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    
+    .grid-section {
       gap: 1.5rem;
     }
     
     .guide-grid {
       grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .guide-item {
+      padding: 1.25rem;
+      gap: 1rem;
     }
     
     .controls {
-      gap: 0.75rem;
+      gap: 1rem;
     }
     
     .btn {
-      min-width: 120px;
+      min-width: 140px;
       font-size: 0.85rem;
+      height: 3rem;
+      padding: 0 1.5rem;
     }
+  }
 
+  @media (max-width: 480px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    .header {
+      margin-bottom: 2.5rem;
+    }
+    
     .card {
       padding: 1.5rem;
+      margin-bottom: 2rem;
     }
-
+    
     .algorithm-header {
       padding: 1.5rem;
     }
@@ -616,18 +667,26 @@
     .algorithm-content {
       padding: 1.5rem;
     }
-  }
-
-  @media (max-width: 480px) {
+    
     .result-content {
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.75rem;
+      gap: 1rem;
     }
 
     .guide-item {
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.75rem;
+      padding: 1rem;
+    }
+    
+    .grids-container {
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .grid-section {
+      gap: 1rem;
     }
   }
 </style>
