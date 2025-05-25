@@ -5,593 +5,741 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>悬崖漫步环境可视化 - Zorro's AI Tech Blog</title>
     <meta name="description" content="探索强化学习中的策略迭代与价值迭代算法">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <style>
-  /* 可视化容器 - 作用域化样式 */
-  .viz-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
-    padding: 2rem 1rem;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  :root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #111111;
+    --bg-card: #1a1a1a;
+    --bg-hover: #222222;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --text-muted: #666666;
+    --accent-cyan: #00ffff;
+    --accent-purple: #8b5cf6;
+    --accent-green: #00ff88;
+    --accent-orange: #ff6b35;
+    --accent-pink: #ff0080;
+    --border-color: #333333;
+    --shadow-glow: 0 0 20px rgba(0, 255, 255, 0.1);
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --gradient-primary: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    --gradient-secondary: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+    --gradient-tertiary: linear-gradient(135deg, var(--accent-orange), var(--accent-pink));
   }
-  
-  .viz-container .viz-content {
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* 背景动画 */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(0, 255, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(0, 255, 136, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* 容器 */
+  .container {
     max-width: 1400px;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    padding: 2rem;
+    position: relative;
   }
-  
-  /* 标题样式 */
-  .viz-container .viz-title {
+
+  /* 标题区域 */
+  .header {
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 3rem;
+    position: relative;
   }
-  
-  .viz-container .viz-title h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #ec4899 100%);
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 2px;
+    background: var(--gradient-primary);
+    border-radius: 1px;
+  }
+
+  .title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin: 0;
-    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
   }
-  
-  .viz-container .viz-subtitle {
-    font-size: 1.125rem;
-    color: #64748b;
-    text-align: center;
-    margin: 1rem 0 0 0;
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    letter-spacing: 0.5px;
   }
-  
+
   /* 卡片样式 */
-  .viz-container .viz-card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s ease;
-  }
-  
-  .viz-container .viz-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* 使用指南 */
-  .viz-container .guide-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .viz-container .guide-header .icon {
-    font-size: 1.25rem;
-  }
-  
-  .viz-container .guide-header h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin: 0;
-  }
-  
-  .viz-container .guide-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
-  }
-  
-  .viz-container .guide-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: #64748b;
-  }
-  
-  .viz-container .guide-item .label {
-    font-weight: 500;
-    color: #1f2937;
-    flex-shrink: 0;
-  }
-  
-  /* 图例样式 */
-  .viz-container .legend-title {
-    text-align: center;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #64748b;
-    margin-bottom: 1rem;
-  }
-  
-  .viz-container .legend-items {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-  
-  .viz-container .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    background: #f1f5f9;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-  
-  .viz-container .legend-color {
-    width: 1rem;
-    height: 1rem;
-    border-radius: 0.25rem;
-    flex-shrink: 0;
-  }
-  
-  .viz-container .color-start {
-    background: linear-gradient(135deg, #22c55e, #15803d);
-  }
-  
-  .viz-container .color-goal {
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  }
-  
-  .viz-container .color-cliff {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-  }
-  
-  /* 算法容器 */
-  .viz-container .algorithm-card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s ease;
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+    position: relative;
     overflow: hidden;
   }
-  
-  .viz-container .algorithm-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-primary);
+    opacity: 0.5;
   }
-  
-  .viz-container .algorithm-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid #e2e8f0;
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card), var(--shadow-glow);
+    border-color: var(--accent-cyan);
   }
-  
-  .viz-container .algorithm-header h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    text-align: center;
-    color: #1f2937;
-    margin: 0;
-  }
-  
-  .viz-container .algorithm-content {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  /* 结果显示 */
-  .viz-container .results-display {
-    background: #f8fafc;
-    border-radius: 0.375rem;
-    padding: 1rem;
-    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-    font-size: 0.875rem;
-    color: #64748b;
-  }
-  
-  .viz-container .result-content {
+
+  /* 使用指南 */
+  .guide-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .guide-icon {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+
+  .guide-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .guide-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+  }
+
+  .guide-item:hover {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 4px 16px rgba(0, 255, 255, 0.1);
+  }
+
+  .guide-label {
+    font-weight: 600;
+    color: var(--accent-cyan);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .guide-text {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  /* 算法卡片 */
+  .algorithm-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .algorithm-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-card), var(--shadow-glow);
+  }
+
+  .algorithm-header {
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+  }
+
+  .algorithm-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-secondary);
+  }
+
+  .algorithm-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -0.5px;
+  }
+
+  .algorithm-content {
+    padding: 2rem;
+  }
+
+  /* 结果显示 */
+  .results-display {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .results-display::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gradient-primary);
+  }
+
+  .result-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     flex-wrap: wrap;
+    padding-left: 1rem;
   }
-  
-  .viz-container .result-icon {
-    font-size: 1.125rem;
+
+  .result-icon {
+    font-size: 1.2rem;
+    filter: drop-shadow(0 0 6px currentColor);
   }
-  
-  .viz-container .result-label {
+
+  .result-label {
     font-weight: 600;
-    color: #1f2937;
+    color: var(--accent-cyan);
   }
-  
-  .viz-container .result-tag {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
+
+  .result-tag {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
     font-weight: 500;
+    border: 1px solid;
   }
-  
-  .viz-container .tag-blue {
-    background: #dbeafe;
-    color: #1e40af;
+
+  .tag-blue {
+    background: rgba(0, 255, 255, 0.1);
+    color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
   }
-  
-  .viz-container .tag-green {
-    background: #dcfce7;
-    color: #166534;
+
+  .tag-green {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--accent-green);
+    border-color: var(--accent-green);
   }
-  
-  .viz-container .tag-purple {
-    background: #f3e8ff;
-    color: #7c2d12;
+
+  .tag-purple {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--accent-purple);
+    border-color: var(--accent-purple);
   }
-  
-  .viz-container .tag-success {
-    color: #059669;
+
+  .tag-success {
+    color: var(--accent-green);
     font-weight: 600;
+    text-shadow: 0 0 8px currentColor;
   }
-  
+
   /* 网格布局 */
-  .viz-container .grids-container {
+  .grids-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 2rem;
+    margin-bottom: 2rem;
   }
-  
-  .viz-container .grid-section {
+
+  .grid-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
   }
-  
-  .viz-container .grid-title {
-    font-size: 1.125rem;
+
+  .grid-title {
+    font-size: 1.3rem;
     font-weight: 500;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
     text-align: center;
-    color: #1f2937;
+    position: relative;
   }
-  
-  .viz-container .grid-wrapper {
-    display: flex;
-    justify-content: center;
+
+  .grid-title::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 1px;
+    background: var(--accent-cyan);
   }
-  
+
   /* 网格样式 */
-  .viz-container .grid-container {
+  .grid-container {
     display: grid;
     grid-template-columns: repeat(12, 40px);
     grid-template-rows: repeat(4, 40px);
     gap: 2px;
-    background: white;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-card);
+    position: relative;
   }
-  
-  .viz-container .grid-cell {
+
+  .grid-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-secondary);
+  }
+
+  .grid-cell {
     width: 40px;
     height: 40px;
-    border: 2px solid #e5e7eb;
+    border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-weight: 600;
     font-size: 0.75rem;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
+    border-radius: 8px;
+    transition: all 0.3s ease;
     cursor: default;
-    background: #ffffff;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
   }
-  
-  .viz-container .grid-cell:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  .grid-cell:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(0, 255, 255, 0.2);
     z-index: 10;
+    border-color: var(--accent-cyan);
   }
-  
-  .viz-container .cell-start {
-    background: linear-gradient(135deg, #22c55e, #15803d);
+
+  .cell-start {
+    background: var(--gradient-secondary);
+    color: var(--bg-primary);
+    border-color: var(--accent-green);
+    box-shadow: 0 0 16px rgba(0, 255, 136, 0.3);
+    font-weight: 700;
+  }
+
+  .cell-goal {
+    background: var(--gradient-tertiary);
+    color: var(--bg-primary);
+    border-color: var(--accent-orange);
+    box-shadow: 0 0 16px rgba(255, 107, 53, 0.3);
+    font-weight: 700;
+  }
+
+  .cell-cliff {
+    background: linear-gradient(135deg, #ff0080, #ff4444);
     color: white;
-    border-color: #15803d;
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    border-color: var(--accent-pink);
+    box-shadow: 0 0 16px rgba(255, 0, 128, 0.3);
+    font-weight: 700;
   }
-  
-  .viz-container .cell-goal {
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    color: white;
-    border-color: #f59e0b;
-    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
-  }
-  
-  .viz-container .cell-cliff {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    border-color: #dc2626;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-  }
-  
-  .viz-container .value-text {
-    font-size: 0.625rem;
+
+  .value-text {
+    font-size: 0.6rem;
     opacity: 0.9;
     margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
   }
-  
+
   /* 按钮样式 */
-  .viz-container .controls {
+  .controls {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 1rem;
   }
-  
-  .viz-container .viz-button {
+
+  .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
     font-weight: 500;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
-    border: none;
-    height: 2.5rem;
-    padding: 0 1rem;
-    min-width: 120px;
-    font-family: inherit;
+    border: 1px solid;
+    height: 3rem;
+    padding: 0 1.5rem;
+    min-width: 140px;
+    font-family: 'JetBrains Mono', monospace;
+    position: relative;
+    overflow: hidden;
   }
-  
-  .viz-container .viz-button:focus-visible {
-    outline: 2px solid #2563eb;
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--accent-cyan);
     outline-offset: 2px;
   }
-  
-  .viz-container .viz-button:disabled {
+
+  .btn:disabled {
     pointer-events: none;
     opacity: 0.5;
   }
-  
-  .viz-container .btn-primary {
-    background: #1f2937;
-    color: white;
+
+  .btn-primary {
+    background: var(--bg-secondary);
+    color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
   }
-  
-  .viz-container .btn-primary:hover {
-    background: #111827;
+
+  .btn-primary:hover {
+    background: var(--accent-cyan);
+    color: var(--bg-primary);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    transform: translateY(-2px);
   }
-  
-  .viz-container .btn-secondary {
-    border: 1px solid #d1d5db;
-    background: white;
-    color: #1f2937;
+
+  .btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--accent-purple);
+    border-color: var(--accent-purple);
   }
-  
-  .viz-container .btn-secondary:hover {
-    background: #f9fafb;
-    color: #1f2937;
+
+  .btn-secondary:hover {
+    background: var(--accent-purple);
+    color: var(--bg-primary);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    transform: translateY(-2px);
   }
-  
-  .viz-container .btn-destructive {
-    background: #dc2626;
-    color: white;
+
+  .btn-destructive {
+    background: var(--bg-secondary);
+    color: var(--accent-pink);
+    border-color: var(--accent-pink);
   }
-  
-  .viz-container .btn-destructive:hover {
-    background: #b91c1c;
+
+  .btn-destructive:hover {
+    background: var(--accent-pink);
+    color: var(--bg-primary);
+    box-shadow: 0 0 20px rgba(255, 0, 128, 0.3);
+    transform: translateY(-2px);
   }
-  
+
   /* 动画效果 */
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { 
+      opacity: 0; 
+      transform: translateY(30px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
   }
-  
-  .viz-container .animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
-  }
-  
+
   @keyframes pulse-update {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02); }
+    0%, 100% { 
+      transform: scale(1); 
+    }
+    50% { 
+      transform: scale(1.02); 
+      box-shadow: var(--shadow-card), var(--shadow-glow);
+    }
   }
-  
-  .viz-container .animate-pulse-update {
-    animation: pulse-update 0.6s ease-in-out;
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
   }
-  
+
+  .animate-pulse-update {
+    animation: pulse-update 0.8s ease-in-out;
+  }
+
+  /* 滚动条样式 */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent-cyan);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-purple);
+  }
+
   /* 响应式设计 */
   @media (max-width: 768px) {
-    .viz-container {
-      padding: 1rem 0.5rem;
+    .container {
+      padding: 1rem;
     }
     
-    .viz-container .viz-title h1 {
+    .title {
       font-size: 2.5rem;
     }
     
-    .viz-container .grid-container {
+    .grid-container {
       grid-template-columns: repeat(12, 32px);
       grid-template-rows: repeat(4, 32px);
       gap: 1px;
-      padding: 0.75rem;
+      padding: 1rem;
     }
     
-    .viz-container .grid-cell {
+    .grid-cell {
       width: 32px;
       height: 32px;
-      font-size: 0.625rem;
+      font-size: 0.65rem;
     }
     
-    .viz-container .grids-container {
+    .grids-container {
       grid-template-columns: 1fr;
       gap: 1.5rem;
     }
     
-    .viz-container .guide-grid {
+    .guide-grid {
       grid-template-columns: 1fr;
     }
     
-    .viz-container .controls {
-      gap: 0.5rem;
+    .controls {
+      gap: 0.75rem;
     }
     
-    .viz-container .viz-button {
-      min-width: 100px;
-      font-size: 0.8rem;
+    .btn {
+      min-width: 120px;
+      font-size: 0.85rem;
+    }
+
+    .card {
+      padding: 1.5rem;
+    }
+
+    .algorithm-header {
+      padding: 1.5rem;
+    }
+
+    .algorithm-content {
+      padding: 1.5rem;
     }
   }
-  
+
   @media (max-width: 480px) {
-    .viz-container .legend-items {
-      gap: 1rem;
-    }
-    
-    .viz-container .result-content {
+    .result-content {
       flex-direction: column;
       align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .guide-item {
+      flex-direction: column;
       gap: 0.5rem;
     }
   }
 </style>
 
-<div class="viz-container">
-  <div class="viz-content">
-    
-    <!-- 页面标题 -->
-    <div class="viz-title">
-      <h1>悬崖漫步环境可视化</h1>
-      <p class="viz-subtitle">探索强化学习中的策略迭代与价值迭代算法</p>
+<div class="container">
+  <div class="header">
+    <h1 class="title">悬崖漫步环境可视化</h1>
+    <p class="subtitle">探索强化学习中的策略迭代与价值迭代算法</p>
+  </div>
+  
+  <div class="card">
+    <div class="guide-header">
+      <div class="guide-icon">💡</div>
+      <h2 class="guide-title">使用指南</h2>
     </div>
-    
-    <!-- 使用指南 -->
-    <div class="viz-card">
-      <div class="guide-header">
-        <div class="icon">💡</div>
-        <h3>使用指南</h3>
+    <div class="guide-grid">
+      <div class="guide-item">
+        <span class="guide-label">完整运行：</span>
+        <span class="guide-text">点击「运行策略迭代」或「运行价值迭代」查看完整收敛过程</span>
       </div>
-      <div class="guide-grid">
-        <div class="guide-item">
-          <span class="label">完整运行：</span>
-          <span>点击「运行策略迭代」或「运行价值迭代」查看完整收敛过程</span>
-        </div>
-        <div class="guide-item">
-          <span class="label">单步调试：</span>
-          <span>使用「运行一步迭代」按钮逐步观察算法进展</span>
-        </div>
-        <div class="guide-item">
-          <span class="label">重新开始：</span>
-          <span>点击「重置」按钮清空结果并重新初始化</span>
-        </div>
-        <div class="guide-item">
-          <span class="label">对比学习：</span>
-          <span>同时运行两种算法，比较它们的收敛速度和最终结果</span>
-        </div>
+      <div class="guide-item">
+        <span class="guide-label">单步调试：</span>
+        <span class="guide-text">使用「运行一步迭代」按钮逐步观察算法进展</span>
+      </div>
+      <div class="guide-item">
+        <span class="guide-label">重新开始：</span>
+        <span class="guide-text">点击「重置」按钮清空结果并重新初始化</span>
+      </div>
+      <div class="guide-item">
+        <span class="guide-label">对比学习：</span>
+        <span class="guide-text">同时运行两种算法，比较它们的收敛速度和最终结果</span>
       </div>
     </div>
+  </div>
+  
+  <div class="algorithm-card">
+    <div class="algorithm-header">
+      <h2 class="algorithm-title">策略迭代 (Policy Iteration)</h2>
+    </div>
     
-    <!-- 策略迭代 -->
-    <div class="algorithm-card">
-      <div class="algorithm-header">
-        <h2>策略迭代 (Policy Iteration)</h2>
+    <div class="algorithm-content">
+      <div id="policyIterationResults" class="results-display">
+        <div class="result-content">
+          <span class="result-icon">🎯</span>
+          <span class="result-label">准备就绪</span>
+          <span>|</span>
+          <span>点击运行按钮开始策略迭代算法</span>
+        </div>
       </div>
       
-      <div class="algorithm-content">
-        <!-- 结果显示 -->
-        <div id="policyIterationResults" class="results-display">
-          <div class="result-content">
-            <span class="result-icon">🎯</span>
-            <span class="result-label">准备就绪</span>
-            <span>|</span>
-            <span>点击运行按钮开始策略迭代算法</span>
-          </div>
+      <div class="grids-container">
+        <div class="grid-section">
+          <h3 class="grid-title">最优策略</h3>
+          <div class="grid-container" id="policyIterationPolicyGrid"></div>
         </div>
-        
-        <!-- 网格显示 -->
-        <div class="grids-container">
-          <div class="grid-section">
-            <h3 class="grid-title">最优策略</h3>
-            <div class="grid-wrapper">
-              <div class="grid-container" id="policyIterationPolicyGrid"></div>
-            </div>
-          </div>
-          <div class="grid-section">
-            <h3 class="grid-title">状态价值</h3>
-            <div class="grid-wrapper">
-              <div class="grid-container" id="policyIterationValueGrid"></div>
-            </div>
-          </div>
+        <div class="grid-section">
+          <h3 class="grid-title">状态价值</h3>
+          <div class="grid-container" id="policyIterationValueGrid"></div>
         </div>
-        
-        <!-- 控制按钮 -->
-        <div class="controls">
-          <button id="policyIterationBtn" class="viz-button btn-primary">
-            运行策略迭代
-          </button>
-          <button id="singleStepPolicyBtn" class="viz-button btn-secondary">
-            运行一步迭代
-          </button>
-          <button id="resetPolicyIterationBtn" class="viz-button btn-destructive">
-            重置策略迭代
-          </button>
-        </div>
-      </div>
-    </div>
-    
-    <!-- 价值迭代 -->
-    <div class="algorithm-card">
-      <div class="algorithm-header">
-        <h2>价值迭代 (Value Iteration)</h2>
       </div>
       
-      <div class="algorithm-content">
-        <!-- 结果显示 -->
-        <div id="valueIterationResults" class="results-display">
-          <div class="result-content">
-            <span class="result-icon">🎯</span>
-            <span class="result-label">准备就绪</span>
-            <span>|</span>
-            <span>点击运行按钮开始价值迭代算法</span>
-          </div>
-        </div>
-        
-        <!-- 网格显示 -->
-        <div class="grids-container">
-          <div class="grid-section">
-            <h3 class="grid-title">最优策略</h3>
-            <div class="grid-wrapper">
-              <div class="grid-container" id="valueIterationPolicyGrid"></div>
-            </div>
-          </div>
-          <div class="grid-section">
-            <h3 class="grid-title">状态价值</h3>
-            <div class="grid-wrapper">
-              <div class="grid-container" id="valueIterationValueGrid"></div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 控制按钮 -->
-        <div class="controls">
-          <button id="valueIterationBtn" class="viz-button btn-primary">
-            运行价值迭代
-          </button>
-          <button id="singleStepValueBtn" class="viz-button btn-secondary">
-            运行一步迭代
-          </button>
-          <button id="resetValueIterationBtn" class="viz-button btn-destructive">
-            重置价值迭代
-          </button>
-        </div>
+      <div class="controls">
+        <button id="policyIterationBtn" class="btn btn-primary">
+          运行策略迭代
+        </button>
+        <button id="singleStepPolicyBtn" class="btn btn-secondary">
+          运行一步迭代
+        </button>
+        <button id="resetPolicyIterationBtn" class="btn btn-destructive">
+          重置策略迭代
+        </button>
       </div>
     </div>
+  </div>
+  
+  <div class="algorithm-card">
+    <div class="algorithm-header">
+      <h2 class="algorithm-title">价值迭代 (Value Iteration)</h2>
+    </div>
     
+    <div class="algorithm-content">
+      <div id="valueIterationResults" class="results-display">
+        <div class="result-content">
+          <span class="result-icon">🎯</span>
+          <span class="result-label">准备就绪</span>
+          <span>|</span>
+          <span>点击运行按钮开始价值迭代算法</span>
+        </div>
+      </div>
+      
+      <div class="grids-container">
+        <div class="grid-section">
+          <h3 class="grid-title">最优策略</h3>
+          <div class="grid-container" id="valueIterationPolicyGrid"></div>
+        </div>
+        <div class="grid-section">
+          <h3 class="grid-title">状态价值</h3>
+          <div class="grid-container" id="valueIterationValueGrid"></div>
+        </div>
+      </div>
+      
+      <div class="controls">
+        <button id="valueIterationBtn" class="btn btn-primary">
+          运行价值迭代
+        </button>
+        <button id="singleStepValueBtn" class="btn btn-secondary">
+          运行一步迭代
+        </button>
+        <button id="resetValueIterationBtn" class="btn btn-destructive">
+          重置价值迭代
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
