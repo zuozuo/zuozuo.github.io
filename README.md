@@ -22,6 +22,14 @@
 - **工具分享**：高效开发工具的配置和使用技巧
 
 ### 热门文章
+- **[从Embedding理论到LSTM Seq2Seq实战：理论与实践的完美融合](/posts/embedding-theory-to-lstm-practice/)**：深度学习理论与实践的完整结合指南
+  - 系统性地将embedding理论知识直接应用到LSTM seq2seq的实际项目中
+  - 详细解析PyTorch中nn.Embedding的数学原理、前向传播和反向传播机制
+  - 提供完整的中英机器翻译项目，包含数据预处理、模型训练和结果分析
+  - 深入分析embedding的查找表本质、稀疏梯度更新和语义空间映射
+  - 包含embedding质量分析、可视化工具和高级优化技巧（预训练、动态词汇表）
+  - 从基础概念到生产级应用的完整技术栈，为学习Transformer奠定坚实基础
+
 - **[LLM数据预处理技术详解：从文本到Token的完整流程](/posts/llm-data-preprocessing-techniques-from-text-to-token/)**：深度解析大语言模型数据预处理核心技术
   - BPE、WordPiece、SentencePiece等子词算法详细实现和对比分析
   - BERT风格特殊Token（[CLS]、[SEP]、[MASK]）的作用和使用方法
