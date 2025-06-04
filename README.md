@@ -22,6 +22,15 @@
 - **工具分享**：高效开发工具的配置和使用技巧
 
 ### 热门文章
+- **[从理论到实践：深度解析Embedding在LSTM Seq2Seq模型中的应用](/posts/embedding-in-lstm-seq2seq-practice/)**：通过完整代码深度剖析embedding原理
+  - 从"查找表"到深度学习语义桥梁的本质理解
+  - embedding与one-hot编码的数学等价性推导
+  - 276行完整PyTorch代码：包含词汇表构建、LSTM编码器-解码器实现
+  - 梯度计算机制、初始化策略和训练更新的深度剖析
+  - 大语言模型中的Position Embedding、RoPE、CLIP多模态应用
+  - RAG向量检索、子词级embedding、量化压缩等前沿技术
+  - embedding可视化与异常检测的实践技巧
+
 - **[LLM数据预处理技术详解：从文本到Token的完整流程](/posts/llm-data-preprocessing-techniques-from-text-to-token/)**：深度解析大语言模型数据预处理核心技术
   - BPE、WordPiece、SentencePiece等子词算法详细实现和对比分析
   - BERT风格特殊Token（[CLS]、[SEP]、[MASK]）的作用和使用方法
