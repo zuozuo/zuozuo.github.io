@@ -296,6 +296,12 @@ def main():
             print(f"上下文向量维度: {context_vector.shape}")
             print(f"上下文向量值: {context_vector.squeeze().numpy()[:5]}...")  # 只显示前5个值
 
+    # 可视化embedding
+    src_embedding_matrix = model.encoder.embedding.weight.data.cpu()
+    visualize_embeddings(src_embedding_matrix, src_vocab, 
+                         method='tsne', 
+                         title="Source Language Embedding Visualization (t-SNE)")
+
 if __name__ == "__main__":
     main()
 ```
@@ -310,6 +316,7 @@ if __name__ == "__main__":
 - **Seq2SeqModel类**：完整的序列到序列模型
 - **数据处理**：Dataset、DataLoader和批处理函数
 - **训练循环**：完整的训练和测试流程
+- **Embedding可视化**：训练后自动生成并保存词向量的t-SNE可视化图像。
 
 ## 1. 核心概念深度解析
 
@@ -360,7 +367,9 @@ self.embedding = nn.Embedding(vocab_size, embed_size, padding_idx=0)
 - **稠密向量（Dense Vector）**：embedding产生的连续、低维向量
 - **稀疏向量（Sparse Vector）**：one-hot这样的高维、大部分为0的向量
 
-### 1.4 数学原理与等价性推导
+## 2. 技术细节深度剖析
+
+### 2.1 数学原理与等价性推导
 
 #### 离散空间到连续空间的映射
 设词表大小为$N$，embedding维度为$d$。embedding层的核心是一个参数矩阵：
@@ -439,7 +448,7 @@ def demonstrate_embedding_gradients():
 demonstrate_embedding_gradients()
 ```
 
-### 1.5 embedding的数据写入机制
+### 2.2 embedding的数据写入机制
 
 #### 第一阶段：初始化写入
 PyTorch的embedding初始化策略及其影响：
@@ -500,7 +509,7 @@ model.embedding.weight.data = pretrained_embeddings
 model.embedding.weight.data[word_idx] = custom_vector
 ```
 
-### 1.6 embedding层的完整剖析
+### 2.3 embedding层的完整剖析
 
 embedding层不仅仅是weight，还包含多个重要属性：
 
@@ -532,7 +541,7 @@ def negative_sampling_probability(word_freq, total_freq, power=0.75):
 # 高频词被采样为负样本的概率更高，有助于学习更好的embedding
 ```
 
-### 1.7 大语言模型中的特殊embedding机制
+### 2.4 大语言模型中的特殊embedding机制
 
 #### Token Embedding、Position Embedding、Segment Embedding
 在现代LLM（如BERT、GPT）中，embedding不仅仅是词嵌入：
@@ -581,7 +590,7 @@ def apply_rotary_pos_emb(x, cos, sin):
 # RoPE通过旋转而非加法的方式编码位置，在长序列上表现更好
 ```
 
-### 1.8 LSTM中的embedding实际工作流程
+### 2.5 LSTM中的embedding实际工作流程
 
 让我们追踪LSTM代码中embedding的完整数据流：
 
@@ -602,9 +611,9 @@ embedded = self.embedding(input_seq)
 # 4. LSTM处理embedded向量，而不是原始索引
 ```
 
-## 2. 深度理解与常见误区
+## 3. 深度理解与常见误区
 
-### 2.1 核心概念辨析
+### 3.1 核心概念辨析
 
 #### 误区1："one-hot向量也是embedding"
 **正确理解**：one-hot只是编码方式，不是embedding。embedding特指：
@@ -634,7 +643,7 @@ word_vector = model.encoder.embedding.weight[4]  # 假设"我"的索引是4
 print(f"'我'的词向量维度: {word_vector.shape}")  # [64]
 ```
 
-### 2.2 性能与工程考量
+### 3.2 性能与工程考量
 
 #### 内存效率对比
 ```python
@@ -658,7 +667,7 @@ embedding_memory = embed_size * 4  # 约1.2KB每个词
 # 时间复杂度：O(1)
 ```
 
-### 2.3 大规模embedding的工程挑战
+### 3.3 大规模embedding的工程挑战
 
 #### 分布式embedding优化
 在大型LLM训练中，embedding层往往是参数最多的部分：
@@ -715,9 +724,9 @@ optimizer = torch.optim.SparseAdam(embedding.parameters())
 embedding = nn.Embedding(vocab_size, embed_size, max_norm=1.0)
 ```
 
-## 3. 应用实践与最佳实践
+## 4. 应用实践与最佳实践
 
-### 3.1 LSTM Seq2Seq中的embedding应用
+### 4.1 LSTM Seq2Seq中的embedding应用
 
 在我们的机器翻译示例中，embedding扮演关键角色：
 
@@ -737,7 +746,7 @@ class LSTMDecoder(nn.Module):
 - 相同的embed_size确保维度一致性
 - padding_idx=0处理变长序列
 
-### 3.2 embedding维度选择指南
+### 4.2 embedding维度选择指南
 
 | 数据规模 | 推荐维度 | 说明 |
 |---------|---------|------|
@@ -748,7 +757,7 @@ class LSTMDecoder(nn.Module):
 
 代码示例中使用64维，适合小规模演示任务。
 
-### 3.3 冷启动与OOV处理
+### 4.3 冷启动与OOV处理
 
 #### 未登录词（OOV）处理策略
 ```python
@@ -771,7 +780,7 @@ def load_pretrained_embeddings(vocab, embedding_dim):
     return embedding_matrix
 ```
 
-### 3.4 embedding在RAG与prompt engineering中的应用
+### 4.4 embedding在RAG与prompt engineering中的应用
 
 #### 向量检索增强生成（RAG）
 ```python
@@ -810,7 +819,7 @@ def prompt_embedding_search(query_embedding, prompt_database):
     return best_idx, similarities[best_idx]
 ```
 
-### 3.5 多语言与跨领域应用
+### 4.5 多语言与跨领域应用
 
 #### 共享embedding策略
 对于相似任务，可以共享embedding减少参数：
@@ -830,9 +839,9 @@ class SharedEmbeddingSeq2Seq(nn.Module):
         self.decoder.embedding = self.shared_embedding
 ```
 
-## 4. 前沿发展与技术趋势
+## 5. 前沿发展与技术趋势
 
-### 4.1 上下文相关embedding
+### 5.1 上下文相关embedding
 
 传统embedding（如Word2Vec）给每个词固定向量，而现代方法（如BERT）生成上下文相关的动态向量：
 
@@ -844,7 +853,7 @@ word_vector = embedding(word_idx)  # 固定向量
 contextualized_vector = bert(sentence)[word_position]  # 随上下文变化
 ```
 
-### 4.2 子词级embedding
+### 5.2 子词级embedding
 
 解决OOV问题的利器：
 
@@ -856,7 +865,7 @@ char_embedding = nn.Embedding(char_vocab_size, char_embed_size)
 subword_embedding = nn.Embedding(subword_vocab_size, embed_size)
 ```
 
-### 4.3 多模态embedding：CLIP案例深度解析
+### 5.3 多模态embedding：CLIP案例深度解析
 
 CLIP（Contrastive Language-Image Pre-training）是多模态embedding的经典案例：
 
@@ -911,7 +920,7 @@ def contrastive_loss(text_embeds, image_embeds, temperature=0.07):
     return (loss_text + loss_image) / 2
 ```
 
-### 4.4 分层embedding与专家混合（MoE）
+### 5.4 分层embedding与专家混合（MoE）
 
 ```python
 class LayerwiseEmbedding(nn.Module):
@@ -928,9 +937,9 @@ class LayerwiseEmbedding(nn.Module):
 # 在某些大模型中，不同层可能使用不同维度的embedding
 ```
 
-## 5. 调试与可视化
+## 6. 调试与可视化
 
-### 5.1 embedding质量检查
+### 6.1 embedding质量检查
 
 ```python
 def analyze_embedding_quality(embedding, vocab):
@@ -955,43 +964,24 @@ def analyze_embedding_quality(embedding, vocab):
     print(f"Embedding范数分布: {embedding.weight.norm(dim=1).mean():.3f}")
 ```
 
-### 5.2 embedding可视化
+### 6.2 embedding可视化
 
-```python
-def visualize_embeddings(embedding_matrix, vocab, method='tsne'):
-    """使用t-SNE或PCA可视化embedding"""
-    from sklearn.manifold import TSNE
-    import matplotlib.pyplot as plt
-    
-    # 降维到2D
-    if method == 'tsne':
-        reducer = TSNE(n_components=2, random_state=42)
-    else:
-        from sklearn.decomposition import PCA
-        reducer = PCA(n_components=2)
-    
-    embeddings_2d = reducer.fit_transform(embedding_matrix.detach().numpy())
-    
-    # 绘制散点图
-    plt.figure(figsize=(12, 8))
-    plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], alpha=0.6)
-    
-    # 添加词汇标签
-    for i, word in enumerate(vocab.idx2word.values()):
-        if i < 20:  # 只显示前20个词
-            plt.annotate(word, (embeddings_2d[i, 0], embeddings_2d[i, 1]))
-    
-    plt.title(f'Embedding Visualization ({method.upper()})')
-    plt.xlabel('Dimension 1')
-    plt.ylabel('Dimension 2')
-    plt.grid(True, alpha=0.3)
-    plt.show()
+为了直观地理解embedding空间中学到的词向量分布，我们可以使用降维技术（如t-SNE或PCA）将高维词向量投影到2D平面进行可视化。**此功能现已集成到本文提供的完整Python脚本 (`encoder_decoder_lstm.py`) 中。**
 
-# 提示：运行此代码后，观察语义相似的词是否在空间中聚集
-# 如果embedding训练得好，"爱"、"喜欢"等情感词应该彼此接近
-```
+当您运行完整的脚本时，在训练和测试阶段完成后，脚本会自动：
+1. 提取源语言编码器的embedding权重。
+2. 使用t-SNE方法将词向量降至2维。
+3. 生成一个散点图，其中每个点代表一个词，语义相近的词在图上会聚集在一起。
+4. 随机标注一部分词语以帮助识别聚类情况，避免标签过于密集。
+5. **图像将自动保存为 `embedding_visualization.png` 文件**在脚本运行的目录下。
 
-### 5.3 embedding异常检测
+**运行脚本后生成的 `embedding_visualization.png` 文件会显示类似下图的效果：**
+
+（如果embedding训练得好，语义相似的词，例如"我"、"你"，或者"爱"、"喜欢"，应该在可视化空间中彼此靠近。）
+
+（您也可以在脚本中轻松切换到PCA方法，或调整可视化参数，如标注的词语数量。）
+
+### 6.3 embedding异常检测
 
 ```python
 def detect_embedding_anomalies(embedding, threshold=3.0):

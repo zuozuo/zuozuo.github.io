@@ -4,6 +4,9 @@ import torch.optim as optim
 import numpy as np
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader, Dataset
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
 
 # 设置随机种子以确保结果可重现
 torch.manual_seed(42)
@@ -270,6 +273,134 @@ def main():
             print(f"输出: {predicted_sentence}")
             print(f"上下文向量维度: {context_vector.shape}")
             print(f"上下文向量值: {context_vector.squeeze().numpy()[:5]}...")  # 只显示前5个值
+
+    # 8. 可视化源语言embedding
+    print("\n" + "=" * 50)
+    print("可视化源语言Embedding (t-SNE)...")
+    # 从模型中获取源语言的embedding矩阵和词汇表
+    src_embedding_matrix = model.encoder.embedding.weight.data.cpu()
+    visualize_embeddings(src_embedding_matrix, src_vocab, method='tsne', title="Source Language Embedding Visualization (t-SNE)")
+
+def visualize_embeddings(embedding_matrix, vocab, method='tsne', title='Embedding Visualization', num_words_to_annotate=20):
+    """使用t-SNE或PCA可视化embedding"""
+    # 确保词汇表中的词少于或等于实际embedding矩阵中的行数
+    # 通常，vocab.vocab_size 会是 embedding_matrix.shape[0]
+    # 但为了安全，我们取两者中较小的值，并排除特殊标记（如果它们影响可视化）
+    
+    # 获取所有词（排除特殊标记如<PAD>, <SOS>, <EOS>, <UNK>，如果它们在词汇表索引的开头）
+    # 我们假设特殊标记的索引较小，如果 visualize_embeddings 只关注非特殊词汇
+    
+    # 过滤掉权重全为零的向量 (通常是 padding_idx)
+    # 同时收集有效的词和它们的索引
+    valid_indices = []
+    valid_words = []
+    
+    # 创建一个列表来保存所有词的向量
+    all_vectors_list = []
+    
+    # 获取所有词的列表，按索引顺序
+    # vocab.idx2word 是一个字典，我们需要按索引排序的词
+    # 我们只取词汇表中实际存在的词汇，直到 embedding_matrix.shape[0]
+    # 通常 vocab.vocab_size 应该等于 embedding_matrix.shape[0]
+    
+    words_to_process_indices = sorted([idx for idx in vocab.idx2word.keys() if idx < embedding_matrix.shape[0]])
+
+    for idx in words_to_process_indices:
+        word = vocab.idx2word[idx]
+        vector = embedding_matrix[idx]
+        # 排除<PAD>等特殊token的可视化, 通常 padding_idx 为 0
+        if word not in ['<PAD>', '<SOS>', '<EOS>', '<UNK>'] or torch.any(vector != 0):
+             # 只有当词不是特殊词，或者向量不全为0时才添加
+            # 实际上，对于非特殊词，向量不应全为0，除非embed_size很小或特殊情况
+            # 而对于<PAD>，我们通常希望排除它，除非特别想观察它
+            if not (word == '<PAD>' and torch.all(vector == 0)):
+                 all_vectors_list.append(vector.numpy()) # TSNE/PCA需要numpy数组
+                 valid_words.append(word)
+                 valid_indices.append(idx) # 虽然未使用，但保留以备将来之需
+
+    if not all_vectors_list:
+        print("没有有效的词向量可供可视化。")
+        return
+
+    embeddings_to_visualize = np.array(all_vectors_list)
+
+    if embeddings_to_visualize.shape[0] < 2:
+        print(f"有效的词向量数量 ({embeddings_to_visualize.shape[0]}) 不足以进行降维可视化。")
+        return
+
+    # 降维到2D
+    # t-SNE对于少于 perplexity+1 个样本会出问题，通常perplexity在5-50之间
+    # PCA没有这个限制
+    n_samples = embeddings_to_visualize.shape[0]
+    
+    if method == 'tsne':
+        # 对于非常小的样本量，TSNE可能失败或产生无意义的结果
+        # 调整 perplexity, n_iter, learning_rate
+        perplexity_value = min(30.0, float(n_samples - 1)) # Perplexity must be less than n_samples
+        if perplexity_value <= 0: # 如果只有一个点或没有点
+             print(f"样本数量 ({n_samples}) 过少，无法使用t-SNE。")
+             if n_samples > 1 and embeddings_to_visualize.ndim == 2 and embeddings_to_visualize.shape[1] >=2:
+                 print("尝试使用PCA替代...")
+                 method = 'pca' # 尝试PCA
+             else:
+                 return # 确实无法可视化
+        
+        if method == 'tsne': # 再次检查，因为可能在上面被改为pca
+            try:
+                reducer = TSNE(n_components=2, random_state=42, perplexity=perplexity_value, 
+                               n_iter=300, learning_rate=200) # 减少迭代次数和学习率以便快速演示
+                embeddings_2d = reducer.fit_transform(embeddings_to_visualize)
+            except Exception as e:
+                print(f"t-SNE执行失败: {e}。尝试使用PCA。")
+                if n_samples > 1 and embeddings_to_visualize.ndim == 2 and embeddings_to_visualize.shape[1] >=2: # 确保PCA可以运行
+                    method = 'pca'
+                else:
+                    return
+
+
+    if method == 'pca': # 如果原始方法是PCA，或者t-SNE失败后转为PCA
+        if n_samples < 2 or embeddings_to_visualize.shape[1] < 2: # PCA至少需要2个样本和2个特征
+            print("样本或特征数量不足以进行PCA可视化。")
+            return
+        try:
+            reducer = PCA(n_components=2)
+            embeddings_2d = reducer.fit_transform(embeddings_to_visualize)
+        except Exception as e:
+            print(f"PCA执行失败: {e}")
+            return
+
+
+    if embeddings_2d is None or embeddings_2d.shape[0] == 0:
+        print("降维失败，没有生成2D嵌入。")
+        return
+
+    # 绘制散点图
+    plt.figure(figsize=(12, 10)) # 增大图像尺寸以容纳更多标签
+    plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], alpha=0.7, s=30) # 增大点的大小
+    
+    # 添加词汇标签 (只注释一部分词以避免拥挤)
+    words_to_annotate_actual = min(num_words_to_annotate, len(valid_words))
+    
+    # 为了更好的可读性，选择一些词进行标注，例如均匀间隔的或者随机选择的
+    # 这里我们简单选择前 num_words_to_annotate_actual 个词
+    indices_to_annotate = np.random.choice(len(valid_words), size=words_to_annotate_actual, replace=False)
+
+
+    for i in indices_to_annotate:
+        plt.annotate(valid_words[i], (embeddings_2d[i, 0], embeddings_2d[i, 1]), fontsize=9)
+    
+    plt.title(title, fontsize=14)
+    plt.xlabel('Dimension 1', fontsize=12)
+    plt.ylabel('Dimension 2', fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout() # 调整布局以防止标签溢出
+    # 保存图像而不是显示，以便在无GUI环境运行
+    try:
+        plt.savefig("embedding_visualization.png")
+        print(f"Embedding可视化图像已保存到 embedding_visualization.png")
+    except Exception as e:
+        print(f"保存图像失败: {e}")
+    # plt.show() # 在脚本中通常不直接调用show()，除非是交互式运行
 
 if __name__ == "__main__":
     main()
