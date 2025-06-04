@@ -300,6 +300,17 @@ if __name__ == "__main__":
     main()
 ```
 
+### 🔍 代码要点回顾
+
+上面的完整代码实现涵盖了以下核心部分：
+
+- **Vocabulary类**：词汇表管理和索引转换
+- **LSTMEncoder类**：编码器实现，包含embedding层和LSTM层
+- **LSTMDecoder类**：解码器实现，支持训练和推理模式
+- **Seq2SeqModel类**：完整的序列到序列模型
+- **数据处理**：Dataset、DataLoader和批处理函数
+- **训练循环**：完整的训练和测试流程
+
 ## 1. 核心概念深度解析
 
 ### 1.1 embedding的本质：可学习的查找表
@@ -349,9 +360,7 @@ self.embedding = nn.Embedding(vocab_size, embed_size, padding_idx=0)
 - **稠密向量（Dense Vector）**：embedding产生的连续、低维向量
 - **稀疏向量（Sparse Vector）**：one-hot这样的高维、大部分为0的向量
 
-## 2. 技术细节深度剖析
-
-### 2.1 数学原理与等价性推导
+### 1.4 数学原理与等价性推导
 
 #### 离散空间到连续空间的映射
 设词表大小为$N$，embedding维度为$d$。embedding层的核心是一个参数矩阵：
@@ -430,7 +439,7 @@ def demonstrate_embedding_gradients():
 demonstrate_embedding_gradients()
 ```
 
-### 2.2 embedding的数据写入机制
+### 1.5 embedding的数据写入机制
 
 #### 第一阶段：初始化写入
 PyTorch的embedding初始化策略及其影响：
@@ -491,7 +500,7 @@ model.embedding.weight.data = pretrained_embeddings
 model.embedding.weight.data[word_idx] = custom_vector
 ```
 
-### 2.3 embedding层的完整剖析
+### 1.6 embedding层的完整剖析
 
 embedding层不仅仅是weight，还包含多个重要属性：
 
@@ -523,7 +532,7 @@ def negative_sampling_probability(word_freq, total_freq, power=0.75):
 # 高频词被采样为负样本的概率更高，有助于学习更好的embedding
 ```
 
-### 2.4 大语言模型中的特殊embedding机制
+### 1.7 大语言模型中的特殊embedding机制
 
 #### Token Embedding、Position Embedding、Segment Embedding
 在现代LLM（如BERT、GPT）中，embedding不仅仅是词嵌入：
@@ -572,7 +581,7 @@ def apply_rotary_pos_emb(x, cos, sin):
 # RoPE通过旋转而非加法的方式编码位置，在长序列上表现更好
 ```
 
-### 2.5 LSTM中的embedding实际工作流程
+### 1.8 LSTM中的embedding实际工作流程
 
 让我们追踪LSTM代码中embedding的完整数据流：
 
@@ -593,9 +602,9 @@ embedded = self.embedding(input_seq)
 # 4. LSTM处理embedded向量，而不是原始索引
 ```
 
-## 3. 深度理解与常见误区
+## 2. 深度理解与常见误区
 
-### 3.1 核心概念辨析
+### 2.1 核心概念辨析
 
 #### 误区1："one-hot向量也是embedding"
 **正确理解**：one-hot只是编码方式，不是embedding。embedding特指：
@@ -625,7 +634,7 @@ word_vector = model.encoder.embedding.weight[4]  # 假设"我"的索引是4
 print(f"'我'的词向量维度: {word_vector.shape}")  # [64]
 ```
 
-### 3.2 性能与工程考量
+### 2.2 性能与工程考量
 
 #### 内存效率对比
 ```python
@@ -649,7 +658,7 @@ embedding_memory = embed_size * 4  # 约1.2KB每个词
 # 时间复杂度：O(1)
 ```
 
-### 3.3 大规模embedding的工程挑战
+### 2.3 大规模embedding的工程挑战
 
 #### 分布式embedding优化
 在大型LLM训练中，embedding层往往是参数最多的部分：
@@ -706,9 +715,9 @@ optimizer = torch.optim.SparseAdam(embedding.parameters())
 embedding = nn.Embedding(vocab_size, embed_size, max_norm=1.0)
 ```
 
-## 4. 应用实践与最佳实践
+## 3. 应用实践与最佳实践
 
-### 4.1 LSTM Seq2Seq中的embedding应用
+### 3.1 LSTM Seq2Seq中的embedding应用
 
 在我们的机器翻译示例中，embedding扮演关键角色：
 
@@ -728,7 +737,7 @@ class LSTMDecoder(nn.Module):
 - 相同的embed_size确保维度一致性
 - padding_idx=0处理变长序列
 
-### 4.2 embedding维度选择指南
+### 3.2 embedding维度选择指南
 
 | 数据规模 | 推荐维度 | 说明 |
 |---------|---------|------|
@@ -739,7 +748,7 @@ class LSTMDecoder(nn.Module):
 
 代码示例中使用64维，适合小规模演示任务。
 
-### 4.3 冷启动与OOV处理
+### 3.3 冷启动与OOV处理
 
 #### 未登录词（OOV）处理策略
 ```python
@@ -762,7 +771,7 @@ def load_pretrained_embeddings(vocab, embedding_dim):
     return embedding_matrix
 ```
 
-### 4.4 embedding在RAG与prompt engineering中的应用
+### 3.4 embedding在RAG与prompt engineering中的应用
 
 #### 向量检索增强生成（RAG）
 ```python
@@ -801,7 +810,7 @@ def prompt_embedding_search(query_embedding, prompt_database):
     return best_idx, similarities[best_idx]
 ```
 
-### 4.5 多语言与跨领域应用
+### 3.5 多语言与跨领域应用
 
 #### 共享embedding策略
 对于相似任务，可以共享embedding减少参数：
@@ -821,9 +830,9 @@ class SharedEmbeddingSeq2Seq(nn.Module):
         self.decoder.embedding = self.shared_embedding
 ```
 
-## 5. 前沿发展与技术趋势
+## 4. 前沿发展与技术趋势
 
-### 5.1 上下文相关embedding
+### 4.1 上下文相关embedding
 
 传统embedding（如Word2Vec）给每个词固定向量，而现代方法（如BERT）生成上下文相关的动态向量：
 
@@ -835,7 +844,7 @@ word_vector = embedding(word_idx)  # 固定向量
 contextualized_vector = bert(sentence)[word_position]  # 随上下文变化
 ```
 
-### 5.2 子词级embedding
+### 4.2 子词级embedding
 
 解决OOV问题的利器：
 
@@ -847,7 +856,7 @@ char_embedding = nn.Embedding(char_vocab_size, char_embed_size)
 subword_embedding = nn.Embedding(subword_vocab_size, embed_size)
 ```
 
-### 5.3 多模态embedding：CLIP案例深度解析
+### 4.3 多模态embedding：CLIP案例深度解析
 
 CLIP（Contrastive Language-Image Pre-training）是多模态embedding的经典案例：
 
@@ -902,7 +911,7 @@ def contrastive_loss(text_embeds, image_embeds, temperature=0.07):
     return (loss_text + loss_image) / 2
 ```
 
-### 5.4 分层embedding与专家混合（MoE）
+### 4.4 分层embedding与专家混合（MoE）
 
 ```python
 class LayerwiseEmbedding(nn.Module):
@@ -919,9 +928,9 @@ class LayerwiseEmbedding(nn.Module):
 # 在某些大模型中，不同层可能使用不同维度的embedding
 ```
 
-## 6. 调试与可视化
+## 5. 调试与可视化
 
-### 6.1 embedding质量检查
+### 5.1 embedding质量检查
 
 ```python
 def analyze_embedding_quality(embedding, vocab):
@@ -946,7 +955,7 @@ def analyze_embedding_quality(embedding, vocab):
     print(f"Embedding范数分布: {embedding.weight.norm(dim=1).mean():.3f}")
 ```
 
-### 6.2 embedding可视化
+### 5.2 embedding可视化
 
 ```python
 def visualize_embeddings(embedding_matrix, vocab, method='tsne'):
@@ -982,7 +991,7 @@ def visualize_embeddings(embedding_matrix, vocab, method='tsne'):
 # 如果embedding训练得好，"爱"、"喜欢"等情感词应该彼此接近
 ```
 
-### 6.3 embedding异常检测
+### 5.3 embedding异常检测
 
 ```python
 def detect_embedding_anomalies(embedding, threshold=3.0):
@@ -1013,17 +1022,6 @@ def detect_embedding_anomalies(embedding, threshold=3.0):
 1. **学习路径**：结合文章开头的完整代码与本文的理论分析
 2. **实践操作**：将代码复制到本地，尝试运行并修改参数  
 3. **深入研究**：基于这个基础实现，探索更高级的seq2seq变体
-
-### 🔍 代码要点回顾
-
-文章开头的完整代码实现涵盖了以下核心部分：
-
-- **Vocabulary类**：词汇表管理和索引转换
-- **LSTMEncoder类**：编码器实现，包含embedding层和LSTM层
-- **LSTMDecoder类**：解码器实现，支持训练和推理模式
-- **Seq2SeqModel类**：完整的序列到序列模型
-- **数据处理**：Dataset、DataLoader和批处理函数
-- **训练循环**：完整的训练和测试流程
 
 ## 延伸阅读
 
