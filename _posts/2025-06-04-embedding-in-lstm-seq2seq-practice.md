@@ -973,9 +973,11 @@ def analyze_embedding_quality(embedding, vocab):
 2. 使用t-SNE方法将词向量降至2维。
 3. 生成一个散点图，其中每个点代表一个词，语义相近的词在图上会聚集在一起。
 4. 随机标注一部分词语以帮助识别聚类情况，避免标签过于密集。
-5. **图像将自动保存为 `embedding_visualization.png` 文件**在脚本运行的目录下。
+5. **图像将自动保存为 `embedding_visualization.png` 文件**在脚本运行的目录下（在博客构建时，此图片已复制到 `/assets/img/posts/embedding_lstm_visualization.png`）。
 
 **运行脚本后生成的 `embedding_visualization.png` 文件会显示类似下图的效果：**
+
+![源语言Embedding t-SNE 可视化](/assets/img/posts/embedding_lstm_visualization.png "源语言Embedding t-SNE 可视化 - 展示了训练后源语言词汇在二维空间的分布，语义相近的词汇会聚集在一起")
 
 （如果embedding训练得好，语义相似的词，例如"我"、"你"，或者"爱"、"喜欢"，应该在可视化空间中彼此靠近。）
 
