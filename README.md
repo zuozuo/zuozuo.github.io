@@ -22,6 +22,14 @@
 - **工具分享**：高效开发工具的配置和使用技巧
 
 ### 热门文章
+- **[LLM数据预处理技术详解：从文本到Token的完整流程](/posts/llm-data-preprocessing-techniques-from-text-to-token/)**：深度解析大语言模型数据预处理核心技术
+  - BPE、WordPiece、SentencePiece等子词算法详细实现和对比分析
+  - BERT风格特殊Token（[CLS]、[SEP]、[MASK]）的作用和使用方法
+  - Unicode标准化、文本清洗、高级数据增强技术（回译、EDA、上下文嵌入）
+  - 中文等无分隔符语言的特殊处理挑战和解决方案
+  - 预处理策略评估方法、前沿进展（字节级处理、极大词汇表）
+  - 从基础概念到工程实践的完整技术栈详解
+
 - **[是时候抛弃 iTerm2，拥抱 Kitty 了](/posts/leave-iterm2-embrace-kitty/)**：现代化GPU加速终端的完整配置指南
   - Kitty vs iTerm2 性能对比分析
   - 字体、主题、键位映射完整配置
