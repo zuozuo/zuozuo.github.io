@@ -26,3 +26,14 @@ package-lock.json
 _sass/vendors
 assets/js/dist
 .aider*
+.DS_Store
+.git
+.idea
+.vscode
+.vscode-test
+.vscode/extensions.json
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/settings.json.sample
+.vscode/tasks.json.sample
