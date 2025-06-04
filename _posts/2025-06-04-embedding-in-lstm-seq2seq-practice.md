@@ -10,8 +10,8 @@ pin: false
 math: true
 mermaid: true
 image:
-  path: /assets/img/posts/embedding-lstm-cover.jpg
-  alt: "Embedding在LSTM Seq2Seq中的应用示意图"
+  path: https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/LSTM_Cell.svg/2880px-LSTM_Cell.svg.png
+  alt: "LSTM单元结构示意图 - 展示了LSTM的核心组件和信息流"
 ---
 
 # Embedding深度解析：从"查找表"到深度学习的语义桥梁
