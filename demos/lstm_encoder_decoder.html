@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSTM编码器-解码器完整代码实现</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
+                        'mono': ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(30px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 自定义代码块样式 */
+        .code-container {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(135deg, #ef4444 0%, #f97316 25%, #eab308 50%, #22c55e 75%, #3b82f6 100%);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .code-container::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 20px 0 0 #fff, 40px 0 0 #fff;
+        }
+
+        .code-content {
+            margin-top: 40px;
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 24px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        /* 自定义滚动条 */
+        .code-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .code-content::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+
+        .code-content::-webkit-scrollbar-thumb {
+            background: #64748b;
+            border-radius: 10px;
+        }
+
+        .code-content::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* 现代化卡片样式 */
+        .modern-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .modern-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 渐变背景 */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* 按钮样式 */
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border: none;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(139, 92, 246, 0.4);
+        }
+
+        /* 代码高亮主题自定义 */
+        pre[class*="language-"] {
+            background: transparent !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+        }
+
+        .line-numbers .line-numbers-rows {
+            border-right-color: #475569 !important;
+        }
+
+        .line-numbers-rows > span:before {
+            color: #64748b !important;
+        }
+
+        /* 章节导航样式 */
+        .nav-item {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+
+        .nav-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateX(8px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .section-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .section-card:hover {
+            border-left-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.02);
+        }
+
+        /* 复制按钮样式 */
+        .copy-btn {
+            position: absolute;
+            top: 60px;
+            right: 24px;
+            background: rgba(139, 92, 246, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .code-container:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .copy-btn:hover {
+            background: rgba(139, 92, 246, 1);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg font-sans">
+    <div class="container mx-auto px-6 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-12 animate-fade-in">
+            <h1 class="text-5xl font-bold tracking-tight text-white mb-6 drop-shadow-lg">
+                LSTM编码器-解码器完整代码实现
+            </h1>
+            <p class="text-xl text-white/80 max-w-4xl mx-auto leading-relaxed">
+                深度学习序列到序列模型的PyTorch完整实现，包含词汇表构建、LSTM编码器、LSTM解码器和训练流程
+            </p>
+            <div class="mt-8 w-24 h-1 bg-gradient-to-r from-purple-400 to-pink-400 mx-auto rounded-full animate-float"></div>
+        </div>
+
+        <!-- 导航和概述 -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
+            <!-- 章节导航 -->
+            <div class="lg:col-span-1">
+                <div class="modern-card p-6 sticky top-6">
+                    <h3 class="text-lg font-bold mb-4 text-gray-800">代码章节</h3>
+                    <nav class="space-y-2">
+                        <a href="#imports" class="nav-item block text-sm font-medium text-gray-600 hover:text-purple-600">
+                            📦 导入依赖
+                        </a>
+                        <a href="#vocabulary" class="nav-item block text-sm font-medium text-gray-600 hover:text-purple-600">
+                            📚 词汇表类
+                        </a>
+                        <a href="#encoder" class="nav-item block text-sm font-medium text-gray-600 hover:text-purple-600">
+                            🔤 LSTM编码器
+                        </a>
+                        <a href="#decoder" class="nav-item block text-sm font-medium text-gray-600 hover:text-purple-600">
+                            🔡 LSTM解码器
+                        </a>
+                        <a href="#seq2seq" class="nav-item block text-sm font-medium text-gray-600 hover:text-purple-600">
+                            🔄 Seq2Seq模型
+                        </a>
+                        <a href="#dataset" class="nav-item block text-sm font-medium text-gray-600 hover:text-purple-600">
+                            💾 数据集处理
+                        </a>
+                        <a href="#training" class="nav-item block text-sm font-medium text-gray-600 hover:text-purple-600">
+                            🎯 训练流程
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- 概述信息 -->
+            <div class="lg:col-span-3">
+                <div class="modern-card p-8">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                        <span class="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full mr-3"></span>
+                        项目概述
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl">
+                            <div class="text-2xl font-bold text-blue-600 mb-2">276</div>
+                            <div class="text-sm text-gray-600">代码行数</div>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl">
+                            <div class="text-2xl font-bold text-purple-600 mb-2">7</div>
+                            <div class="text-sm text-gray-600">核心类/函数</div>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl">
+                            <div class="text-2xl font-bold text-green-600 mb-2">PyTorch</div>
+                            <div class="text-sm text-gray-600">深度学习框架</div>
+                        </div>
+                    </div>
+                    <div class="mt-6 space-y-3">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                            完整的中英机器翻译实现
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                            包含词汇表构建和数据预处理
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                            支持变长序列处理和Teacher Forcing训练
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 完整代码展示 -->
+        <div class="modern-card p-8 animate-slide-up">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                    <span class="w-6 h-6 bg-gradient-to-br from-green-500 to-blue-500 rounded-lg mr-3"></span>
+                    完整代码实现
+                </h2>
+                <div class="flex gap-3">
+                    <button onclick="downloadCode()" class="btn-primary inline-flex items-center justify-center rounded-xl text-sm font-medium h-10 px-4 py-2">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-4-4m4 4l4-4m5-7H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2z"></path>
+                        </svg>
+                        下载代码
+                    </button>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <button class="copy-btn" onclick="copyCode()">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    复制代码
+                </button>
+                <div class="code-content">
+                    <pre class="line-numbers"><code class="language-python">import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import DataLoader, Dataset
+
+# 设置随机种子以确保结果可重现
+torch.manual_seed(42)
+np.random.seed(42)
+
+class Vocabulary:
+    """词汇表类，用于文本和数字之间的转换"""
+    def __init__(self):
+        self.word2idx = {'<PAD>': 0, '< SOS >': 1, '<EOS>': 2, '<UNK>': 3}
+        self.idx2word = {0: '<PAD>', 1: '< SOS >', 2: '<EOS>', 3: '<UNK>'}
+        self.vocab_size = 4
+    
+    def add_word(self, word):
+        if word not in self.word2idx:
+            self.word2idx[word] = self.vocab_size
+            self.idx2word[self.vocab_size] = word
+            self.vocab_size += 1
+    
+    def add_sentence(self, sentence):
+        for word in sentence.split():
+            self.add_word(word)
+    
+    def sentence_to_indices(self, sentence):
+        return [self.word2idx.get(word, self.word2idx['<UNK>']) 
+                for word in sentence.split()]
+    
+    def indices_to_sentence(self, indices):
+        return ' '.join([self.idx2word[idx] for idx in indices 
+                        if idx not in [0, 1, 2]])  # 排除特殊标记
+
+class LSTMEncoder(nn.Module):
+    """LSTM编码器"""
+    def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1):
+        super(LSTMEncoder, self).__init__()
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        
+        # 词嵌入层
+        self.embedding = nn.Embedding(vocab_size, embed_size, padding_idx=0)
+        # LSTM层
+        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, 
+                           batch_first=True, bidirectional=False)
+        
+    def forward(self, input_seq, input_lengths):
+        # input_seq: [batch_size, seq_len]
+        batch_size = input_seq.size(0)
+        
+        # 词嵌入
+        embedded = self.embedding(input_seq)  # [batch_size, seq_len, embed_size]
+        
+        # 打包序列以处理不同长度的输入
+        packed = nn.utils.rnn.pack_padded_sequence(
+            embedded, input_lengths, batch_first=True, enforce_sorted=False)
+        
+        # LSTM前向传播
+        packed_output, (hidden, cell) = self.lstm(packed)
+        
+        # 解包序列
+        output, _ = nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
+        
+        # 返回最后的隐状态作为固定长度的向量表示
+        # hidden: [num_layers, batch_size, hidden_size]
+        # 我们取最后一层的隐状态
+        context_vector = hidden[-1]  # [batch_size, hidden_size]
+        
+        return context_vector, (hidden, cell)
+
+class LSTMDecoder(nn.Module):
+    """LSTM解码器"""
+    def __init__(self, vocab_size, embed_size, hidden_size, num_layers=1):
+        super(LSTMDecoder, self).__init__()
+        self.hidden_size = hidden_size
+        self.vocab_size = vocab_size
+        
+        self.embedding = nn.Embedding(vocab_size, embed_size, padding_idx=0)
+        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
+        self.output_projection = nn.Linear(hidden_size, vocab_size)
+        
+    def forward(self, encoder_hidden, target_seq=None, max_length=20):
+        batch_size = encoder_hidden[0].size(1)
+        
+        if target_seq is not None:
+            # 训练模式：使用目标序列
+            embedded = self.embedding(target_seq)
+            output, _ = self.lstm(embedded, encoder_hidden)
+            output = self.output_projection(output)
+            return output
+        else:
+            # 推理模式：逐步生成
+            outputs = []
+            hidden = encoder_hidden
+            input_token = torch.ones(batch_size, 1, dtype=torch.long) * 1  # < SOS >
+            
+            for _ in range(max_length):
+                embedded = self.embedding(input_token)
+                output, hidden = self.lstm(embedded, hidden)
+                output = self.output_projection(output)
+                
+                # 取概率最大的词作为下一个输入
+                input_token = output.argmax(dim=-1)
+                outputs.append(output)
+                
+                # 如果生成了<EOS>，提前停止
+                if (input_token == 2).all():
+                    break
+            
+            return torch.cat(outputs, dim=1)
+
+class Seq2SeqModel(nn.Module):
+    """序列到序列模型"""
+    def __init__(self, encoder, decoder):
+        super(Seq2SeqModel, self).__init__()
+        self.encoder = encoder
+        self.decoder = decoder
+    
+    def forward(self, input_seq, input_lengths, target_seq=None, max_length=20):
+        # 编码阶段：将输入序列压缩成固定长度向量
+        context_vector, encoder_hidden = self.encoder(input_seq, input_lengths)
+        
+        print(f"输入序列形状: {input_seq.shape}")
+        print(f"上下文向量形状: {context_vector.shape}")
+        print(f"编码器隐状态形状: {encoder_hidden[0].shape}")
+        
+        # 解码阶段：基于上下文向量生成输出序列
+        output = self.decoder(encoder_hidden, target_seq, max_length)
+        
+        return output, context_vector
+
+# 创建示例数据
+def create_sample_data():
+    """创建示例训练数据"""
+    # 中文到英文的翻译示例
+    data_pairs = [
+        ("我 爱 自然 语言 处理", "I love natural language processing"),
+        ("今天 天气 很 好", "Today weather is good"),
+        ("机器 学习 很 有趣", "Machine learning is interesting"),
+        ("深度 学习 很 强大", "Deep learning is powerful"),
+        ("人工 智能 改变 世界", "AI changes the world"),
+    ]
+    return data_pairs
+
+class TranslationDataset(Dataset):
+    """翻译数据集"""
+    def __init__(self, data_pairs, src_vocab, tgt_vocab):
+        self.data_pairs = data_pairs
+        self.src_vocab = src_vocab
+        self.tgt_vocab = tgt_vocab
+    
+    def __len__(self):
+        return len(self.data_pairs)
+    
+    def __getitem__(self, idx):
+        src_sentence, tgt_sentence = self.data_pairs[idx]
+        
+        src_indices = self.src_vocab.sentence_to_indices(src_sentence)
+        tgt_indices = [1] + self.tgt_vocab.sentence_to_indices(tgt_sentence) + [2]  # 添加< SOS >和<EOS>
+        
+        return torch.tensor(src_indices), torch.tensor(tgt_indices)
+
+def collate_fn(batch):
+    """数据批处理函数"""
+    src_batch, tgt_batch = zip(*batch)
+    
+    # 计算序列长度
+    src_lengths = [len(seq) for seq in src_batch]
+    tgt_lengths = [len(seq) for seq in tgt_batch]
+    
+    # 填充序列
+    src_batch = pad_sequence(src_batch, batch_first=True, padding_value=0)
+    tgt_batch = pad_sequence(tgt_batch, batch_first=True, padding_value=0)
+    
+    return src_batch, torch.tensor(src_lengths), tgt_batch, torch.tensor(tgt_lengths)
+
+def main():
+    # 1. 准备数据
+    print("=" * 50)
+    print("准备数据...")
+    data_pairs = create_sample_data()
+    
+    # 构建词汇表
+    src_vocab = Vocabulary()
+    tgt_vocab = Vocabulary()
+    
+    for src, tgt in data_pairs:
+        src_vocab.add_sentence(src)
+        tgt_vocab.add_sentence(tgt)
+    
+    print(f"源语言词汇表大小: {src_vocab.vocab_size}")
+    print(f"目标语言词汇表大小: {tgt_vocab.vocab_size}")
+    
+    # 2. 创建数据集和数据加载器
+    dataset = TranslationDataset(data_pairs, src_vocab, tgt_vocab)
+    dataloader = DataLoader(dataset, batch_size=2, shuffle=True, collate_fn=collate_fn)
+    
+    # 3. 定义模型参数
+    print("\n" + "=" * 50)
+    print("初始化模型...")
+    embed_size = 64
+    hidden_size = 128
+    num_layers = 1
+    
+    # 4. 创建编码器和解码器
+    encoder = LSTMEncoder(src_vocab.vocab_size, embed_size, hidden_size, num_layers)
+    decoder = LSTMDecoder(tgt_vocab.vocab_size, embed_size, hidden_size, num_layers)
+    model = Seq2SeqModel(encoder, decoder)
+    
+    # 5. 定义损失函数和优化器
+    criterion = nn.CrossEntropyLoss(ignore_index=0)  # 忽略padding
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    
+    # 6. 训练模型
+    print("\n" + "=" * 50)
+    print("开始训练...")
+    model.train()
+    
+    for epoch in range(50):
+        total_loss = 0
+        for batch_idx, (src_batch, src_lengths, tgt_batch, tgt_lengths) in enumerate(dataloader):
+            optimizer.zero_grad()
+            
+            # 准备目标序列（用于teacher forcing）
+            decoder_input = tgt_batch[:, :-1]  # 去掉最后一个token
+            decoder_target = tgt_batch[:, 1:]  # 去掉第一个token(< SOS >)
+            
+            # 前向传播
+            output, context_vector = model(src_batch, src_lengths, decoder_input)
+            
+            # 计算损失
+            loss = criterion(output.reshape(-1, output.size(-1)), 
+                           decoder_target.reshape(-1))
+            
+            # 反向传播
+            loss.backward()
+            optimizer.step()
+            
+            total_loss += loss.item()
+        
+        if (epoch + 1) % 10 == 0:
+            print(f'Epoch [{epoch+1}/50], Loss: {total_loss/len(dataloader):.4f}')
+    
+    # 7. 测试模型
+    print("\n" + "=" * 50)
+    print("测试模型...")
+    model.eval()
+    
+    test_sentences = ["我 爱 自然 语言 处理", "今天 天气 很 好"]
+    
+    with torch.no_grad():
+        for test_sentence in test_sentences:
+            print(f"\n输入: {test_sentence}")
+            
+            # 将句子转换为索引
+            src_indices = src_vocab.sentence_to_indices(test_sentence)
+            src_tensor = torch.tensor(src_indices).unsqueeze(0)  # 添加batch维度
+            src_length = torch.tensor([len(src_indices)])
+            
+            # 生成翻译
+            output, context_vector = model(src_tensor, src_length, max_length=10)
+            
+            # 将输出转换为单词
+            predicted_indices = output.argmax(dim=-1).squeeze(0).tolist()
+            predicted_sentence = tgt_vocab.indices_to_sentence(predicted_indices)
+            
+            print(f"输出: {predicted_sentence}")
+            print(f"上下文向量维度: {context_vector.shape}")
+            print(f"上下文向量值: {context_vector.squeeze().numpy()[:5]}...")  # 只显示前5个值
+
+if __name__ == "__main__":
+    main()
+</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="modern-card p-8 mt-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <span class="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg mr-3"></span>
+                使用说明
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-700">📋 运行要求</h3>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                            <span>Python 3.7+</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                            <span>PyTorch 1.8+</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                            <span>NumPy</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-700">🚀 快速开始</h3>
+                    <div class="bg-gray-50 rounded-lg p-4 font-mono text-sm">
+                        <div class="text-gray-600"># 保存代码为 lstm_seq2seq.py</div>
+                        <div class="text-gray-800 font-semibold">python lstm_seq2seq.py</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 返回链接 -->
+        <div class="text-center mt-12">
+            <a href="../" class="inline-flex items-center text-white/80 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                返回主页
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 复制代码功能
+        function copyCode() {
+            const codeElement = document.querySelector('code');
+            const text = codeElement.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>已复制';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+
+        // 下载代码功能
+        function downloadCode() {
+            const codeElement = document.querySelector('code');
+            const text = codeElement.textContent;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'lstm_encoder_decoder.py';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 导航高亮
+        function updateActiveNav() {
+            const sections = ['imports', 'vocabulary', 'encoder', 'decoder', 'seq2seq', 'dataset', 'training'];
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 简单的高亮逻辑，实际应用中可以基于滚动位置
+            const currentTime = new Date().getSeconds();
+            const activeIndex = currentTime % sections.length;
+            if (navItems[activeIndex]) {
+                navItems[activeIndex].classList.add('active');
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加行号
+            Prism.highlightAll();
+            
+            // 导航高亮（示例）
+            setTimeout(updateActiveNav, 1000);
+        });
+    </script>
+</body>
+</html> 
