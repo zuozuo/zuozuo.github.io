@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "从理论到实践：深度解析Embedding在LSTM Seq2Seq模型中的应用"
-date: 2025-01-29 20:00:00 +0800
+date: 2025-06-04 20:00:00 +0800
 categories: [人工智能, 深度学习]
 tags: [embedding, lstm, seq2seq, 机器翻译, pytorch, nlp]
 author: Yonghui Zuo
