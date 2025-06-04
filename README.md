@@ -25,7 +25,7 @@
 - **[从理论到实践：深度解析Embedding在LSTM Seq2Seq模型中的应用](/posts/embedding-in-lstm-seq2seq-practice/)**：通过完整代码深度剖析embedding原理
   - 从"查找表"到深度学习语义桥梁的本质理解
   - embedding与one-hot编码的数学等价性推导
-  - 276行完整PyTorch代码：包含词汇表构建、LSTM编码器-解码器实现
+  - 276行完整PyTorch代码：包含词汇表构建、LSTM编码器-解码器实现，**脚本运行结束后自动生成词向量t-SNE可视化图**
   - 梯度计算机制、初始化策略和训练更新的深度剖析
   - 大语言模型中的Position Embedding、RoPE、CLIP多模态应用
   - RAG向量检索、子词级embedding、量化压缩等前沿技术
