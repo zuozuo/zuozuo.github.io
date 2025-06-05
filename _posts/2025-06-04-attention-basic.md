@@ -1,3 +1,19 @@
+---
+layout: post
+title: "注意力机制数学原理深度解析"
+subtitle: "深入理解注意力机制的方方面面"
+date: 2025-06-05 18:00:00 +0800
+background: ''
+categories: [人工智能, 深度学习]
+tags: [Attention, Transformer, LLM]
+author: Yonghui Zuo
+description: "深入理解注意力机制的方方面面"
+pin: false
+math: true
+mermaid: true
+---
+
+
 # Day 1: 注意力机制数学原理深度解析
 
 ## 1. 注意力机制的直觉理解
