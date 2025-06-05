@@ -14,53 +14,12 @@ import torch.nn.functional as F
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import sys
 import os
 
-# 设置中文字体支持
-plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'SimHei', 'DejaVu Sans']
-plt.rcParams['axes.unicode_minus'] = False
-
-def plot_attention_weights(attention_weights, tokens=None, title="Attention Weights"):
-    """
-    可视化注意力权重矩阵
-    
-    Args:
-        attention_weights: 注意力权重矩阵 [seq_len, seq_len]
-        tokens: 序列中的token列表
-        title: 图表标题
-    """
-    fig, ax = plt.subplots(figsize=(10, 8))
-    
-    # 转换为numpy数组
-    if torch.is_tensor(attention_weights):
-        weights = attention_weights.detach().cpu().numpy()
-    else:
-        weights = attention_weights
-    
-    # 创建热力图
-    im = ax.imshow(weights, cmap='Blues', aspect='auto')
-    
-    # 设置标签
-    if tokens is not None:
-        ax.set_xticks(range(len(tokens)))
-        ax.set_yticks(range(len(tokens)))
-        ax.set_xticklabels(tokens, rotation=45, ha='right')
-        ax.set_yticklabels(tokens)
-    
-    # 添加数值标注
-    for i in range(weights.shape[0]):
-        for j in range(weights.shape[1]):
-            text = ax.text(j, i, f'{weights[i, j]:.3f}',
-                         ha="center", va="center", color="black", fontsize=8)
-    
-    ax.set_title(title, fontsize=14, fontweight='bold')
-    ax.set_xlabel('Key Position')
-    ax.set_ylabel('Query Position')
-    
-    # 添加颜色条
-    plt.colorbar(im, ax=ax, shrink=0.8)
-    plt.tight_layout()
-    return fig
+# 添加utils路径
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from utils.visualization import plot_attention_weights, plot_interactive_attention
 
 class BasicAttention(nn.Module):
     """
@@ -121,6 +80,36 @@ class BasicAttention(nn.Module):
         if return_attention:
             return output, attention_weights
         return output
+
+class ScaledDotProductAttention(nn.Module):
+    """
+    缩放点积注意力的完整实现
+    包含dropout和数值稳定性优化
+    """
+    
+    def __init__(self, d_k, dropout=0.1):
+        super().__init__()
+        self.d_k = d_k
+        self.dropout = nn.Dropout(dropout)
+        
+    def forward(self, query, key, value, mask=None):
+        batch_size, seq_len, d_k = query.shape
+        
+        # 计算注意力分数
+        scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(self.d_k)
+        
+        # 应用掩码
+        if mask is not None:
+            scores = scores.masked_fill(mask == 0, -1e9)
+        
+        # 数值稳定的softmax
+        attention_weights = F.softmax(scores, dim=-1)
+        attention_weights = self.dropout(attention_weights)
+        
+        # 计算输出
+        output = torch.matmul(attention_weights, value)
+        
+        return output, attention_weights
 
 def create_padding_mask(seq, pad_token_id=0):
     """创建填充掩码"""
@@ -242,6 +231,29 @@ def analyze_attention_properties():
         print(f"缩放{scale:2d}倍: {softmax_result.numpy()} (熵: {entropy:.3f})")
     
     print()
+    
+    # 3. 注意力权重的分布特性
+    print("3. 注意力权重分布分析")
+    
+    # 创建不同相似度的Query和Key
+    scenarios = [
+        ("高相似度", torch.tensor([[1.0, 0.0], [0.9, 0.1], [0.8, 0.2]])),
+        ("中等相似度", torch.tensor([[1.0, 0.0], [0.5, 0.5], [0.0, 1.0]])),
+        ("低相似度", torch.tensor([[1.0, 0.0], [-0.5, 0.5], [-1.0, 1.0]]))
+    ]
+    
+    for name, data in scenarios:
+        Q = data[:1]  # 第一行作为Query
+        K = data      # 所有行作为Key
+        V = torch.eye(3, 2)  # 单位矩阵作为Value
+        
+        attention = BasicAttention(d_k=2)
+        output, weights = attention(Q.unsqueeze(0), K.unsqueeze(0), V.unsqueeze(0), return_attention=True)
+        
+        print(f"{name}:")
+        print(f"  注意力权重: {weights[0, 0].detach().numpy()}")
+        print(f"  权重熵: {-(weights[0, 0] * torch.log(weights[0, 0] + 1e-8)).sum():.3f}")
+        print()
 
 def visualize_attention_example():
     """
@@ -274,12 +286,12 @@ def visualize_attention_example():
     fig = plot_attention_weights(attention_matrix, tokens, "Self-Attention Example")
     
     # 保存图片
-    os.makedirs("outputs", exist_ok=True)
-    fig.savefig("outputs/attention_weights_example.png", 
+    os.makedirs("day01-attention-basics/outputs", exist_ok=True)
+    fig.savefig("day01-attention-basics/outputs/attention_weights_example.png", 
                 dpi=300, bbox_inches='tight')
     plt.close(fig)
     
-    print("注意力权重可视化已保存到: outputs/attention_weights_example.png")
+    print("注意力权重可视化已保存到: day01-attention-basics/outputs/attention_weights_example.png")
     
     # 分析注意力模式
     print("\n注意力模式分析:")
@@ -369,19 +381,53 @@ def test_causal_attention():
     )
     
     print("因果注意力权重矩阵:")
-    print(f"权重张量形状: {weights.shape}")
-    attention_matrix = weights[0, 0].detach().numpy()  # 移除batch和head维度，得到 [4, 4]
+    attention_matrix = weights[0].detach().numpy()
     print(attention_matrix)
     print()
     
     # 验证因果性质
     print("因果性质验证:")
     for i in range(seq_len):
-        if i + 1 < seq_len:
-            future_weights = attention_matrix[i, i+1:]
-            print(f"位置{i}对未来位置的注意力权重和: {future_weights.sum():.8f}")
-        else:
-            print(f"位置{i}对未来位置的注意力权重和: 0.00000000 (最后位置)")
+        future_weights = attention_matrix[i, i+1:]
+        print(f"位置{i}对未来位置的注意力权重和: {future_weights.sum():.8f}")
+
+def gradient_flow_analysis():
+    """
+    分析注意力机制的梯度流动
+    """
+    print("\n=== 梯度流动分析 ===\n")
+    
+    torch.manual_seed(42)
+    
+    seq_len = 3
+    d_model = 4
+    
+    # 创建需要梯度的输入
+    embeddings = torch.randn(1, seq_len, d_model, requires_grad=True)
+    
+    # 前向传播
+    attention = BasicAttention(d_k=d_model)
+    output, weights = attention(
+        embeddings, embeddings, embeddings, return_attention=True
+    )
+    
+    # 创建一个简单的损失（输出的和）
+    loss = output.sum()
+    
+    # 反向传播
+    loss.backward()
+    
+    print("输入梯度:")
+    print(embeddings.grad[0].detach().numpy())
+    print()
+    
+    print("梯度范数:")
+    grad_norms = torch.norm(embeddings.grad[0], dim=-1)
+    print(grad_norms.detach().numpy())
+    print()
+    
+    print("注意力权重:")
+    print(weights[0].detach().numpy())
 
 def main():
     """
@@ -405,10 +451,13 @@ def main():
     # 5. 因果注意力测试
     test_causal_attention()
     
+    # 6. 梯度流动分析
+    gradient_flow_analysis()
+    
     print("\n" + "=" * 60)
     print("✅ 所有测试完成！")
     print("\n📊 生成的文件:")
-    print("- outputs/attention_weights_example.png")
+    print("- day01-attention-basics/outputs/attention_weights_example.png")
     print("\n📚 下一步学习:")
     print("- 理解自注意力机制的特殊性质")
     print("- 学习位置编码的必要性")

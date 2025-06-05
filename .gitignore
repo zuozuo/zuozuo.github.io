@@ -37,3 +37,4 @@ assets/js/dist
 .vscode/launch.json
 .vscode/settings.json.sample
 .vscode/tasks.json.sample
+**/*.pyc
