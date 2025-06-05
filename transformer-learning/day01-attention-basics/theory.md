@@ -21,10 +21,35 @@ h₁ → h₂ → h₃ → ... → hₙ
 2. **梯度消失**：长距离依赖难以学习
 3. **串行计算**：无法并行处理
 
-**注意力机制的解决方案**：
-- 直接访问所有位置的信息
-- 根据相关性动态加权
-- 支持并行计算
+#### Q: 为什么会出现梯度消失问题？为什么长距离依赖难以学习？
+
+**A: 梯度消失问题的根本原因**
+
+**1. 传统RNN/LSTM的信息传递方式**
+在传统的循环神经网络中，信息是链式传递的：h₁ → h₂ → h₃ → ... → hₙ
+
+每一步的梯度都需要通过链式法则反向传播：
+$$\frac{\partial L}{\partial h_1} = \frac{\partial L}{\partial h_n} \cdot \frac{\partial h_n}{\partial h_{n-1}} \cdot \frac{\partial h_{n-1}}{\partial h_{n-2}} \cdot ... \cdot \frac{\partial h_2}{\partial h_1}$$
+
+**2. 梯度消失的数学机制**
+当序列很长时，这个连乘会导致：
+- 如果 $|\frac{\partial h_{t+1}}{\partial h_t}| < 1$，则梯度会**指数级衰减**
+- 如果 $|\frac{\partial h_{t+1}}{\partial h_t}| > 1$，则梯度会**指数级爆炸**
+
+对于长度为n的序列：
+$$\left|\frac{\partial L}{\partial h_1}\right| \approx \left|\frac{\partial L}{\partial h_n}\right| \cdot \prod_{t=1}^{n-1} \left|\frac{\partial h_{t+1}}{\partial h_t}\right|$$
+
+**3. 长距离依赖难以学习的原因**
+- **信息瓶颈**：所有历史信息都必须压缩到固定大小的隐状态中，随着序列增长，早期信息逐渐被"遗忘"
+- **梯度信号衰减**：学习位置1和位置100之间的依赖关系时，梯度需要传播99步，每一步都可能造成信息损失
+
+**4. 注意力机制的解决方案**
+- **直接连接**：任意两个位置之间只有一步梯度传播
+- **无梯度消失**：$\frac{\partial L}{\partial V_j} = \sum_{i=1}^{n} \alpha_{i,j} \frac{\partial L}{\partial \text{output}_i}$
+- **长距离依赖直接学习**：如句子"The cat that was sitting on the mat **was** very fluffy"中，"was"可以直接"看到"并关注"cat"，轻松学习主谓一致关系
+- **直接访问所有位置的信息**：不需要通过中间状态传递
+- **根据相关性动态加权**：自动学习重要信息的权重分配
+- **支持并行计算**：所有位置可以同时处理
 
 ## 2. 注意力机制的数学基础
 
