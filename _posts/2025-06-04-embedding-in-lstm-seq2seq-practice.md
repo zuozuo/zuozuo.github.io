@@ -578,6 +578,34 @@ if __name__ == "__main__":
     main()
 ```
 
+### 🔍 代码要点回顾
+
+上面的完整代码实现涵盖了以下核心部分：
+
+- **Vocabulary类**：词汇表管理和索引转换
+- **LSTMEncoder类**：编码器实现，包含embedding层和LSTM层
+- **LSTMDecoder类**：解码器实现，支持训练和推理模式
+- **Seq2SeqModel类**：完整的序列到序列模型
+- **数据处理**：Dataset、DataLoader和批处理函数
+- **训练循环**：完整的训练和测试流程
+- **Embedding可视化**：训练后自动生成并保存词向量的t-SNE可视化图像
+
+## 完整代码实现
+
+想要查看完整的LSTM编码器-解码器实现代码吗？完整的276行PyTorch代码已经在**文章开头**的"完整代码实现"部分提供，包含词汇表构建、LSTM编码器、解码器和训练流程。
+
+### 📁 **代码文件下载**
+
+如果您希望下载代码文件到本地运行，可以访问：
+**[下载代码文件](/demos/lstm_encoder_decoder.html)**
+
+### 💡 使用建议
+
+1. **学习路径**：结合文章开头的完整代码与本文的理论分析
+2. **实践操作**：将代码复制到本地，尝试运行并修改参数  
+3. **深入研究**：基于这个基础实现，探索更高级的seq2seq变体
+
+
 ## 1. 核心概念深度解析
 
 ### 1.1 embedding的本质：可学习的查找表
@@ -1215,6 +1243,8 @@ def visualize_embeddings(embedding_matrix, vocab, method='tsne', title="Embeddin
    - `<PAD>`、`<SOS>`、`<EOS>`等特殊标记通常远离实际词汇
    - 这表明模型学会了区分功能性标记和语义性词汇
 
+![源语言Embedding t-SNE 可视化](/assets/img/posts/embedding_lstm_visualization_fixed.png "源语言Embedding t-SNE 可视化 - 修复中文字体显示问题后的可视化结果")
+
 #### 6.2.3 数学原理深度解析
 
 在我们的LSTM seq2seq模型中，每个词的embedding向量$\mathbf{e}_i \in \mathbb{R}^{64}$通过以下过程学习：
@@ -1338,35 +1368,6 @@ def detect_embedding_anomalies(embedding, threshold=3.0):
     for idx in outliers[:10]:  # 只显示前10个
         print(f"索引 {idx}: 范数 {norms[idx]:.3f}")
 ```
-
-### 🔍 代码要点回顾
-
-上面的完整代码实现涵盖了以下核心部分：
-
-- **Vocabulary类**：词汇表管理和索引转换
-- **LSTMEncoder类**：编码器实现，包含embedding层和LSTM层
-- **LSTMDecoder类**：解码器实现，支持训练和推理模式
-- **Seq2SeqModel类**：完整的序列到序列模型
-- **数据处理**：Dataset、DataLoader和批处理函数
-- **训练循环**：完整的训练和测试流程
-- **Embedding可视化**：训练后自动生成并保存词向量的t-SNE可视化图像
-
-![源语言Embedding t-SNE 可视化](/assets/img/posts/embedding_lstm_visualization_fixed.png "源语言Embedding t-SNE 可视化 - 修复中文字体显示问题后的可视化结果")
-
-## 完整代码实现
-
-想要查看完整的LSTM编码器-解码器实现代码吗？完整的276行PyTorch代码已经在**文章开头**的"完整代码实现"部分提供，包含词汇表构建、LSTM编码器、解码器和训练流程。
-
-### 📁 **代码文件下载**
-
-如果您希望下载代码文件到本地运行，可以访问：
-**[下载代码文件](/demos/lstm_encoder_decoder.html)**
-
-### 💡 使用建议
-
-1. **学习路径**：结合文章开头的完整代码与本文的理论分析
-2. **实践操作**：将代码复制到本地，尝试运行并修改参数  
-3. **深入研究**：基于这个基础实现，探索更高级的seq2seq变体
 
 ## 延伸阅读
 
