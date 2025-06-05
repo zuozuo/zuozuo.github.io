@@ -104,6 +104,38 @@ $$\text{Var}(q \cdot k) = \text{Var}\left(\sum_{i=1}^{d_k} q_i k_i\right) = \sum
 缩放后：
 $$\text{Var}\left(\frac{q \cdot k}{\sqrt{d_k}}\right) = \frac{\text{Var}(q \cdot k)}{d_k} = 1$$
 
+#### Q: 缩放操作的数学推导为什么这样计算？每一步的含义是什么？
+
+**A: 缩放操作数学推导详细解析**
+
+**第1步：假设条件的理解**
+- $q, k \sim \mathcal{N}(0, 1)$ 表示Query和Key向量的每个元素都服从标准正态分布
+- 均值为0，方差为1，这是深度学习中常见的标准化假设
+
+**第2步：点积方差计算的详细过程**
+点积定义：$q \cdot k = \sum_{i=1}^{d_k} q_i k_i$
+
+利用方差的线性性质（对于独立随机变量）：
+$$\text{Var}\left(\sum_{i=1}^{d_k} q_i k_i\right) = \sum_{i=1}^{d_k} \text{Var}(q_i k_i)$$
+
+计算单项方差：对于独立的 $q_i$ 和 $k_i$：
+- 使用公式：$\text{Var}(XY) = E[X^2]E[Y^2] - (E[X]E[Y])^2$
+- 由于 $E[q_i] = E[k_i] = 0$，$E[q_i^2] = E[k_i^2] = 1$
+- 所以：$\text{Var}(q_i k_i) = 1 \times 1 - 0 \times 0 = 1$
+
+总方差：$\sum_{i=1}^{d_k} 1 = d_k$
+
+**第3步：缩放效果**
+使用方差性质：$\text{Var}(cX) = c^2\text{Var}(X)$
+$$\text{Var}\left(\frac{q \cdot k}{\sqrt{d_k}}\right) = \frac{1}{d_k} \text{Var}(q \cdot k) = \frac{d_k}{d_k} = 1$$
+
+**第4步：为什么缩放很重要？**
+- **不缩放时**：当$d_k=64$时，点积值可能在$[-20, 20]$范围内
+- **Softmax饱和**：$\text{softmax}([20, -20]) = [0.9999..., 0.0000...]$，梯度几乎为0
+- **缩放后**：点积值在$[-3, 3]$范围内，$\text{softmax}([3, -3]) = [0.95, 0.05]$，梯度健康流动
+
+**数学本质**：缩放操作将点积值的方差从$d_k$降到1，防止softmax函数进入饱和区域，保证梯度的有效传播。
+
 #### 步骤3：归一化
 应用softmax函数确保权重和为1：
 $$\alpha_{i,j} = \frac{\exp(S_{i,j}/\sqrt{d_k})}{\sum_{k=1}^{m} \exp(S_{i,k}/\sqrt{d_k})}$$
