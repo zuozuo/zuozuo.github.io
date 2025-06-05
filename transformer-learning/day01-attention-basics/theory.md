@@ -251,8 +251,38 @@ $$\text{Output} = AV = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 
 ## 3. 完整的注意力机制公式
 
-### 3.1 标准公式
+### 3.1 标准公式推导综述
+
+注意力机制的标准公式：
 $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
+
+**推导思路总览**：
+1. **相似度计算** → 2. **缩放操作** → 3. **概率归一化** → 4. **加权聚合**
+
+#### 步骤1：相似度计算 $QK^T$
+**目标**：衡量Query和Key之间的匹配程度
+- **数学**：$S_{i,j} = Q_i \cdot K_j^T$（点积相似度）
+- **直觉**：相似的Query-Key对应更高的分数
+
+#### 步骤2：缩放操作 $\frac{QK^T}{\sqrt{d_k}}$
+**目标**：解决高维度下点积值过大的问题
+- **问题**：$\text{Var}(Q_i \cdot K_j) = d_k$，高维时方差过大
+- **解决**：除以$\sqrt{d_k}$使方差归一为1
+- **效果**：防止softmax饱和，保证梯度健康流动
+
+#### 步骤3：概率归一化 $\text{softmax}(\cdot)$
+**目标**：将相似度分数转换为概率分布
+- **要求**：非负性($\alpha_{i,j} \geq 0$)和归一化($\sum_j \alpha_{i,j} = 1$)
+- **实现**：$\alpha_{i,j} = \frac{\exp(S_{i,j})}{\sum_k \exp(S_{i,k})}$
+- **意义**：权重表示"关注程度"的概率分配
+
+#### 步骤4：加权聚合 $\alpha V$
+**目标**：基于注意力权重聚合Value信息
+- **数学**：$\text{output}_i = \sum_j \alpha_{i,j} V_j$（加权平均）
+- **性质**：输出是Value向量的凸组合
+- **效果**：信息量守恒，只是重新分配和组合
+
+**核心思想**：注意力机制是一个"软性信息检索"过程，通过学习的相似度函数动态地从记忆中检索和聚合相关信息。
 
 ### 3.2 维度分析
 - 输入：$Q \in \mathbb{R}^{n \times d_k}$, $K \in \mathbb{R}^{m \times d_k}$, $V \in \mathbb{R}^{m \times d_v}$
