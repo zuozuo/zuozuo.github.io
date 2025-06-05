@@ -8,6 +8,11 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 
+# 设置matplotlib支持中文显示
+# 根据CSDN博客 https://blog.csdn.net/weixin_46474921/article/details/123783987 的解决方案
+plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']  # macOS系统推荐字体
+plt.rcParams['axes.unicode_minus'] = False  # 解决中文字体下坐标轴负数的负号显示问题
+
 # 设置随机种子以确保结果可重现
 torch.manual_seed(42)
 np.random.seed(42)
@@ -348,7 +353,7 @@ def visualize_embeddings(embedding_matrix, vocab, method='tsne', title='Embeddin
         if method == 'tsne': # 再次检查，因为可能在上面被改为pca
             try:
                 reducer = TSNE(n_components=2, random_state=42, perplexity=perplexity_value, 
-                               n_iter=300, learning_rate=200) # 减少迭代次数和学习率以便快速演示
+                               max_iter=300, learning_rate=200) # 修复sklearn参数：n_iter改为max_iter
                 embeddings_2d = reducer.fit_transform(embeddings_to_visualize)
             except Exception as e:
                 print(f"t-SNE执行失败: {e}。尝试使用PCA。")
