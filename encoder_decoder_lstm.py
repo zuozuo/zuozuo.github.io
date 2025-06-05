@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader, Dataset
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
+from sklearn.metrics.pairwise import cosine_similarity
 
 # 设置matplotlib支持中文显示
 # 根据CSDN博客 https://blog.csdn.net/weixin_46474921/article/details/123783987 的解决方案
@@ -279,12 +280,151 @@ def main():
             print(f"上下文向量维度: {context_vector.shape}")
             print(f"上下文向量值: {context_vector.squeeze().numpy()[:5]}...")  # 只显示前5个值
 
-    # 8. 可视化源语言embedding
+    # 8. Embedding质量分析与可视化
     print("\n" + "=" * 50)
-    print("可视化源语言Embedding (t-SNE)...")
+    print("Embedding质量分析与可视化...")
+    
     # 从模型中获取源语言的embedding矩阵和词汇表
     src_embedding_matrix = model.encoder.embedding.weight.data.cpu()
+    
+    # 先进行质量分析
+    analysis_results = analyze_embedding_quality(src_embedding_matrix, src_vocab, top_k=8)
+    
+    # 再进行可视化
+    print(f"\n{'='*60}")
+    print("🎨 生成t-SNE可视化图...")
+    print(f"{'='*60}")
     visualize_embeddings(src_embedding_matrix, src_vocab, method='tsne', title="Source Language Embedding Visualization (t-SNE)")
+
+def analyze_embedding_quality(embedding_matrix, vocab, top_k=5):
+    """分析embedding质量和聚类效果"""
+    print(f"\n{'='*60}")
+    print("📊 Embedding质量分析")
+    print(f"{'='*60}")
+    
+    # 计算所有词汇的余弦相似度矩阵
+    from sklearn.metrics.pairwise import cosine_similarity
+    import numpy as np
+    
+    # 过滤掉特殊标记，只分析实际词汇
+    real_words = []
+    real_indices = []
+    real_embeddings = []
+    
+    for idx, word in vocab.idx2word.items():
+        if idx < embedding_matrix.shape[0] and word not in ['<PAD>', '<SOS>', '<EOS>', '<UNK>']:
+            real_words.append(word)
+            real_indices.append(idx)
+            real_embeddings.append(embedding_matrix[idx].numpy())
+    
+    if len(real_embeddings) < 2:
+        print("⚠️  实际词汇数量不足，无法进行聚类分析")
+        return
+    
+    real_embeddings = np.array(real_embeddings)
+    similarity_matrix = cosine_similarity(real_embeddings)
+    
+    print(f"\n🔍 词汇相似度分析 (共{len(real_words)}个词汇)")
+    print("-" * 50)
+    
+    # 1. 找出最相似的词对
+    most_similar_pairs = []
+    for i in range(len(real_words)):
+        for j in range(i+1, len(real_words)):
+            similarity = similarity_matrix[i][j]
+            most_similar_pairs.append((real_words[i], real_words[j], similarity))
+    
+    # 按相似度排序
+    most_similar_pairs.sort(key=lambda x: x[2], reverse=True)
+    
+    print(f"\n📈 最相似的{min(top_k, len(most_similar_pairs))}对词汇:")
+    for i, (word1, word2, sim) in enumerate(most_similar_pairs[:top_k]):
+        print(f"   {i+1}. '{word1}' ↔ '{word2}': {sim:.4f}")
+    
+    # 2. 分析特定主题词汇的聚集度
+    print(f"\n🎯 主题词汇聚集分析:")
+    print("-" * 30)
+    
+    # 定义主题词汇组
+    theme_groups = {
+        "时间天气": ["今天", "天气", "好"],
+        "AI技术": ["人工", "智能", "机器", "学习"],
+        "NLP": ["自然", "语言", "处理"],
+        "情感": ["爱", "有趣", "强大"]
+    }
+    
+    for theme_name, words in theme_groups.items():
+        # 找出该主题中存在的词汇
+        existing_words = [w for w in words if w in real_words]
+        if len(existing_words) >= 2:
+            # 计算组内平均相似度
+            indices = [real_words.index(w) for w in existing_words]
+            group_similarities = []
+            for i in range(len(indices)):
+                for j in range(i+1, len(indices)):
+                    group_similarities.append(similarity_matrix[indices[i]][indices[j]])
+            
+            avg_similarity = np.mean(group_similarities)
+            print(f"   {theme_name}: {existing_words} → 平均相似度: {avg_similarity:.4f}")
+    
+    # 3. 检查共现词汇的相似度
+    print(f"\n🔗 训练数据共现词汇相似度:")
+    print("-" * 35)
+    
+    cooccurrence_pairs = [
+        ("我", "爱"), ("今天", "天气"), ("天气", "好"),
+        ("机器", "学习"), ("深度", "学习"), ("人工", "智能")
+    ]
+    
+    for word1, word2 in cooccurrence_pairs:
+        if word1 in real_words and word2 in real_words:
+            idx1, idx2 = real_words.index(word1), real_words.index(word2)
+            similarity = similarity_matrix[idx1][idx2]
+            print(f"   '{word1}' ↔ '{word2}': {similarity:.4f}")
+    
+    # 4. 统计分析
+    print(f"\n📊 Embedding统计特性:")
+    print("-" * 25)
+    
+    # 向量范数分析
+    norms = np.linalg.norm(real_embeddings, axis=1)
+    print(f"   向量范数 - 均值: {np.mean(norms):.4f}, 标准差: {np.std(norms):.4f}")
+    
+    # 整体相似度分布
+    upper_triangle = similarity_matrix[np.triu_indices(len(real_words), k=1)]
+    print(f"   相似度分布 - 均值: {np.mean(upper_triangle):.4f}, 标准差: {np.std(upper_triangle):.4f}")
+    print(f"   相似度范围: [{np.min(upper_triangle):.4f}, {np.max(upper_triangle):.4f}]")
+    
+    # 5. 异常检测
+    print(f"\n⚠️  异常向量检测:")
+    print("-" * 20)
+    
+    mean_norm = np.mean(norms)
+    std_norm = np.std(norms)
+    outlier_threshold = 2.0  # 2倍标准差
+    
+    outliers = []
+    for i, (word, norm) in enumerate(zip(real_words, norms)):
+        if abs(norm - mean_norm) > outlier_threshold * std_norm:
+            outliers.append((word, norm))
+    
+    if outliers:
+        print(f"   发现{len(outliers)}个异常向量:")
+        for word, norm in outliers:
+            print(f"     '{word}': 范数 = {norm:.4f}")
+    else:
+        print("   ✅ 未发现明显异常向量")
+
+    return {
+        'similarity_matrix': similarity_matrix,
+        'most_similar_pairs': most_similar_pairs[:top_k],
+        'real_words': real_words,
+        'statistics': {
+            'mean_norm': np.mean(norms),
+            'mean_similarity': np.mean(upper_triangle),
+            'std_similarity': np.std(upper_triangle)
+        }
+    }
 
 def visualize_embeddings(embedding_matrix, vocab, method='tsne', title='Embedding Visualization', num_words_to_annotate=20):
     """使用t-SNE或PCA可视化embedding"""
