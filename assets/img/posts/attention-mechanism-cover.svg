@@ -1,0 +1,125 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <!-- 渐变背景 -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#92400e;stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:#1e3a8a;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 发光效果 -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- 注意力权重矩阵渐变 -->
+    <linearGradient id="heatmap" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:0.3" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景 -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- 左侧：咖啡厅场景 -->
+  <g id="cafe-scene">
+    <!-- 咖啡杯图标 -->
+    <circle cx="150" cy="200" r="30" fill="#92400e" opacity="0.6"/>
+    <rect x="135" y="185" width="30" height="10" fill="#f8fafc" opacity="0.8"/>
+    
+    <!-- 对话气泡 -->
+    <ellipse cx="120" cy="300" rx="60" ry="30" fill="#f8fafc" opacity="0.3"/>
+    <ellipse cx="200" cy="350" rx="50" ry="25" fill="#f8fafc" opacity="0.3"/>
+    
+    <!-- 声音波纹 -->
+    <circle cx="120" cy="300" r="40" fill="none" stroke="#f97316" stroke-width="2" opacity="0.4"/>
+    <circle cx="120" cy="300" r="60" fill="none" stroke="#f97316" stroke-width="1" opacity="0.3"/>
+    <circle cx="120" cy="300" r="80" fill="none" stroke="#f97316" stroke-width="1" opacity="0.2"/>
+  </g>
+  
+  <!-- 中间：数学公式过渡区 -->
+  <g id="formula-section">
+    <!-- 主要公式 -->
+    <text x="400" y="250" font-family="serif" font-size="28" fill="#f8fafc" filter="url(#glow)">
+      Attention(Q,K,V) = 
+    </text>
+    <text x="420" y="290" font-family="serif" font-size="24" fill="#f97316" filter="url(#glow)">
+      softmax(QK^T/√d_k)V
+    </text>
+    
+    <!-- Query Key Value 标签 -->
+    <text x="350" y="360" font-family="sans-serif" font-size="16" fill="#fbbf24">Query</text>
+    <text x="450" y="360" font-family="sans-serif" font-size="16" fill="#fbbf24">Key</text>
+    <text x="530" y="360" font-family="sans-serif" font-size="16" fill="#fbbf24">Value</text>
+    
+    <!-- 连接箭头 -->
+    <path d="M 320 315 Q 400 315 480 315" stroke="#f97316" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <!-- 右侧：技术实现 -->
+  <g id="tech-section">
+    <!-- 注意力权重矩阵 -->
+    <g id="attention-matrix">
+      <rect x="800" y="150" width="50" height="50" fill="url(#heatmap)" opacity="0.9"/>
+      <rect x="860" y="150" width="50" height="50" fill="url(#heatmap)" opacity="0.5"/>
+      <rect x="920" y="150" width="50" height="50" fill="url(#heatmap)" opacity="0.3"/>
+      
+      <rect x="800" y="210" width="50" height="50" fill="url(#heatmap)" opacity="0.4"/>
+      <rect x="860" y="210" width="50" height="50" fill="url(#heatmap)" opacity="0.8"/>
+      <rect x="920" y="210" width="50" height="50" fill="url(#heatmap)" opacity="0.4"/>
+      
+      <rect x="800" y="270" width="50" height="50" fill="url(#heatmap)" opacity="0.2"/>
+      <rect x="860" y="270" width="50" height="50" fill="url(#heatmap)" opacity="0.3"/>
+      <rect x="920" y="270" width="50" height="50" fill="url(#heatmap)" opacity="0.7"/>
+    </g>
+    
+    <!-- 神经网络节点 -->
+    <circle cx="1000" cy="200" r="15" fill="#f97316" filter="url(#glow)"/>
+    <circle cx="1050" cy="180" r="12" fill="#fbbf24" filter="url(#glow)"/>
+    <circle cx="1050" cy="220" r="12" fill="#fbbf24" filter="url(#glow)"/>
+    <circle cx="1100" cy="200" r="15" fill="#f97316" filter="url(#glow)"/>
+    
+    <!-- 连接线 -->
+    <line x1="1000" y1="200" x2="1050" y2="180" stroke="#f8fafc" stroke-width="2" opacity="0.6"/>
+    <line x1="1000" y1="200" x2="1050" y2="220" stroke="#f8fafc" stroke-width="2" opacity="0.6"/>
+    <line x1="1050" y1="180" x2="1100" y2="200" stroke="#f8fafc" stroke-width="3" opacity="0.8"/>
+    <line x1="1050" y1="220" x2="1100" y2="200" stroke="#f8fafc" stroke-width="1" opacity="0.4"/>
+  </g>
+  
+  <!-- 标题文字 -->
+  <g id="title-section">
+    <text x="600" y="80" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#f8fafc" filter="url(#glow)">
+      破解注意力机制的密码
+    </text>
+    <text x="600" y="120" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#fbbf24">
+      从咖啡厅聊天到Transformer核心
+    </text>
+  </g>
+  
+  <!-- 箭头标记定义 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+     refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+    </marker>
+  </defs>
+  
+  <!-- 装饰性代码片段背景 -->
+  <g opacity="0.1">
+    <text x="50" y="500" font-family="monospace" font-size="12" fill="#64748b">
+      def attention(Q, K, V):
+    </text>
+    <text x="50" y="520" font-family="monospace" font-size="12" fill="#64748b">
+          scores = Q @ K.transpose(-2, -1)
+    </text>
+    <text x="50" y="540" font-family="monospace" font-size="12" fill="#64748b">
+          return softmax(scores) @ V
+    </text>
+  </g>
+</svg> 

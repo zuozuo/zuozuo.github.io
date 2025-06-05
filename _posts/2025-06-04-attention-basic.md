@@ -1,14 +1,14 @@
 ---
 layout: post
-title: "注意力机制数学原理深度解析"
-subtitle: "深入理解注意力机制的方方面面"
+title: "破解注意力机制的密码：从咖啡厅聊天到Transformer核心"
+subtitle: "用数学公式和直觉理解彻底掌握AI时代最重要的算法突破"
 date: 2025-06-05 18:00:00 +0800
-background: ''
+background: '/assets/img/posts/attention-mechanism-cover.svg'
 categories: [人工智能, 深度学习]
-tags: [Attention, Transformer, LLM]
+tags: [Attention, Transformer, LLM, 数学原理, 算法解析]
 author: Yonghui Zuo
-description: "深入理解注意力机制的方方面面"
-pin: false
+description: "从生活直觉到数学推导，完整解析注意力机制如何解决RNN梯度消失问题，实现长距离依赖学习，奠定现代AI基础"
+pin: true
 math: true
 mermaid: true
 ---
