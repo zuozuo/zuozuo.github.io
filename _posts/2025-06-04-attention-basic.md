@@ -49,8 +49,8 @@ $$\frac{\partial L}{\partial h_1} = \frac{\partial L}{\partial h_n} \cdot \frac{
 
 **2. 梯度消失的数学机制**
 当序列很长时，这个连乘会导致：
-- 如果 $|\frac{\partial h_{t+1}}{\partial h_t}| < 1$，则梯度会**指数级衰减**
-- 如果 $|\frac{\partial h_{t+1}}{\partial h_t}| > 1$，则梯度会**指数级爆炸**
+- 如果 $\left|\frac{\partial h_{t+1}}{\partial h_t}\right| < 1$，则梯度会**指数级衰减**
+- 如果 $\left|\frac{\partial h_{t+1}}{\partial h_t}\right| > 1$，则梯度会**指数级爆炸**
 
 对于长度为n的序列：
 $$\left|\frac{\partial L}{\partial h_1}\right| \approx \left|\frac{\partial L}{\partial h_n}\right| \cdot \prod_{t=1}^{n-1} \left|\frac{\partial h_{t+1}}{\partial h_t}\right|$$
@@ -745,9 +745,9 @@ def verify_permutation_equivariance():
     return difference < 1e-6
 ```
 
-### 深入理解：什么是排列矩阵？
+#### 深入理解：什么是排列矩阵？
 
-#### 排列矩阵的数学定义
+##### 排列矩阵的数学定义
 
 **排列矩阵**是一种特殊的方阵，它的每一行和每一列都恰好有一个1，其余元素都是0。
 
@@ -756,7 +756,7 @@ def verify_permutation_equivariance():
 - 每列恰好有一个1，其余为0
 - $P$对应一个置换（排列）$\pi: \{1,2,...,n\} \rightarrow \{1,2,...,n\}$
 
-#### 具体例子
+##### 具体例子
 
 **3×3排列矩阵示例**
 
@@ -781,7 +781,7 @@ $$P_3 = \begin{pmatrix}
 1 & 0 & 0
 \end{pmatrix}$$
 
-#### 排列矩阵的作用机制
+##### 排列矩阵的作用机制
 
 **左乘排列矩阵 - 行排列**
 当$P$左乘矩阵$A$时，$PA$会重新排列$A$的**行**：
@@ -806,7 +806,7 @@ AP = [[2, 3, 1],    # 列的顺序重新排列
       [8, 9, 7]]
 ```
 
-#### 排列矩阵的重要性质
+##### 排列矩阵的重要性质
 
 **1. 正交性**
 排列矩阵是正交矩阵：
@@ -826,7 +826,7 @@ $$P^{-1} = P^T$$
 **4. 群结构**
 所有$n \times n$排列矩阵构成一个群，称为对称群$S_n$。
 
-#### 在注意力机制中的数学验证
+##### 在注意力机制中的数学验证
 
 回到注意力机制的排列等变性：
 
@@ -844,7 +844,7 @@ $$A' = \text{softmax}(S') = P \cdot \text{softmax}(QK^T) \cdot P^T = PAP^T$$
 **步骤4**：最终输出
 $$\text{Output}' = A'(PV) = PAP^T \cdot PV = PA(P^TP)V = PAV = P \cdot \text{Output}$$
 
-#### 实际演示验证
+##### 实际演示验证
 
 通过Python代码验证排列矩阵的性质：
 
@@ -893,9 +893,15 @@ print(f"最大差异: {np.abs(output2 - expected_output).max():.8f}")
 # 排列等变性验证:
 # output2 ≈ P @ output1? True  
 # 最大差异: 0.00000000
+# 验证等变性：output2 应该等于 output1_perm
+difference = torch.abs(output2 - output1_perm).max()
+print(f"排列等变性验证 - 最大差异: {difference:.8f}")
+return difference < 1e-6
 ```
 
-#### 为什么理解排列矩阵很重要？
+```
+
+##### 为什么理解排列矩阵很重要？
 
 **1. 理论基础**
 - 提供了严格的数学框架来分析排列操作
@@ -911,7 +917,7 @@ print(f"最大差异: {np.abs(output2 - expected_output).max():.8f}")
 - 为Transformer的并行计算提供理论支撑
 - 指导新架构的设计思路
 
-#### 直觉理解
+##### 直觉理解
 
 可以将排列矩阵想象成一个"重新排列指令表"：
 - 每一行告诉你"这个位置的元素应该放到哪里"
@@ -920,13 +926,6 @@ print(f"最大差异: {np.abs(output2 - expected_output).max():.8f}")
 
 这种严格的数学定义让我们能够精确地分析和预测注意力机制在各种输入变换下的行为，为理解现代深度学习架构奠定了坚实的理论基础。
     
-    # 验证等变性：output2 应该等于 output1_perm
-    difference = torch.abs(output2 - output1_perm).max()
-    print(f"排列等变性验证 - 最大差异: {difference:.8f}")
-    
-    return difference < 1e-6
-```
-
 #### 总结：排列不变性的本质意义
 
 **1. 表征学习的角度**：

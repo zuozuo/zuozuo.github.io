@@ -381,15 +381,20 @@ def test_causal_attention():
     )
     
     print("因果注意力权重矩阵:")
-    attention_matrix = weights[0].detach().numpy()
-    print(attention_matrix)
+    print(f"权重形状: {weights.shape}")
+    print(weights[0].detach().numpy())
     print()
     
     # 验证因果性质
     print("因果性质验证:")
+    attention_matrix = weights[0, 0].detach().numpy()  # [seq_len, seq_len]
+    print(f"attention_matrix形状: {attention_matrix.shape}")
     for i in range(seq_len):
-        future_weights = attention_matrix[i, i+1:]
-        print(f"位置{i}对未来位置的注意力权重和: {future_weights.sum():.8f}")
+        if i+1 < attention_matrix.shape[1]:
+            future_weights = attention_matrix[i, i+1:]
+            print(f"位置{i}对未来位置的注意力权重和: {future_weights.sum():.8f}")
+        else:
+            print(f"位置{i}对未来位置的注意力权重和: 0.00000000")
 
 def gradient_flow_analysis():
     """
