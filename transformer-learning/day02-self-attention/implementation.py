@@ -1,6 +1,7 @@
 """
 Day 2: 自注意力机制实现
 实现完整的自注意力机制，包括位置编码
+同时实现传统注意力机制进行对比
 """
 
 import torch
@@ -11,6 +12,92 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import Optional, Tuple
+
+class TraditionalAttention(nn.Module):
+    """
+    传统注意力机制实现（用于对比）
+    模拟编码器-解码器架构中的注意力
+    """
+    def __init__(self, encoder_dim: int, decoder_dim: int, attention_dim: int = 128):
+        super().__init__()
+        self.encoder_dim = encoder_dim
+        self.decoder_dim = decoder_dim
+        self.attention_dim = attention_dim
+        
+        # 加性注意力的参数
+        self.W_encoder = nn.Linear(encoder_dim, attention_dim, bias=False)
+        self.W_decoder = nn.Linear(decoder_dim, attention_dim, bias=False)
+        self.v = nn.Linear(attention_dim, 1, bias=False)
+        
+    def forward(self, encoder_outputs: torch.Tensor, decoder_state: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        传统注意力前向传播
+        Args:
+            encoder_outputs: 编码器输出 [batch_size, seq_len, encoder_dim]
+            decoder_state: 解码器状态 [batch_size, decoder_dim]
+        Returns:
+            context: 上下文向量 [batch_size, encoder_dim]
+            attention_weights: 注意力权重 [batch_size, seq_len]
+        """
+        batch_size, seq_len, encoder_dim = encoder_outputs.shape
+        
+        # 1. 计算注意力分数
+        # 将解码器状态扩展到与编码器输出相同的序列长度
+        decoder_expanded = decoder_state.unsqueeze(1).expand(-1, seq_len, -1)  # [batch_size, seq_len, decoder_dim]
+        
+        # 加性注意力计算
+        encoder_proj = self.W_encoder(encoder_outputs)  # [batch_size, seq_len, attention_dim]
+        decoder_proj = self.W_decoder(decoder_expanded)  # [batch_size, seq_len, attention_dim]
+        
+        # 计算注意力能量
+        energy = torch.tanh(encoder_proj + decoder_proj)  # [batch_size, seq_len, attention_dim]
+        scores = self.v(energy).squeeze(-1)  # [batch_size, seq_len]
+        
+        # 2. 计算注意力权重
+        attention_weights = F.softmax(scores, dim=-1)  # [batch_size, seq_len]
+        
+        # 3. 计算上下文向量
+        context = torch.bmm(attention_weights.unsqueeze(1), encoder_outputs).squeeze(1)  # [batch_size, encoder_dim]
+        
+        return context, attention_weights
+
+class DotProductTraditionalAttention(nn.Module):
+    """
+    点积传统注意力（简化版本）
+    """
+    def __init__(self, encoder_dim: int, decoder_dim: int):
+        super().__init__()
+        self.encoder_dim = encoder_dim
+        self.decoder_dim = decoder_dim
+        
+        # 如果维度不同，需要投影
+        if encoder_dim != decoder_dim:
+            self.projection = nn.Linear(decoder_dim, encoder_dim)
+        else:
+            self.projection = None
+            
+    def forward(self, encoder_outputs: torch.Tensor, decoder_state: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        点积注意力前向传播
+        """
+        batch_size, seq_len, encoder_dim = encoder_outputs.shape
+        
+        # 投影解码器状态（如果需要）
+        if self.projection:
+            decoder_projected = self.projection(decoder_state)  # [batch_size, encoder_dim]
+        else:
+            decoder_projected = decoder_state
+            
+        # 计算注意力分数（点积）
+        scores = torch.bmm(encoder_outputs, decoder_projected.unsqueeze(-1)).squeeze(-1)  # [batch_size, seq_len]
+        
+        # 计算注意力权重
+        attention_weights = F.softmax(scores, dim=-1)  # [batch_size, seq_len]
+        
+        # 计算上下文向量
+        context = torch.bmm(attention_weights.unsqueeze(1), encoder_outputs).squeeze(1)  # [batch_size, encoder_dim]
+        
+        return context, attention_weights
 
 class SelfAttention(nn.Module):
     """
@@ -238,9 +325,72 @@ def visualize_positional_encoding(d_model: int = 128, max_len: int = 100):
     plt.tight_layout()
     plt.show()
 
+def compare_traditional_vs_self_attention():
+    """
+    比较传统注意力与自注意力机制
+    """
+    print("=== 传统注意力 vs 自注意力对比 ===")
+    
+    # 设置参数
+    batch_size, seq_len, d_model = 2, 8, 64
+    
+    # 模拟编码器-解码器场景
+    encoder_outputs = torch.randn(batch_size, seq_len, d_model)  # 编码器输出
+    decoder_states = torch.randn(batch_size, 3, d_model)  # 3个解码步的状态
+    
+    # 1. 传统注意力
+    traditional_attention = TraditionalAttention(d_model, d_model)
+    
+    # 2. 自注意力
+    self_attention = SelfAttention(d_model)
+    
+    print("计算复杂度对比:")
+    
+    # 传统注意力：逐步计算
+    traditional_contexts = []
+    traditional_weights_list = []
+    
+    for step in range(3):
+        context, weights = traditional_attention(encoder_outputs, decoder_states[:, step, :])
+        traditional_contexts.append(context)
+        traditional_weights_list.append(weights)
+        print(f"  传统注意力步骤{step+1}: 输入{encoder_outputs.shape} + {decoder_states[:, step, :].shape} → 输出{context.shape}")
+    
+    # 自注意力：一次性计算
+    self_output, self_weights = self_attention(encoder_outputs)
+    print(f"  自注意力: 输入{encoder_outputs.shape} → 输出{self_output.shape}")
+    
+    # 可视化对比
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    
+    # 传统注意力权重（每个解码步）
+    for step in range(3):
+        weights = traditional_weights_list[step][0].detach().numpy()  # 取第一个batch
+        axes[0, step].bar(range(seq_len), weights)
+        axes[0, step].set_title(f'Traditional Attention - Step {step+1}')
+        axes[0, step].set_xlabel('Encoder Position')
+        axes[0, step].set_ylabel('Attention Weight')
+        axes[0, step].set_ylim(0, 1)
+    
+    # 自注意力权重矩阵
+    self_weights_np = self_weights[0].detach().numpy()
+    
+    # 显示自注意力的前3行（对应3个查询位置）
+    for pos in range(3):
+        axes[1, pos].bar(range(seq_len), self_weights_np[pos])
+        axes[1, pos].set_title(f'Self-Attention - Query Position {pos+1}')
+        axes[1, pos].set_xlabel('Key Position')
+        axes[1, pos].set_ylabel('Attention Weight')
+        axes[1, pos].set_ylim(0, 1)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return traditional_contexts, traditional_weights_list, self_output, self_weights
+
 def compare_attention_types():
     """
-    比较不同类型的注意力机制
+    比较不同类型的自注意力机制
     """
     # 设置参数
     batch_size, seq_len, d_model = 2, 8, 64
@@ -418,12 +568,16 @@ if __name__ == "__main__":
     print(f"注意力权重形状: {attention_weights.shape}")
     print()
     
-    # 2. 位置编码可视化
-    print("2. 位置编码可视化")
+    # 2. 传统注意力 vs 自注意力对比
+    print("2. 传统注意力 vs 自注意力对比")
+    compare_traditional_vs_self_attention()
+    
+    # 3. 位置编码可视化
+    print("3. 位置编码可视化")
     visualize_positional_encoding()
     
-    # 3. 比较不同类型的注意力
-    print("3. 比较不同类型的注意力机制")
+    # 4. 比较不同类型的自注意力
+    print("4. 比较不同类型的自注意力机制")
     compare_attention_types()
     
     # 4. 复杂度分析

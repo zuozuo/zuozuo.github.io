@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time
-from implementation import SelfAttention, SelfAttentionWithPositionalEncoding
+from implementation import SelfAttention, SelfAttentionWithPositionalEncoding, TraditionalAttention, DotProductTraditionalAttention
 from positional_encoding import SinusoidalPositionalEncoding, LearnablePositionalEncoding
 
 def experiment_1_basic_functionality():
@@ -387,6 +387,98 @@ def experiment_6_gradient_flow():
     
     return input_grad
 
+def experiment_7_traditional_vs_self_attention():
+    """
+    实验7: 传统注意力与自注意力对比
+    """
+    print("\n=== 实验7: 传统注意力与自注意力对比 ===")
+    
+    # 设置参数
+    batch_size, seq_len, d_model = 1, 10, 64
+    num_decode_steps = 5
+    
+    # 模拟数据
+    encoder_outputs = torch.randn(batch_size, seq_len, d_model)
+    decoder_states = torch.randn(batch_size, num_decode_steps, d_model)
+    
+    # 创建模型
+    traditional_attention = TraditionalAttention(d_model, d_model)
+    self_attention = SelfAttention(d_model)
+    
+    # 测量计算时间
+    print("性能对比:")
+    
+    # 传统注意力时间测量
+    start_time = time.time()
+    traditional_contexts = []
+    traditional_weights = []
+    
+    for step in range(num_decode_steps):
+        context, weights = traditional_attention(encoder_outputs, decoder_states[:, step, :])
+        traditional_contexts.append(context)
+        traditional_weights.append(weights)
+    
+    traditional_time = time.time() - start_time
+    
+    # 自注意力时间测量
+    start_time = time.time()
+    self_output, self_weights = self_attention(encoder_outputs)
+    self_time = time.time() - start_time
+    
+    print(f"传统注意力时间: {traditional_time*1000:.2f}ms ({num_decode_steps}步)")
+    print(f"自注意力时间: {self_time*1000:.2f}ms (一次性)")
+    print(f"速度提升: {traditional_time/self_time:.2f}倍")
+    
+    # 内存使用对比
+    traditional_memory = sum([w.numel() for w in traditional_weights]) * 4 / 1024  # KB
+    self_memory = self_weights.numel() * 4 / 1024  # KB
+    
+    print(f"传统注意力内存: {traditional_memory:.2f}KB")
+    print(f"自注意力内存: {self_memory:.2f}KB")
+    
+    # 可视化注意力模式
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    
+    # 传统注意力：显示前3个解码步
+    for step in range(min(3, num_decode_steps)):
+        weights = traditional_weights[step][0].detach().numpy()
+        axes[0, step].bar(range(seq_len), weights)
+        axes[0, step].set_title(f'Traditional Attention - Decode Step {step+1}')
+        axes[0, step].set_xlabel('Encoder Position')
+        axes[0, step].set_ylabel('Attention Weight')
+        axes[0, step].set_ylim(0, max(weights) * 1.1)
+    
+    # 自注意力：显示注意力矩阵的前3行
+    self_weights_np = self_weights[0].detach().numpy()
+    for pos in range(3):
+        axes[1, pos].bar(range(seq_len), self_weights_np[pos])
+        axes[1, pos].set_title(f'Self-Attention - Query Position {pos+1}')
+        axes[1, pos].set_xlabel('Key Position')
+        axes[1, pos].set_ylabel('Attention Weight')
+        axes[1, pos].set_ylim(0, max(self_weights_np[pos]) * 1.1)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # 分析注意力模式差异
+    print("\n注意力模式分析:")
+    
+    # 传统注意力的分散度
+    traditional_entropy = []
+    for weights in traditional_weights:
+        entropy = -torch.sum(weights * torch.log(weights + 1e-9), dim=-1).mean().item()
+        traditional_entropy.append(entropy)
+    
+    avg_traditional_entropy = np.mean(traditional_entropy)
+    
+    # 自注意力的分散度
+    self_entropy = -torch.sum(self_weights * torch.log(self_weights + 1e-9), dim=-1).mean().item()
+    
+    print(f"传统注意力平均熵: {avg_traditional_entropy:.3f}")
+    print(f"自注意力平均熵: {self_entropy:.3f}")
+    
+    return traditional_contexts, traditional_weights, self_output, self_weights
+
 def run_all_experiments():
     """
     运行所有实验
@@ -411,6 +503,9 @@ def run_all_experiments():
     # 实验6: 梯度流分析
     gradients = experiment_6_gradient_flow()
     
+    # 实验7: 传统注意力与自注意力对比
+    comparison_results = experiment_7_traditional_vs_self_attention()
+    
     print("\n=== 实验总结 ===")
     print("✓ 所有实验完成")
     print("✓ 自注意力机制基础功能正常")
@@ -419,6 +514,7 @@ def run_all_experiments():
     print("✓ 注意力模式能够反映输入序列特征")
     print("✓ 掩码机制工作正常")
     print("✓ 梯度流稳定")
+    print("✓ 自注意力相比传统注意力具有并行化优势")
 
 if __name__ == "__main__":
     # 设置随机种子以确保结果可重现
