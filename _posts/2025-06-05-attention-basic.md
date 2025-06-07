@@ -957,8 +957,6 @@ print(f"排列等变性验证 - 最大差异: {difference:.8f}")
 return difference < 1e-6
 ```
 
-```
-
 ##### 为什么理解排列矩阵很重要？
 
 **1. 理论基础**
@@ -1079,11 +1077,102 @@ $$O(n \cdot m) + O(n \cdot d_v) = O(n \cdot m + n \cdot d_v)$$
 - 这促使了稀疏注意力、局部注意力等节省内存的变体
 
 
-### 4.3 梯度流动
-注意力机制提供了直接的梯度路径：
-$$\frac{\partial L}{\partial V_j} = \sum_{i=1}^{n} \alpha_{i,j} \frac{\partial L}{\partial \text{output}_i}$$
+### 4.3 梯度推导
+我来详细推导注意力机制的梯度公式。以最经典的加性注意力（Additive Attention）和缩放点积注意力（Scaled Dot-Product Attention）为例。
 
-这避免了RNN中的梯度消失问题。
+#### 1. 加性注意力的梯度推导
+
+###### 前向传播
+加性注意力的计算过程：
+
+$$e_i = v^T \tanh(W_q q + W_k k_i + b)$$
+
+$$\alpha_i = \frac{\exp(e_i)}{\sum_{j=1}^n \exp(e_j)}$$
+
+$$c = \sum_{i=1}^n \alpha_i v_i$$
+
+其中：
+- $q$ 是查询向量
+- $k_i, v_i$ 是第 $i$ 个键值对
+- $W_q, W_k$ 是权重矩阵
+- $v$ 是注意力权重向量
+
+###### 梯度推导
+
+**1) 对注意力权重 $\alpha_i$ 的梯度：**
+
+设损失函数为 $L$，则：
+
+$$\frac{\partial L}{\partial \alpha_i} = \frac{\partial L}{\partial c} \cdot v_i$$
+
+**2) 对能量分数 $e_i$ 的梯度：**
+
+由于 $\alpha_i = \text{softmax}(e_i)$，利用softmax的梯度性质：
+
+$$\frac{\partial \alpha_j}{\partial e_i} = \begin{cases}
+\alpha_i(1-\alpha_i) & \text{if } i = j \\
+-\alpha_i\alpha_j & \text{if } i \neq j
+\end{cases}$$
+
+因此：
+
+$$\frac{\partial L}{\partial e_i} = \sum_{j=1}^n \frac{\partial L}{\partial \alpha_j} \frac{\partial \alpha_j}{\partial e_i}$$
+
+$$= \frac{\partial L}{\partial \alpha_i} \alpha_i(1-\alpha_i) - \sum_{j \neq i} \frac{\partial L}{\partial \alpha_j} \alpha_i\alpha_j$$
+
+$$= \alpha_i \left( \frac{\partial L}{\partial \alpha_i} - \sum_{j=1}^n \frac{\partial L}{\partial \alpha_j} \alpha_j \right)$$
+
+**3) 对参数的梯度：**
+
+设 $h_i = W_q q + W_k k_i + b$，$s_i = \tanh(h_i)$，则：
+
+$$\frac{\partial L}{\partial v} = \sum_{i=1}^n \frac{\partial L}{\partial e_i} s_i$$
+
+$$\frac{\partial L}{\partial W_q} = \sum_{i=1}^n \frac{\partial L}{\partial e_i} v^T (1-s_i^2) q^T$$
+
+$$\frac{\partial L}{\partial W_k} = \sum_{i=1}^n \frac{\partial L}{\partial e_i} v^T (1-s_i^2) k_i^T$$
+
+#### 2. 缩放点积注意力的梯度推导
+
+##### 前向传播
+$$e_{ij} = \frac{q_i^T k_j}{\sqrt{d_k}}$$
+
+$$\alpha_{ij} = \frac{\exp(e_{ij})}{\sum_{l=1}^n \exp(e_{il})}$$
+
+$$o_i = \sum_{j=1}^n \alpha_{ij} v_j$$
+
+##### 梯度推导
+
+**1) 对查询 $Q$ 的梯度：**
+
+$$\frac{\partial L}{\partial Q} = \frac{1}{\sqrt{d_k}} \sum_{i,j} \frac{\partial L}{\partial e_{ij}} K$$
+
+其中 $\frac{\partial L}{\partial e_{ij}}$ 的计算类似前面的softmax梯度。
+
+**2) 对键 $K$ 的梯度：**
+
+$$\frac{\partial L}{\partial K} = \frac{1}{\sqrt{d_k}} \sum_{i,j} \frac{\partial L}{\partial e_{ij}} Q$$
+
+**3) 对值 $V$ 的梯度：**
+
+$$\frac{\partial L}{\partial V} = \sum_{i,j} \frac{\partial L}{\partial o_i} \alpha_{ij}$$
+
+#### 3. 多头注意力的梯度
+
+对于多头注意力，每个头独立计算梯度，然后在最后的线性变换层合并：
+
+$$\frac{\partial L}{\partial W^O} = \sum_{h=1}^H \text{head}_h^T \frac{\partial L}{\partial \text{output}}$$
+
+其中每个 $\text{head}_h$ 按照上述单头注意力的方式计算梯度。
+
+#### 关键要点
+
+1. **Softmax梯度**是注意力机制梯度推导的核心，需要特别注意其雅可比矩阵的形式
+2. **链式法则**的正确应用，特别是在多层嵌套的情况下
+3. **矩阵求导**的技巧，特别是对于批量操作的情况
+4. **数值稳定性**考虑，在实现时需要注意梯度消失和爆炸的问题
+
+这些梯度公式是反向传播算法训练注意力机制的理论基础。
 
 ## 5. 掩码注意力（Masked Attention）
 
