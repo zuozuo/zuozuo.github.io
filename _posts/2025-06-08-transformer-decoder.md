@@ -8,7 +8,7 @@ categories: [人工智能, 深度学习]
 tags: [Attention, Transformer, LLM, 数学原理, 算法解析]
 author: Yonghui Zuo
 description: ""
-pin: true
+pin: false
 math: true
 mermaid: true
 ---
