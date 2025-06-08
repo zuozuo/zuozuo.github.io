@@ -11,6 +11,13 @@ import matplotlib
 matplotlib.use('Agg')  # 使用非交互式后端
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+# 配置中文字体支持
+plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'SimHei', 'DejaVu Sans']
+plt.rcParams['axes.unicode_minus'] = False
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning, module='matplotlib')
+warnings.filterwarnings('ignore', category=UserWarning, module='seaborn')
 from typing import Dict, List, Tuple, Optional
 import time
 import os
@@ -49,9 +56,9 @@ class DecoderExperiments:
                        cbar=False,
                        square=True,
                        ax=axes[i])
-            axes[i].set_title(f'因果掩码 {size}x{size}')
-            axes[i].set_xlabel('Key位置')
-            axes[i].set_ylabel('Query位置')
+            axes[i].set_title(f'Causal Mask {size}x{size}')
+            axes[i].set_xlabel('Key Position')
+            axes[i].set_ylabel('Query Position')
         
         plt.tight_layout()
         plt.savefig(f'{self.save_dir}/causal_masks.png', dpi=300, bbox_inches='tight')
@@ -91,13 +98,13 @@ class DecoderExperiments:
             sns.heatmap(weights_no_mask[0, head].detach().numpy(),
                        annot=True, fmt='.2f', cmap='Blues',
                        ax=axes[0, head], cbar=False)
-            axes[0, head].set_title(f'无掩码 - 头{head+1}')
+            axes[0, head].set_title(f'No Mask - Head {head+1}')
             
             # 有掩码
             sns.heatmap(weights_masked[0, head].detach().numpy(),
                        annot=True, fmt='.2f', cmap='Reds',
                        ax=axes[1, head], cbar=False)
-            axes[1, head].set_title(f'有掩码 - 头{head+1}')
+            axes[1, head].set_title(f'With Mask - Head {head+1}')
         
         plt.tight_layout()
         plt.savefig(f'{self.save_dir}/attention_comparison.png', dpi=300, bbox_inches='tight')
@@ -139,9 +146,9 @@ class DecoderExperiments:
             sns.heatmap(cross_weights[0, head].detach().numpy(),
                        annot=True, fmt='.2f', cmap='Greens',
                        ax=axes[head], cbar=True)
-            axes[head].set_title(f'交叉注意力 - 头{head+1}')
-            axes[head].set_xlabel('编码器位置')
-            axes[head].set_ylabel('解码器位置')
+            axes[head].set_title(f'Cross Attention - Head {head+1}')
+            axes[head].set_xlabel('Encoder Position')
+            axes[head].set_ylabel('Decoder Position')
         
         plt.tight_layout()
         plt.savefig(f'{self.save_dir}/cross_attention.png', dpi=300, bbox_inches='tight')
@@ -197,14 +204,22 @@ class DecoderExperiments:
             '最终输出': final_output
         }
         
-        print("各阶段统计信息:")
+        print("Stage Statistics:")
+        stage_names_en = {
+            '输入': 'Input',
+            '自注意力后': 'After Self-Attn',
+            '交叉注意力后': 'After Cross-Attn',
+            '最终输出': 'Final Output'
+        }
+        
         for name, tensor in stages.items():
             mean_val = tensor.mean().item()
             std_val = tensor.std().item()
             max_val = tensor.max().item()
             min_val = tensor.min().item()
-            print(f"{name:12s}: 均值={mean_val:6.3f}, 标准差={std_val:6.3f}, "
-                  f"最大值={max_val:6.3f}, 最小值={min_val:6.3f}")
+            en_name = stage_names_en.get(name, name)
+            print(f"{en_name:15s}: Mean={mean_val:6.3f}, Std={std_val:6.3f}, "
+                  f"Max={max_val:6.3f}, Min={min_val:6.3f}")
         
         # 可视化信息流
         fig, axes = plt.subplots(2, 2, figsize=(12, 10))
@@ -217,9 +232,10 @@ class DecoderExperiments:
             # 展平张量并绘制直方图
             values = tensor.detach().numpy().flatten()
             ax.hist(values, bins=50, alpha=0.7, density=True)
-            ax.set_title(f'{name} - 激活分布')
-            ax.set_xlabel('激活值')
-            ax.set_ylabel('密度')
+            en_name = stage_names_en.get(name, name)
+            ax.set_title(f'{en_name} - Activation Distribution')
+            ax.set_xlabel('Activation Value')
+            ax.set_ylabel('Density')
             ax.grid(True, alpha=0.3)
         
         plt.tight_layout()
@@ -311,27 +327,27 @@ class DecoderExperiments:
         
         # 时间对比
         axes[0, 0].bar(model_sizes, times, color='skyblue')
-        axes[0, 0].set_title('推理时间对比')
-        axes[0, 0].set_ylabel('时间 (秒)')
+        axes[0, 0].set_title('Inference Time Comparison')
+        axes[0, 0].set_ylabel('Time (seconds)')
         axes[0, 0].tick_params(axis='x', rotation=45)
         
         # 参数数量对比
         axes[0, 1].bar(model_sizes, params, color='lightgreen')
-        axes[0, 1].set_title('参数数量对比')
-        axes[0, 1].set_ylabel('参数数量 (百万)')
+        axes[0, 1].set_title('Parameter Count Comparison')
+        axes[0, 1].set_ylabel('Parameters (millions)')
         axes[0, 1].tick_params(axis='x', rotation=45)
         
         # 吞吐量对比
         axes[1, 0].bar(model_sizes, throughputs, color='salmon')
-        axes[1, 0].set_title('吞吐量对比')
-        axes[1, 0].set_ylabel('Tokens/秒')
+        axes[1, 0].set_title('Throughput Comparison')
+        axes[1, 0].set_ylabel('Tokens/second')
         axes[1, 0].tick_params(axis='x', rotation=45)
         
         # 效率对比 (吞吐量/参数数量)
         efficiency = [t/p for t, p in zip(throughputs, params)]
         axes[1, 1].bar(model_sizes, efficiency, color='gold')
-        axes[1, 1].set_title('效率对比 (吞吐量/参数数量)')
-        axes[1, 1].set_ylabel('Tokens/秒/百万参数')
+        axes[1, 1].set_title('Efficiency (Throughput/Parameters)')
+        axes[1, 1].set_ylabel('Tokens/sec/million params')
         axes[1, 1].tick_params(axis='x', rotation=45)
         
         plt.tight_layout()
@@ -394,9 +410,9 @@ class DecoderExperiments:
         norms = list(avg_grad_norms.values())
         
         plt.bar(layers, norms, color='purple', alpha=0.7)
-        plt.title('各层梯度范数')
-        plt.xlabel('层名称')
-        plt.ylabel('平均梯度范数')
+        plt.title('Gradient Norms by Layer')
+        plt.xlabel('Layer Name')
+        plt.ylabel('Average Gradient Norm')
         plt.xticks(rotation=45)
         plt.grid(True, alpha=0.3)
         
