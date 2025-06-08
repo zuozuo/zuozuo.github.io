@@ -1,3 +1,18 @@
+---
+layout: post
+title: "前馈神经网络与残差连接"
+subtitle: ""
+date: 2025-06-08 08:00:00 +0800
+background: 
+categories: [人工智能, 深度学习]
+tags: [Attention, Transformer, LLM, 数学原理, 算法解析]
+author: Yonghui Zuo
+description: ""
+pin: true
+math: true
+mermaid: true
+---
+
 # Day 04 理论详解：前馈神经网络与残差连接
 
 ## 1. 前馈神经网络(Feed-Forward Network)
@@ -21,14 +36,10 @@ FFN(x) = max(0, xW₁ + b₁)W₂ + b₂
 
 其中：
 - `x` 是输入向量，维度为 `[seq_len, d_model]`
-- `d_model` 是模型的隐藏维度（embedding dimension），通常为512或768
 - `W₁` 是第一个权重矩阵，维度为 `[d_model, d_ff]`
 - `W₂` 是第二个权重矩阵，维度为 `[d_ff, d_model]`
-- `d_ff` 是FFN中间层的维度，通常为 `4 × d_model`
 - `b₁, b₂` 是偏置向量
 - `max(0, ·)` 是ReLU激活函数
-
-FFN 本质上其实就是 MLP
 
 ### 1.3 维度变换的设计原理
 

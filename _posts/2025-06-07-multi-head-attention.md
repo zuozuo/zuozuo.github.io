@@ -2,7 +2,7 @@
 layout: post
 title: "多头注意力机制"
 subtitle: ""
-date: 2025-06-06 08:00:00 +0800
+date: 2025-06-07 08:00:00 +0800
 background: 
 categories: [人工智能, 深度学习]
 tags: [Attention, Transformer, LLM, 数学原理, 算法解析]
